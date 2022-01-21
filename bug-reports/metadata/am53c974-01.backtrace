@@ -1,0 +1,35 @@
+/root/qemu/hw/scsi/esp.c:196:64: runtime error: member access within null pointer of type 'SCSIDevice' (aka 'struct SCSIDevice')
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /root/qemu/hw/scsi/esp.c:196:64 in 
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==6619==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000098 (pc 0x5568aab73b9e bp 0x7ffd4ec76020 sp 0x7ffd4ec75d30 T0)
+==6619==The signal is caused by a READ memory access.
+==6619==Hint: address points to the zero page.
+    #0 0x5568aab73b9e in do_busid_cmd esp.c
+    #1 0x5568aab72f2d in do_cmd esp.c
+    #2 0x5568aab6b1fb in handle_ti esp.c
+    #3 0x5568aab67380 in esp_reg_write (/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-am53c974+0x5212380)
+    #4 0x5568aab8aa2d in esp_pci_io_write esp-pci.c
+    #5 0x5568a9431451 in memory_region_write_accessor memory.c
+    #6 0x5568a9430a26 in access_with_adjusted_size memory.c
+    #7 0x5568a942e96c in memory_region_dispatch_write (/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-am53c974+0x3ad996c)
+    #8 0x5568a893efa9 in flatview_write_continue exec.c
+    #9 0x5568a8929402 in flatview_write exec.c
+    #10 0x5568a8928f51 in address_space_write (/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-am53c974+0x2fd3f51)
+    #11 0x5568a94176d8 in cpu_outl (/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-am53c974+0x3ac26d8)
+    #12 0x5568ac0c9591 in __wrap_qtest_outl (/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-am53c974+0x6774591)
+    #13 0x5568ac17210f in dispatch_pio_write stateful_fuzz.c
+    #14 0x5568ac0ebff6 in dispatch_event stateful_fuzz.c
+    #15 0x5568ac1740ba in stateful_fuzz stateful_fuzz.c
+    #16 0x5568ac0c396e in LLVMFuzzerTestOneInput (/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-am53c974+0x676e96e)
+    #17 0x5568a87dfdf3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #18 0x5568a87c311a in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
+    #19 0x5568a87cddd4 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:883
+    #20 0x5568a87b94f2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #21 0x7f64eafcfbf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #22 0x5568a87b9549 in _start (/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-am53c974+0x2e64549)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV esp.c in do_busid_cmd
+==6619==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

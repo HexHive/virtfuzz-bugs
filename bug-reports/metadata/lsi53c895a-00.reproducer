@@ -1,0 +1,35 @@
+I wrote a kernel module to reproduce this crash.
+>uint32_t address = (uint32_t)ioremap(0xfebd3000, 1 * 1024);
+>writel(0xffffff00, (void *)(address + 0x2c));
+
+Execute
+```
+#!/bin/bash
+export QEMU=/root/qemu/build-coverage/qemu-system-i386
+export BUILDROOT=./
+$QEMU \
+    -M q35 \
+    -kernel $BUILDROOT/bzImage \
+    -drive file=$BUILDROOT/rootfs.ext2,if=virtio,format=raw \
+    -append "root=/dev/vda console=ttyS0" \
+    -nic user,model=virtio-net-pci \
+    -device lsi53c895a,id=scsi0 \
+    -device scsi-hd,drive=drive0,bus=scsi0.0,channel=0,scsi-id=0,lun=0 \
+    -drive file=null-co://,if=none,format=raw,id=drive0 \
+    -device scsi-hd,drive=drive1,bus=scsi0.0,channel=0,scsi-id=1,lun=0 \
+    -drive file=null-co://,if=none,format=raw,id=drive1 \
+    -nographic \
+    -m 64
+```
+
+The username is root and the password is empty.
+Then, `modprobe lsi53c895a-00`.  You will see the crash.
+
+```
+# modprobe lsi53c895a-00
+lsi53c895a_00: loading out-of-tree module taints kernel.
+qemu-system-i386: ../hw/scsi/lsi53c895a.c:624: void lsi_do_dma(LSIState *, int): Assertion `s->current' failed.
+./run.sh: line 16:   148 Aborted                 (core dumped)
+```
+
+Attachment: https://drive.google.com/file/d/1f7L-GQXXevRWQPyJda5Swwk3NgxbiA6Q/view?usp=sharing

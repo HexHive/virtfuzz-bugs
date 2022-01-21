@@ -1,0 +1,27 @@
+==6086==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+qemu-fuzz-i386: /root/qemu/block/io.c:1919: int bdrv_co_write_req_prepare(BdrvChild *, int64_t, uint64_t, BdrvTrackedRequest *, int): Assertion `child->perm & BLK_PERM_WRITE' failed.
+==6086== ERROR: libFuzzer: deadly signal
+    #0 0x5650dd9ceb08 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
+    #1 0x5650dd9294c2 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x5650dd8dc220 in fuzzer::Fuzzer::CrashCallback() (.part.290) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235
+    #3 0x5650dd90248c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207
+    #4 0x5650dd90248c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206
+    #5 0x7ff9390e797f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1297f)
+    #6 0x7ff938906fb6 in __libc_signal_restore_set /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80
+    #7 0x7ff938906fb6 in raise /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
+    #8 0x7ff938908920 in abort /build/glibc-S9d2JN/glibc-2.27/stdlib/abort.c:79
+    #9 0x7ff9388f8489 in __assert_fail_base /build/glibc-S9d2JN/glibc-2.27/assert/assert.c:92
+    #10 0x7ff9388f8501 in __assert_fail /build/glibc-S9d2JN/glibc-2.27/assert/assert.c:101
+    #11 0x5650e0d8b2d7 in bdrv_co_write_req_prepare /root/qemu/block/io.c:1919:13
+    #12 0x5650e0d7b6cb in bdrv_aligned_pwritev /root/qemu/block/io.c:1999:11
+    #13 0x5650e0d7680f in bdrv_co_pwritev_part /root/qemu/block/io.c:2188:11
+    #14 0x5650e0c83f06 in blk_do_pwritev_part /root/qemu/block/block-backend.c:1260:11
+    #15 0x5650e0c87c8c in blk_aio_write_entry /root/qemu/block/block-backend.c:1476:17
+    #16 0x5650e15be143 in coroutine_trampoline /root/qemu/util/coroutine-ucontext.c:173:9
+    #17 0x7ff9389207af  (/lib/x86_64-linux-gnu/libc.so.6+0x587af)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 101 ChangeBit-ChangeByte-ChangeByte-CopyPart-CMP-ChangeASCIIInt-ChangeBinInt-ChangeBit-ShuffleBytes-ChangeBit-InsertByte-CopyPart-ChangeByte-ChangeBinInt-ShuffleBytes-ChangeByte-ChangeByte-InsertRepeatedBytes-CopyPart-CMP-PersAutoDict-CopyPart-ChangeASCIIInt-CopyPart-InsertByte-EraseBytes-ShuffleBytes-CrossOver-ShuffleBytes-EraseBytes-EraseBytes-CrossOver-ChangeASCIIInt-InsertByte-InsertRepeatedBytes-ChangeByte-EraseBytes-ChangeASCIIInt-InsertRepeatedBytes-ChangeByte-InsertByte-ShuffleBytes-ChangeByte-ChangeBit-PersAutoDict-ChangeASCIIInt-EraseBytes-ChangeBit-PersAutoDict-PersAutoDict-ShuffleBytes-CopyPart-ShuffleBytes-InsertByte-ShuffleBytes-CrossOver-InsertRepeatedBytes-EraseBytes-CopyPart-ChangeBinInt-EraseBytes-ShuffleBytes-ChangeASCIIInt-PersAutoDict-ChangeASCIIInt-InsertRepeatedBytes-ChangeBit-ShuffleBytes-EraseBytes-EraseBytes-InsertByte-ChangeByte-ShuffleBytes-ChangeBinInt-PersAutoDict-CrossOver-ChangeBit-CopyPart-ShuffleBytes-InsertRepeatedBytes-ChangeBinInt-CopyPart-ChangeBit-InsertRepeatedBytes-CopyPart-ChangeBinInt-CMP-ChangeByte-ChangeBinInt-ChangeByte-InsertByte-PersAutoDict-ChangeBinInt-CrossOver-ChangeBit-ChangeBit-ChangeByte-ChangeASCIIInt-CrossOver-ShuffleBytes-Custom- DE: "H\x00\x00\x00"-"\xe3\x08\x00\x00\x00\x00\x00\x00"-")\x00\x00\x00"-"\x01\x00\x00\x00\x00\x00\x03\x02"-"8\xb6\x1d\x15\x00\x00\x00\x00"-"\x00\x00\x00="-"\xff\xff\xff\x09"-"4\x00\x00\x00"-"V\x00"-"\x1c\x02\x00\x00\x00\x00\x00\x00"-; base unit: 06b0c46cad75ed18b47925ebbd268b7a441a1262
+artifact_prefix='./'; Test unit written to ./crash-c068a687321e7f331a896e647c679fb4dfae277b

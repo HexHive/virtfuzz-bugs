@@ -1,0 +1,1 @@
+../dd.sh --target=/root/qemu/build-coverage-5/qemu-fuzz-i386-target-stateful-fuzz-ehci --crash=./crash-adbde9c604a2acb954df8b7c500427246188957f --seeds=./ehci-1*

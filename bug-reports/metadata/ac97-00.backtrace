@@ -1,0 +1,69 @@
+root@fff5a5933072:~/qemu/build-san-6# ./qemu-fuzz-i386 --fuzz-target=stateful-fuzz-ac97 crash-31751ecaaf034b176b19750f316de21eb112cf7c 
+==40683==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x55aee20b9fd0). Disabling -len_control by default.
+INFO: libFuzzer ignores flags that start with '--'
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 3778213887
+INFO: Loaded 1 modules   (906955 inline 8-bit counters): 906955 [0x55aee9752000, 0x55aee982f6cb), 
+INFO: Loaded 1 PC tables (906955 PCs): 906955 [0x55aee897aaa0,0x55aee9751750), 
+./qemu-fuzz-i386: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+Matching objects by name , *ac97-nam*, *ac97-nabm*
+This process will fuzz the following MemoryRegions:
+  * ac97-nam[0] (size 400)
+  * ac97-nabm[0] (size 100)
+This process will fuzz through the following interfaces:
+  * ac97-nam, EVENT_TYPE_PIO_READ, 0xc400 +0x400, 1,4
+  * ac97-nam, EVENT_TYPE_PIO_WRITE, 0xc400 +0x400, 1,4
+  * ac97-nabm, EVENT_TYPE_PIO_READ, 0xc800 +0x100, 1,4
+  * ac97-nabm, EVENT_TYPE_PIO_WRITE, 0xc800 +0x100, 1,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 11 ft: 12 corp: 1/1b exec/s: 0 rss: 207Mb
+Running: crash-31751ecaaf034b176b19750f316de21eb112cf7c
+A bug was just triggered in audio_calloc
+Save all your work and restart without audio
+I am sorry
+Context:
+==40683== ERROR: libFuzzer: deadly signal
+    #0 0x55aee206fdd8 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
+    #1 0x55aee1fca792 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x55aee1f7d4f0 in fuzzer::Fuzzer::CrashCallback() (.part.290) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235
+    #3 0x55aee1fa375c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207
+    #4 0x55aee1fa375c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206
+    #5 0x7fc8bb6a597f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1297f)
+    #6 0x7fc8bacbcfb6 in __libc_signal_restore_set /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80
+    #7 0x7fc8bacbcfb6 in raise /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
+    #8 0x7fc8bacbe920 in abort /build/glibc-S9d2JN/glibc-2.27/stdlib/abort.c:79
+    #9 0x55aee331acfa in audio_bug /root/qemu/build-san-6/../audio/audio.c:119:9
+    #10 0x55aee331b0df in audio_calloc /root/qemu/build-san-6/../audio/audio.c:154:9
+    #11 0x55aee3383380 in audio_pcm_sw_alloc_resources_out /root/qemu/build-san-6/../audio/audio_template.h:115:15
+    #12 0x55aee33255d6 in audio_pcm_sw_init_out /root/qemu/build-san-6/../audio/audio_template.h:174:11
+    #13 0x55aee3320741 in AUD_open_out /root/qemu/build-san-6/../audio/audio_template.h:496:13
+    #14 0x55aee2d7dc05 in open_voice /root/qemu/build-san-6/../hw/audio/ac97.c:387:27
+    #15 0x55aee2d7c1cf in nam_writew /root/qemu/build-san-6/../hw/audio/ac97.c:647:13
+    #16 0x55aee2d7b197 in nam_write /root/qemu/build-san-6/../hw/audio/ac97.c:1261:9
+    #17 0x55aee4f55571 in memory_region_write_accessor /root/qemu/build-san-6/../softmmu/memory.c:491:5
+    #18 0x55aee4f54b46 in access_with_adjusted_size /root/qemu/build-san-6/../softmmu/memory.c:552:18
+    #19 0x55aee4f52a8c in memory_region_dispatch_write /root/qemu/build-san-6/../softmmu/memory.c:1502:16
+    #20 0x55aee4df3b59 in flatview_write_continue /root/qemu/build-san-6/../softmmu/physmem.c:2746:23
+    #21 0x55aee4ddcf62 in flatview_write /root/qemu/build-san-6/../softmmu/physmem.c:2786:14
+    #22 0x55aee4ddcab1 in address_space_write /root/qemu/build-san-6/../softmmu/physmem.c:2878:18
+    #23 0x55aee4ac6c20 in cpu_outw /root/qemu/build-san-6/../softmmu/ioport.c:70:5
+    #24 0x55aee20aa318 in __wrap_qtest_outw /root/qemu/build-san-6/../tests/qtest/fuzz/qtest_wrappers.c:91:9
+    #25 0x55aee214a6fc in dispatch_pio_write /root/qemu/build-san-6/../tests/qtest/fuzz/stateful_fuzz_dispatch.h:99:13
+    #26 0x55aee20c4616 in dispatch_event /root/qemu/build-san-6/../tests/qtest/fuzz/stateful_fuzz_dispatch.h:181:13
+    #27 0x55aee214c6da in stateful_fuzz /root/qemu/build-san-6/../tests/qtest/fuzz/stateful_fuzz.c:133:13
+    #28 0x55aee20b4c4e in LLVMFuzzerTestOneInput /root/qemu/build-san-6/../tests/qtest/fuzz/fuzz.c:151:5
+    #29 0x55aee1fa40c3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #30 0x55aee1f873ea in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
+    #31 0x55aee1f920a4 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:883
+    #32 0x55aee1f7d7c2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #33 0x7fc8bac9fbf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #34 0x55aee1f7d819 in _start (/root/qemu/build-san-6/qemu-fuzz-i386+0x31c2819)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

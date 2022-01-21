@@ -1,0 +1,27 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==426==ERROR: AddressSanitizer: SEGV on unknown address 0x62cf773fa008 (pc 0x561e8635387a bp 0x7fff71ca92a0 sp 0x7fff71ca9260 T0)
+==426==The signal is caused by a READ memory access.
+    #0 0x561e8635387a in tx_status_fifo_pop /root/qemu/build-oss-fuzz/../hw/net/lan9118.c:730:11
+    #1 0x561e86352b79 in lan9118_readl /root/qemu/build-oss-fuzz/../hw/net/lan9118.c:1249:16
+    #2 0x561e86aea48c in memory_region_read_accessor /root/qemu/build-oss-fuzz/../softmmu/memory.c:442:11
+    #3 0x561e86ad2895 in access_with_adjusted_size /root/qemu/build-oss-fuzz/../softmmu/memory.c:552:18
+    #4 0x561e86ad2895 in memory_region_dispatch_read1 /root/qemu/build-oss-fuzz/../softmmu/memory.c:1422:16
+    #5 0x561e86ad2895 in memory_region_dispatch_read /root/qemu/build-oss-fuzz/../softmmu/memory.c:1450:9
+    #6 0x561e86971a83 in flatview_read_continue /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2810:23
+    #7 0x561e86a2cf0a in address_space_read /root/qemu/include/exec/memory.h:2518:26
+    #8 0x561e86a2cf0a in qtest_process_command /root/qemu/build-oss-fuzz/../softmmu/qtest.c:568:13
+    #9 0x561e86a2cf0a in qtest_process_inbuf /root/qemu/build-oss-fuzz/../softmmu/qtest.c:797:9
+    #10 0x561e86c15d5b in fd_chr_read /root/qemu/build-oss-fuzz/../chardev/char-fd.c:68:9
+    #11 0x7f0e3bfa23a4 in g_main_context_dispatch (/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x4c3a4)
+    #12 0x561e8707e8e7 in glib_pollfds_poll /root/qemu/build-oss-fuzz/../util/main-loop.c:231:9
+    #13 0x561e8707e8e7 in os_host_main_loop_wait /root/qemu/build-oss-fuzz/../util/main-loop.c:254:5
+    #14 0x561e8707e8e7 in main_loop_wait /root/qemu/build-oss-fuzz/../util/main-loop.c:530:11
+    #15 0x561e86b38138 in qemu_main_loop /root/qemu/build-oss-fuzz/../softmmu/runstate.c:725:9
+    #16 0x561e85ac86a5 in main /root/qemu/build-oss-fuzz/../softmmu/main.c:50:5
+    #17 0x7f0e3ada2bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #18 0x561e859ef589 in _start (/root/qemu/build-oss-fuzz/qemu-system-arm+0x1108589)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV /root/qemu/build-oss-fuzz/../hw/net/lan9118.c:730:11 in tx_status_fifo_pop
+==426==ABORTING

@@ -1,0 +1,14 @@
+```
+#!/bin/bash -x
+export QEMU=/root/qemu/build-clean/qemu-system-i386
+export BUILDROOT=./
+cat << EOF | $QEMU \
+-machine q35,accel=qtest -m 512M -qtest stdio -monitor none -serial none \
+-device sb16,audiodev=snd0 -audiodev none,id=snd0 \
+-display none -nodefaults -qtest stdio
+outb 0x22c 0x41
+outb 0x22c 0x00
+outb 0x22c 0x14
+outb 0x22c 0xd4
+EOF
+```

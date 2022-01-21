@@ -1,0 +1,37 @@
+A bug was just triggered in AUD_open_out
+Save all your work and restart without audio
+I am sorry
+Context:
+==129== ERROR: libFuzzer: deadly signal
+    #0 0x5580e371b168 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
+    #1 0x5580e3675b22 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x5580e3627cc0 in fuzzer::Fuzzer::CrashCallback() (.part.284) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:233
+    #3 0x5580e364d89c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:205
+    #4 0x5580e364d89c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:204
+    #5 0x7fcd5004697f  (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libpthread.so.0+0x1297f)
+    #6 0x7fcd4f65dfb6 in raise (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x3efb6)
+    #7 0x7fcd4f65f920 in abort (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x40920)
+    #8 0x5580e3915446 in AUD_open_out /root/qemu/build-oss-fuzz/../audio/audio_template.h
+    #9 0x5580e3cda4fd in lm4549_write /root/qemu/build-oss-fuzz/../hw/audio/lm4549.c:192:20
+    #10 0x5580e3c11566 in pl041_write /root/qemu/build-oss-fuzz/../hw/audio/pl041.c:451:13
+    #11 0x5580e476e097 in memory_region_write_accessor /root/qemu/build-oss-fuzz/../softmmu/memory.c:491:5
+    #12 0x5580e476da7d in access_with_adjusted_size /root/qemu/build-oss-fuzz/../softmmu/memory.c:552:18
+    #13 0x5580e476da7d in memory_region_dispatch_write /root/qemu/build-oss-fuzz/../softmmu/memory.c:1502:16
+    #14 0x5580e461bb31 in flatview_write_continue /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2746:23
+    #15 0x5580e460e6c7 in flatview_write /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2786:14
+    #16 0x5580e460de6c in address_space_write /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2878:18
+    #17 0x5580e3762dec in __wrap_qtest_writel /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/qtest_wrappers.c:177:9
+    #18 0x5580e375dcea in stateful_fuzz /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/stateful_fuzz.c:402:13
+    #19 0x5580e375f460 in LLVMFuzzerTestOneInput /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/fuzz.c:151:5
+    #20 0x5580e364e203 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:603
+    #21 0x5580e3651bc8 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:509
+    #22 0x5580e365397e in fuzzer::Fuzzer::MutateAndTestOne() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:750
+    #23 0x5580e3656e07 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:887
+    #24 0x5580e363c2b9 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:908
+    #25 0x5580e3627f92 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #26 0x7fcd4f640bf6 in __libc_start_main (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x21bf6)
+    #27 0x5580e3627fe9 in _start (/root/qemu/build-oss-fuzz/DEST_DIR/qemu-fuzz-arm-target-stateful-fuzz-pl041+0x1147fe9)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal

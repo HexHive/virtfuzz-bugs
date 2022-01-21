@@ -1,0 +1,73 @@
+/root/qemu/hw/usb/hcd-ohci.c:736:19: runtime error: index 8 out of bounds for type 'uint16_t [8]'
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /root/qemu/hw/usb/hcd-ohci.c:736:19 in 
+=================================================================
+==8870==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffd3e8d5be0 at pc 0x55f2e2011000 bp 0x7ffd3e8d5b90 sp 0x7ffd3e8d5b88
+READ of size 2 at 0x7ffd3e8d5be0 thread T0
+    #0 0x55f2e2010fff in ohci_service_iso_td /root/qemu/hw/usb/hcd-ohci.c:736:19
+    #1 0x55f2e2007831 in ohci_service_ed_list /root/qemu/hw/usb/hcd-ohci.c:1194:21
+    #2 0x55f2e1ffa835 in ohci_frame_boundary /root/qemu/hw/usb/hcd-ohci.c:1260:9
+    #3 0x55f2e37ce686 in timerlist_run_timers /root/qemu/util/qemu-timer.c:574:9
+    #4 0x55f2e37ceb5d in qemu_clock_run_timers /root/qemu/util/qemu-timer.c:588:12
+    #5 0x55f2e07862ed in qtest_clock_warp /root/qemu/softmmu/qtest.c:302:9
+    #6 0x55f2e0784506 in qtest_process_command /root/qemu/softmmu/qtest.c:698:9
+    #7 0x55f2e0774118 in qtest_process_inbuf /root/qemu/softmmu/qtest.c:743:9
+    #8 0x55f2e0773b5e in qtest_server_inproc_recv /root/qemu/softmmu/qtest.c:850:9
+    #9 0x55f2e32a455a in send_wrapper /root/qemu/tests/qtest/libqtest.c:1388:5
+    #10 0x55f2e329ba18 in qtest_sendf /root/qemu/tests/qtest/libqtest.c:424:5
+    #11 0x55f2e329bd2d in qtest_clock_step /root/qemu/tests/qtest/libqtest.c:873:5
+    #12 0x55f2e342e5d4 in dispatch_clock_step /root/qemu/tests/qtest/fuzz/stateful_fuzz_dispatch.h:121:5
+    #13 0x55f2e33a73da in dispatch_event /root/qemu/tests/qtest/fuzz/stateful_fuzz_dispatch.h:192:13
+    #14 0x55f2e343039a in stateful_fuzz /root/qemu/tests/qtest/fuzz/stateful_fuzz.c:133:13
+    #15 0x55f2e337e77e in LLVMFuzzerTestOneInput /root/qemu/tests/qtest/fuzz/fuzz.c:159:5
+    #16 0x55f2dfa99df3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #17 0x55f2dfa9e1f8 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:513
+    #18 0x55f2dfaa08a6 in fuzzer::Fuzzer::MutateAndTestOne() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:763
+    #19 0x55f2dfaa2147 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:905
+    #20 0x55f2dfa87c50 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:933
+    #21 0x55f2dfa734f2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #22 0x7f70212c4bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #23 0x55f2dfa73549 in _start (/root/qemu/build-san-5/qemu-fuzz-i386+0x2e66549)
+
+Address 0x7ffd3e8d5be0 is located in stack of thread T0 at offset 64 in frame
+    #0 0x55f2e200e08f in ohci_service_iso_td /root/qemu/hw/usb/hcd-ohci.c:648
+
+  This frame has 1 object(s):
+    [32, 64) 'iso_td' (line 657) <== Memory access at offset 64 overflows this variable
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism, swapcontext or vfork
+      (longjmp and C++ exceptions *are* supported)
+SUMMARY: AddressSanitizer: stack-buffer-overflow /root/qemu/hw/usb/hcd-ohci.c:736:19 in ohci_service_iso_td
+Shadow bytes around the buggy address:
+  0x100027d12b20: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x100027d12b30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x100027d12b40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x100027d12b50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x100027d12b60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x100027d12b70: 00 00 00 00 f1 f1 f1 f1 00 00 00 00[f3]f3 f3 f3
+  0x100027d12b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x100027d12b90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x100027d12ba0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x100027d12bb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x100027d12bc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==8870==ABORTING
+MS: 101 CrossOver-CopyPart-ShuffleBytes-ChangeBit-ChangeBit-ChangeByte-InsertRepeatedBytes-ChangeByte-InsertByte-ChangeBinInt-ChangeASCIIInt-InsertByte-ChangeASCIIInt-ChangeBinInt-InsertRepeatedBytes-ChangeBinInt-InsertRepeatedBytes-CopyPart-ChangeBinInt-PersAutoDict-ShuffleBytes-PersAutoDict-InsertByte-ShuffleBytes-ChangeByte-ChangeBit-ChangeBinInt-ShuffleBytes-CrossOver-ChangeBinInt-ChangeASCIIInt-CopyPart-InsertByte-PersAutoDict-ChangeBinInt-InsertByte-PersAutoDict-ChangeByte-CrossOver-ChangeByte-CopyPart-ChangeByte-InsertByte-ChangeBit-CopyPart-CMP-ChangeASCIIInt-ShuffleBytes-ChangeByte-ChangeASCIIInt-PersAutoDict-ChangeByte-ShuffleBytes-InsertByte-CrossOver-CMP-ChangeByte-CMP-InsertRepeatedBytes-EraseBytes-CrossOver-ShuffleBytes-ChangeBit-ChangeBit-InsertRepeatedBytes-CopyPart-ShuffleBytes-CrossOver-CopyPart-CMP-PersAutoDict-EraseBytes-ChangeBit-CrossOver-ShuffleBytes-CopyPart-ChangeASCIIInt-ChangeBit-CrossOver-EraseBytes-PersAutoDict-InsertByte-ChangeBinInt-CopyPart-ChangeASCIIInt-InsertByte-ChangeByte-CopyPart-CrossOver-ChangeBit-InsertByte-ChangeASCIIInt-ChangeASCIIInt-InsertByte-CrossOver-CrossOver-ChangeBit-ShuffleBytes-InsertRepeatedBytes-InsertRepeatedBytes-Custom- DE: "\xce\x00\x00\x00\x00\x00\x00\x00"-"\x0b\x06\x00\x00\x00\x00\x00\x00"-"\x01\x00\x00\x00\x00\x00\x08\xa5"-"\x01\x00\x00\x00\x00\x00\x08\xea"-"\x00\x00\x00d"-"\xff\xff\xff\xff\xff\xff\x07\xee"-"\xff\xff\x1f\x13i\x9b\\\xe8"-"'\x00"-"\x00\x00\x00\x00\x00\x00\x0e\x8c"-"\x01\x00\x00\x00\x00\x00\x05+"-"\x00\x00\x00\x00\x00\x00\x01K"-; base unit: 3bfbe0c2ff0afe5dbd96fed85f033d42e855569b
+artifact_prefix='./'; Test unit written to ./crash-24c828048ebd5ffc6b8c03e010c8b89e24844d6a

@@ -1,0 +1,41 @@
+==163== ERROR: libFuzzer: deadly signal
+    #0 0x55b9f24c2dd8 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
+    #1 0x55b9f241d792 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x55b9f23d04f0 in fuzzer::Fuzzer::CrashCallback() (.part.290) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235
+    #3 0x55b9f23f675c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207
+    #4 0x55b9f23f675c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206
+    #5 0x7f5649ffc97f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1297f)
+    #6 0x7f5649613fb6 in __libc_signal_restore_set /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80
+    #7 0x7f5649613fb6 in raise /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
+    #8 0x7f5649615920 in abort /build/glibc-S9d2JN/glibc-2.27/stdlib/abort.c:79
+    #9 0x7f5649605489 in __assert_fail_base /build/glibc-S9d2JN/glibc-2.27/assert/assert.c:92
+    #10 0x7f5649605501 in __assert_fail /build/glibc-S9d2JN/glibc-2.27/assert/assert.c:101
+    #11 0x55b9f3e08110 in usb_ep_get /root/qemu/build-san-6/../hw/usb/core.c:750:5
+    #12 0x55b9f366b775 in ehci_execute /root/qemu/build-san-6/../hw/usb/hcd-ehci.c:1373:10
+    #13 0x55b9f3656c9a in ehci_state_execute /root/qemu/build-san-6/../hw/usb/hcd-ehci.c:1960:13
+    #14 0x55b9f364c71d in ehci_advance_state /root/qemu/build-san-6/../hw/usb/hcd-ehci.c:2101:21
+    #15 0x55b9f364a835 in ehci_advance_periodic_state /root/qemu/build-san-6/../hw/usb/hcd-ehci.c:2233:9
+    #16 0x55b9f361c154 in ehci_work_bh /root/qemu/build-san-6/../hw/usb/hcd-ehci.c:2319:17
+    #17 0x55b9f6a49675 in aio_bh_call /root/qemu/build-san-6/../util/async.c:136:5
+    #18 0x55b9f6a4ae5b in aio_bh_poll /root/qemu/build-san-6/../util/async.c:164:13
+    #19 0x55b9f67bd9d5 in aio_dispatch /root/qemu/build-san-6/../util/aio-posix.c:381:5
+    #20 0x55b9f6a53d8a in aio_ctx_dispatch /root/qemu/build-san-6/../util/async.c:306:5
+    #21 0x7f564d6d5536 in g_main_context_dispatch (/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x4c536)
+    #22 0x55b9f6802ffb in glib_pollfds_poll /root/qemu/build-san-6/../util/main-loop.c:231:9
+    #23 0x55b9f6800b37 in os_host_main_loop_wait /root/qemu/build-san-6/../util/main-loop.c:254:5
+    #24 0x55b9f68004f0 in main_loop_wait /root/qemu/build-san-6/../util/main-loop.c:530:11
+    #25 0x55b9f25b4b3f in flush_events /root/qemu/build-san-6/../tests/qtest/fuzz/fuzz.c:49:9
+    #26 0x55b9f25a7593 in stateful_fuzz /root/qemu/build-san-6/../tests/qtest/fuzz/stateful_fuzz.c:134:13
+    #27 0x55b9f25b636e in LLVMFuzzerTestOneInput /root/qemu/build-san-6/../tests/qtest/fuzz/fuzz.c:151:5
+    #28 0x55b9f23f70c3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #29 0x55b9f23fb4c8 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:513
+    #30 0x55b9f23fdb76 in fuzzer::Fuzzer::MutateAndTestOne() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:763
+    #31 0x55b9f23ff417 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:905
+    #32 0x55b9f23e4f20 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:933
+    #33 0x55b9f23d07c2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #34 0x7f56495f6bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #35 0x55b9f23d0819 in _start (/root/qemu/build-san-6/qemu-fuzz-i386+0x31c2819)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal

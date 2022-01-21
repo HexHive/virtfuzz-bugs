@@ -1,0 +1,34 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==618==ERROR: AddressSanitizer: SEGV on unknown address 0x7fffc400bcc0 (pc 0x7ffff43f0b22 bp 0x000000000008 sp 0x7fffffff77f0 T0)
+==618==The signal is caused by a WRITE memory access.
+    #0 0x7ffff43f0b22  (/usr/lib/x86_64-linux-gnu/libpixman-1.so.0+0x6cb22)
+    #1 0x7ffff43d5b28  (/usr/lib/x86_64-linux-gnu/libpixman-1.so.0+0x51b28)
+    #2 0x7ffff438efe8 in pixman_fill (/usr/lib/x86_64-linux-gnu/libpixman-1.so.0+0xafe8)
+    #3 0x555559ed043c in ati_2d_blt /root/qemu/hw/display/ati_2d.c:188:9
+    #4 0x555559eb5af9 in ati_mm_write /root/qemu/hw/display/ati.c:782:9
+    #5 0x555559029c71 in memory_region_write_accessor /root/qemu/softmmu/memory.c:483:5
+    #6 0x555559029246 in access_with_adjusted_size /root/qemu/softmmu/memory.c:544:18
+    #7 0x55555902718c in memory_region_dispatch_write /root/qemu/softmmu/memory.c:1480:16
+    #8 0x55555853ffe9 in flatview_write_continue /root/qemu/exec.c:3172:23
+    #9 0x55555852a442 in flatview_write /root/qemu/exec.c:3212:14
+    #10 0x555558529f91 in address_space_write /root/qemu/exec.c:3304:18
+    #11 0x55555bccfbb9 in __wrap_qtest_writel /root/qemu/tests/qtest/fuzz/qtest_wrappers.c:177:9
+    #12 0x55555bd757b0 in dispatch_mmio_write /root/qemu/tests/qtest/fuzz/stateful_fuzz_dispatch.h:79:13
+    #13 0x55555bcee2e5 in dispatch_event /root/qemu/tests/qtest/fuzz/stateful_fuzz_dispatch.h:175:13
+    #14 0x55555bd77a9a in stateful_fuzz /root/qemu/tests/qtest/fuzz/stateful_fuzz.c:133:13
+    #15 0x55555bcc5e7e in LLVMFuzzerTestOneInput /root/qemu/tests/qtest/fuzz/fuzz.c:159:5
+    #16 0x5555583e0df3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #17 0x5555583e51f8 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:513
+    #18 0x5555583e78a6 in fuzzer::Fuzzer::MutateAndTestOne() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:763
+    #19 0x5555583e9147 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:905
+    #20 0x5555583cec50 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:933
+    #21 0x5555583ba4f2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #22 0x7ffff237dbf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #23 0x5555583ba549 in _start (/root/qemu/build-san-5/qemu-fuzz-i386+0x2e66549)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (/usr/lib/x86_64-linux-gnu/libpixman-1.so.0+0x6cb22)
+==618==ABORTING
+MS: 101 ChangeBit-PersAutoDict-ChangeBinInt-ChangeBit-ChangeASCIIInt-CMP-ChangeBit-InsertRepeatedBytes-ChangeBit-ShuffleBytes-ChangeByte-InsertByte-PersAutoDict-CopyPart-ChangeBit-PersAutoDict-ChangeBit-CMP-CopyPart-EraseBytes-ChangeBinInt-PersAutoDict-CopyPart-ShuffleBytes-CrossOver-ChangeBit-ChangeBinInt-ChangeByte-EraseBytes-ChangeByte-CMP-CrossOver-ChangeASCIIInt-CopyPart-InsertByte-ShuffleBytes-ChangeASCIIInt-PersAutoDict-ChangeByte-ChangeByte-CrossOver-CMP-ChangeBinInt-CMP-CrossOver-ChangeASCIIInt-CrossOver-ShuffleBytes-CopyPart-ChangeByte-ChangeBit-ChangeBinInt-ChangeBit-InsertByte-PersAutoDict-InsertRepeatedBytes-InsertByte-ChangeByte-ChangeBit-InsertRepeatedBytes-CrossOver-ShuffleBytes-InsertRepeatedBytes-InsertRepeatedBytes-InsertRepeatedBytes-ShuffleBytes-ChangeByte-ChangeBit-EraseBytes-ChangeBinInt-ChangeByte-PersAutoDict-CopyPart-ChangeBinInt-EraseBytes-ChangeASCIIInt-CrossOver-CrossOver-CrossOver-ChangeASCIIInt-CopyPart-EraseBytes-CrossOver-ChangeBit-ChangeBinInt-CMP-InsertByte-ChangeASCIIInt-ShuffleBytes-ChangeASCIIInt-InsertByte-CrossOver-PersAutoDict-ChangeASCIIInt-ChangeBinInt-ChangeBinInt-InsertByte-CopyPart-CrossOver-ChangeBinInt-Custom- DE: "\xb9\x06\x00\x00\x00\x00\x00\x00"-"memset"-"\x87\x0d\x00\x00\x00\x00\x00\x00"-"P\x00"-"\xff\xff\xff\xff\xff\xff\x03\xbe"-"\x0f\x00\x00\x00"-"clock"-"#\x00\x00\x00"-"\xff\x1e"-"\x01\x0e\x00\x00\x00\x00\x00\x00"-"\x01\x00\x00\x00\x00\x00\x09\x07"-"\xdc\x03\x00\x00\x00\x00\x00\x00"-"\x03\x0e\x00\x00\x00\x00\x00\x00"-"\xff\xff5\xe8.\xaa\xffX"-; base unit: d49c67677452d9881905d287a7a241aa772bc3c6
+artifact_prefix='./'; Test unit written to ./crash-8bd0921c7bd89452a5b2826add3f6cea8912a6ec

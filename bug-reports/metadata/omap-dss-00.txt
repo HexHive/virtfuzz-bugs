@@ -1,0 +1,21 @@
+# Out-of-memory bug in hw/omap-dss for ARM causing a DoS
+
+## Root cause analysis
+
+In omap-dss, g_realloc(bounce_buffer, len) can allocate a very large buffer causing the memory exhaustion.
+
+```
+static void omap_rfbi_write(void *opaque, hwaddr addr, uint64_t value, unsigned size) {
+   switch (addr) {
+     case 0x44:	/* RFBI_PIXELCNT */
+        s->rfbi.pixels = value; // first, set pixels with any value
+        break;
+
+static void omap_rfbi_transfer_start(struct omap_dss_s *s) {
+    len = s->rfbi.pixels * 2;  // second, double pixels
+    if (!data) {
+        if (len > bounce_len) {
+            bounce_buffer = g_realloc(bounce_buffer, len);
+                                          // BOOM Here
+        }
+```

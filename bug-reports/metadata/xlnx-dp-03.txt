@@ -1,0 +1,3 @@
+# Assertion failure in fifo8_push_all through xlnx_dp_aux_push_rx_fifo
+
+[1](https://yhbt.net/lore/all/161572270432.5470.11336318518807394046@c9d4d6fbb2f1/t/)

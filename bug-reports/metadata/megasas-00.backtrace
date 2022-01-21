@@ -1,0 +1,85 @@
+root@7e77ab3416a0:~/evaluation/bug-reports# /tmp/tmp.CZoALXl6vN/picire_reproduce.sh /tmp/tmp.CZoALXl6vN/picire_inputs.20211020_140611/picire_inputs
+INFO: found LLVMFuzzerCustomMutator (0x559db1f03ab0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 4141306407
+INFO: Loaded 1 modules   (842896 inline 8-bit counters): 842896 [0x559db536a000, 0x559db5437c90), 
+INFO: Loaded 1 PC tables (842896 PCs): 842896 [0x559db468ccd0,0x559db53695d0), 
+/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-megasas: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+Matching objects by name , *megasas-mmio*, *megasas-io*, *megasas-queue*
+This process will fuzz the following MemoryRegions:
+  * megasas-mmio[0] (size 4000)
+  * megasas-io[0] (size 100)
+  * megasas-queue[0] (size 40000)
+This process will fuzz through the following interfaces:
+  * megasas-mmio, EVENT_TYPE_MMIO_READ, 0xe0004000 +0x4000, 8,8
+  * megasas-mmio, EVENT_TYPE_MMIO_WRITE, 0xe0004000 +0x4000, 8,8
+  * megasas-io, EVENT_TYPE_PIO_READ, 0xc100 +0x100, 4,4
+  * megasas-io, EVENT_TYPE_PIO_WRITE, 0xc100 +0x100, 4,4
+  * megasas-queue, EVENT_TYPE_MMIO_READ, 0xe0040000 +0x40000, 8,8
+  * megasas-queue, EVENT_TYPE_MMIO_WRITE, 0xe0040000 +0x40000, 8,8
+INFO: seed corpus: files: 1 min: 1039b max: 1039b total: 1039b rss: 200Mb
+#2	INITED cov: 1528 ft: 1529 corp: 1/1039b exec/s: 0 rss: 200Mb
+Running: /root/evaluation/bug-reports/crash-6495db536f99a6337fc6738b68936703198fea83
+[+] TraceStateCallback 16 (0)
+qemu-fuzz-i386-target-stateful-fuzz-megasas: /root/qemu/hw/scsi/scsi-disk.c:292: void scsi_dma_complete(void *, int): Assertion `r->req.aiocb != NULL' failed.
+==455== ERROR: libFuzzer: deadly signal
+    #0 0x559dae6ccb08 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
+    #1 0x559dae6274c2 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x559dae5da220 in fuzzer::Fuzzer::CrashCallback() (.part.290) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235
+    #3 0x559dae60048c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207
+    #4 0x559dae60048c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206
+    #5 0x7f0b2e06f97f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1297f)
+    #6 0x7f0b2d88efb6 in __libc_signal_restore_set /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80
+    #7 0x7f0b2d88efb6 in raise /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
+    #8 0x7f0b2d890920 in abort /build/glibc-S9d2JN/glibc-2.27/stdlib/abort.c:79
+    #9 0x7f0b2d880489 in __assert_fail_base /build/glibc-S9d2JN/glibc-2.27/assert/assert.c:92
+    #10 0x7f0b2d880501 in __assert_fail /build/glibc-S9d2JN/glibc-2.27/assert/assert.c:101
+    #11 0x559db077051e in scsi_dma_complete /root/qemu/hw/scsi/scsi-disk.c:292:5
+    #12 0x559daf967d57 in dma_complete /root/qemu/dma-helpers.c:120:9
+    #13 0x559daf95fa4b in dma_blk_cb /root/qemu/dma-helpers.c:138:9
+    #14 0x559daf95ed53 in dma_blk_io /root/qemu/dma-helpers.c:254:5
+    #15 0x559db076c247 in scsi_do_read /root/qemu/hw/scsi/scsi-disk.c:359:24
+    #16 0x559db07607b2 in scsi_read_data /root/qemu/hw/scsi/scsi-disk.c:431:9
+    #17 0x559db0802fb0 in scsi_req_continue /root/qemu/hw/scsi/scsi-bus.c:1325:9
+    #18 0x559db0940561 in megasas_enqueue_req /root/qemu/hw/scsi/megasas.c:1661:9
+    #19 0x559db0909998 in megasas_handle_io /root/qemu/hw/scsi/megasas.c:1800:11
+    #20 0x559db08f36bd in megasas_handle_frame /root/qemu/hw/scsi/megasas.c:1979:24
+    #21 0x559db08ef0a5 in megasas_mmio_write /root/qemu/hw/scsi/megasas.c:2135:9
+    #22 0x559daf249c71 in memory_region_write_accessor /root/qemu/softmmu/memory.c:483:5
+    #23 0x559daf249246 in access_with_adjusted_size /root/qemu/softmmu/memory.c:544:18
+    #24 0x559daf24718c in memory_region_dispatch_write /root/qemu/softmmu/memory.c:1480:16
+    #25 0x559dae75ffe9 in flatview_write_continue /root/qemu/exec.c:3172:23
+    #26 0x559dae74a442 in flatview_write /root/qemu/exec.c:3212:14
+    #27 0x559dae749f91 in address_space_write /root/qemu/exec.c:3304:18
+    #28 0x559db1ef0018 in __wrap_qtest_writeq /root/qemu/tests/qtest/fuzz/qtest_wrappers.c:187:9
+    #29 0x559db1f953c4 in dispatch_mmio_write /root/qemu/tests/qtest/fuzz/stateful_fuzz_dispatch.h:82:13
+    #30 0x559db1f0ded5 in dispatch_event /root/qemu/tests/qtest/fuzz/stateful_fuzz_dispatch.h:175:13
+    #31 0x559db1f0c351 in TraceStateCallback /root/qemu/tests/qtest/fuzz/stateful_fuzz.c:179:9
+    #32 0x559db08eeb27 in megasas_mmio_write /root/qemu/hw/scsi/megasas.c:2118:9
+    #33 0x559db0949227 in megasas_port_write /root/qemu/hw/scsi/megasas.c:2186:5
+    #34 0x559daf249c71 in memory_region_write_accessor /root/qemu/softmmu/memory.c:483:5
+    #35 0x559daf249246 in access_with_adjusted_size /root/qemu/softmmu/memory.c:544:18
+    #36 0x559daf24718c in memory_region_dispatch_write /root/qemu/softmmu/memory.c:1480:16
+    #37 0x559dae75ffe9 in flatview_write_continue /root/qemu/exec.c:3172:23
+    #38 0x559dae74a442 in flatview_write /root/qemu/exec.c:3212:14
+    #39 0x559dae749f91 in address_space_write /root/qemu/exec.c:3304:18
+    #40 0x559daf22fef8 in cpu_outl /root/qemu/softmmu/ioport.c:80:5
+    #41 0x559db1eeb691 in __wrap_qtest_outl /root/qemu/tests/qtest/fuzz/qtest_wrappers.c:100:9
+    #42 0x559db1f956df in dispatch_pio_write /root/qemu/tests/qtest/fuzz/stateful_fuzz_dispatch.h:102:13
+    #43 0x559db1f0e0f6 in dispatch_event /root/qemu/tests/qtest/fuzz/stateful_fuzz_dispatch.h:181:13
+    #44 0x559db1f9768a in stateful_fuzz /root/qemu/tests/qtest/fuzz/stateful_fuzz.c:133:13
+    #45 0x559db1ee5a6e in LLVMFuzzerTestOneInput /root/qemu/tests/qtest/fuzz/fuzz.c:159:5
+    #46 0x559dae600df3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #47 0x559dae5e411a in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
+    #48 0x559dae5eedd4 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:883
+    #49 0x559dae5da4f2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #50 0x7f0b2d871bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #51 0x559dae5da549 in _start (/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-megasas+0x2e66549)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

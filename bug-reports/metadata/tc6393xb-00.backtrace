@@ -1,0 +1,76 @@
+==27==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x61f000000dd0 at pc 0x55cc4c7a6474 bp 0x7ffe2e2f10a0 sp 0x7ffe2e2f1098
+READ of size 1 at 0x61f000000dd0 thread T0
+    #0 0x55cc4c7a6473 in nand_getio /root/qemu/build-oss-fuzz/../hw/block/nand.c:613:14
+    #1 0x55cc4c59d37a in tc6393xb_nand_readb /root/qemu/build-oss-fuzz/../hw/display/tc6393xb.c:356:20
+    #2 0x55cc4c59d37a in tc6393xb_readb /root/qemu/build-oss-fuzz/../hw/display/tc6393xb.c:496:21
+    #3 0x55cc4d25d89c in memory_region_read_accessor /root/qemu/build-oss-fuzz/../softmmu/memory.c:442:11
+    #4 0x55cc4d245ca5 in access_with_adjusted_size /root/qemu/build-oss-fuzz/../softmmu/memory.c:552:18
+    #5 0x55cc4d245ca5 in memory_region_dispatch_read1 /root/qemu/build-oss-fuzz/../softmmu/memory.c:1422:16
+    #6 0x55cc4d245ca5 in memory_region_dispatch_read /root/qemu/build-oss-fuzz/../softmmu/memory.c:1450:9
+    #7 0x55cc4d55bfa3 in flatview_read_continue /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2810:23
+    #8 0x55cc4c46fbba in address_space_read /root/qemu/include/exec/memory.h:2518:26
+    #9 0x55cc4c46fbba in __wrap_qtest_readl /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/qtest_wrappers.c:134:9
+    #10 0x55cc4c4de9da in stateful_fuzz /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/stateful_fuzz.c:423:13
+    #11 0x55cc4c4720f0 in LLVMFuzzerTestOneInput /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/fuzz.c:151:5
+    #12 0x55cc4c36ce43 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:603
+    #13 0x55cc4c3702d8 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:509
+    #14 0x55cc4c37290e in fuzzer::Fuzzer::MutateAndTestOne() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:750
+    #15 0x55cc4c3740f7 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:894
+    #16 0x55cc4c3595e1 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:909
+    #17 0x55cc4c344f92 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #18 0x7fdf33737bf6 in __libc_start_main (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x21bf6)
+    #19 0x55cc4c344fe9 in _start (/root/qemu/build-oss-fuzz/DEST_DIR/qemu-fuzz-arm-target-stateful-fuzz-tc6393xb+0x1161fe9)
+
+0x61f000000dd0 is located 0 bytes to the right of 3408-byte region [0x61f000000080,0x61f000000dd0)
+allocated by thread T0 here:
+    #0 0x55cc4c427e20 in malloc /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:145
+    #1 0x7fdf34b57bd8 in g_malloc (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libglib-2.0.so.0+0x51bd8)
+    #2 0x55cc4d682f1d in qdev_new /root/qemu/build-oss-fuzz/../hw/core/qdev.c:153:19
+    #3 0x55cc4c7a6771 in nand_init /root/qemu/build-oss-fuzz/../hw/block/nand.c:639:11
+    #4 0x55cc4c59ceee in tc6393xb_init /root/qemu/build-oss-fuzz/../hw/display/tc6393xb.c:553:16
+    #5 0x55cc4cef8f91 in tosa_init /root/qemu/build-oss-fuzz/../hw/arm/tosa.c:250:12
+    #6 0x55cc4cb1a595 in machine_run_board_init /root/qemu/build-oss-fuzz/../hw/core/machine.c:1237:5
+    #7 0x55cc4d27a20a in qemu_init_board /root/qemu/build-oss-fuzz/../softmmu/vl.c:2514:5
+    #8 0x55cc4d27a20a in qmp_x_exit_preconfig /root/qemu/build-oss-fuzz/../softmmu/vl.c:2588:5
+    #9 0x55cc4d282529 in qemu_init /root/qemu/build-oss-fuzz/../softmmu/vl.c:3611:9
+    #10 0x55cc4c47263e in LLVMFuzzerInitialize /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/fuzz.c:238:5
+    #11 0x55cc4c3568be in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:645
+    #12 0x55cc4c344f92 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #13 0x7fdf33737bf6 in __libc_start_main (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x21bf6)
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow /root/qemu/build-oss-fuzz/../hw/block/nand.c:613:14 in nand_getio
+Shadow bytes around the buggy address:
+  0x0c3e7fff8160: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c3e7fff8170: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c3e7fff8180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c3e7fff8190: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c3e7fff81a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x0c3e7fff81b0: 00 00 00 00 00 00 00 00 00 00[fa]fa fa fa fa fa
+  0x0c3e7fff81c0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c3e7fff81d0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x0c3e7fff81e0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x0c3e7fff81f0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x0c3e7fff8200: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==27==ABORTING
+MS: 9 ChangeBinInt-Custom-ChangeByte-Custom-EraseBytes-Custom-ChangeBinInt-ChangeBit-Custom-; base unit: cc97e3b012c4b896e376d5b6981c9d089d9c8f49
+artifact_prefix='./'; Test unit written to ./crash-0d3ef3e42c503214c80be8db9bcab13554abfd2f

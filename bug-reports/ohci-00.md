@@ -1,0 +1,24 @@
+tag: arch: i386
+tag: type: OOB
+
+# stack-buffer-overflow in ohci_service_iso_td
+
+[Reported](https://www.mail-archive.com/qemu-devel@nongnu.org/msg739616.html) and
+patched, 1328fe0c32d5474604105b8105310e944976b058 and 1be90ebecc95b09a2ee5af3f60c412b45a766c4f.
+
+Found in QEMU 5.1.0.
+
+## More technique details
+
+### QEMU version, upstream commit/tag
+c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50
+
+### Host and Guest
+Ubuntu 18.04 docker/QTest Fuzzer
+
+### Reproducer steps
+
+
+## Contact
+
+Let me know if I need to provide more information.

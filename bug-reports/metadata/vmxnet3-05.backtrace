@@ -1,0 +1,67 @@
+root@e1fc40420e44:~/evaluation/bug-reports# /tmp/tmp.eJhE0LAyIA/picire_reproduce.sh /tmp/tmp.eJhE0LAyIA/picire_inputs.20211003_141848/picire_inputs
+INFO: found LLVMFuzzerCustomMutator (0x561b109c0bd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 2115975641
+INFO: Loaded 1 modules   (842767 inline 8-bit counters): 842767 [0x561b13e06000, 0x561b13ed3c0f), 
+INFO: Loaded 1 PC tables (842767 PCs): 842767 [0x561b13129350,0x561b13e05440), 
+/root/qemu/build-san-5/qemu-fuzz-i386-target-stateful-fuzz-vmxnet3: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+Matching objects by name , *vmxnet3-b0*, *vmxnet3-b1*
+This process will fuzz the following MemoryRegions:
+  * vmxnet3-b0[0] (size 1000)
+  * vmxnet3-b1[0] (size 1000)
+This process will fuzz through the following interfaces:
+  * vmxnet3-b0, EVENT_TYPE_MMIO_READ, 0xe0001000 +0x1000, 4,4
+  * vmxnet3-b0, EVENT_TYPE_MMIO_WRITE, 0xe0001000 +0x1000, 4,4
+  * vmxnet3-b1, EVENT_TYPE_MMIO_READ, 0xe0002000 +0x1000, 4,4
+  * vmxnet3-b1, EVENT_TYPE_MMIO_WRITE, 0xe0002000 +0x1000, 4,4
+INFO: seed corpus: files: 2 min: 1271b max: 1576b total: 2847b rss: 198Mb
+[+] TraceStateCallback 4 (0)
+[vmxnet3][WR][vmxnet3_io_bar0_write]: BAR0 unknown write [540] = 4d00, size 4
+[vmxnet3][WR][vmxnet3_io_bar0_write]: BAR0 unknown write [9f8] = 10f, size 4
+**
+ERROR:/root/qemu/net/eth.c:76:eth_get_gso_type: code should not be reached
+==9156== ERROR: libFuzzer: deadly signal
+    #0 0x561b0d18ab08 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
+    #1 0x561b0d0e54c2 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x561b0d098220 in fuzzer::Fuzzer::CrashCallback() (.part.290) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235
+    #3 0x561b0d0be48c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207
+    #4 0x561b0d0be48c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206
+    #5 0x7fefea79e97f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1297f)
+    #6 0x7fefe9fbdfb6 in __libc_signal_restore_set /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80
+    #7 0x7fefe9fbdfb6 in raise /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
+    #8 0x7fefe9fbf920 in abort /build/glibc-S9d2JN/glibc-2.27/stdlib/abort.c:79
+    #9 0x7fefeebb7444 in g_assertion_message (/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x73444)
+    #10 0x7fefeebb74a9 in g_assertion_message_expr (/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x734a9)
+    #11 0x561b0fae6086 in eth_get_gso_type (/root/qemu/build-san-5/qemu-fuzz-i386+0x58b2086)
+    #12 0x561b0eefc064 in net_tx_pkt_get_gso_type net_tx_pkt.c
+    #13 0x561b0eef9134 in net_tx_pkt_build_vheader (/root/qemu/build-san-5/qemu-fuzz-i386+0x4cc5134)
+    #14 0x561b0effa2b1 in vmxnet3_setup_tx_offloads vmxnet3.c
+    #15 0x561b0eff53c7 in vmxnet3_send_packet vmxnet3.c
+    #16 0x561b0eff37ba in vmxnet3_process_tx_queue vmxnet3.c
+    #17 0x561b0eff1c41 in vmxnet3_io_bar0_write vmxnet3.c
+    #18 0x561b0dd10451 in memory_region_write_accessor memory.c
+    #19 0x561b0dd0fa26 in access_with_adjusted_size memory.c
+    #20 0x561b0dd0d96c in memory_region_dispatch_write (/root/qemu/build-san-5/qemu-fuzz-i386+0x3ad996c)
+    #21 0x561b0d21dfa9 in flatview_write_continue exec.c
+    #22 0x561b0d208402 in flatview_write exec.c
+    #23 0x561b0d207f51 in address_space_write (/root/qemu/build-san-5/qemu-fuzz-i386+0x2fd3f51)
+    #24 0x561b109ac8c9 in __wrap_qtest_writel (/root/qemu/build-san-5/qemu-fuzz-i386+0x67788c9)
+    #25 0x561b10a50ff0 in dispatch_mmio_write stateful_fuzz.c
+    #26 0x561b109caff5 in dispatch_event stateful_fuzz.c
+    #27 0x561b10a532da in stateful_fuzz stateful_fuzz.c
+    #28 0x561b109a2b8e in LLVMFuzzerTestOneInput (/root/qemu/build-san-5/qemu-fuzz-i386+0x676eb8e)
+    #29 0x561b0d0bedf3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #30 0x561b0d0c31f8 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:513
+    #31 0x561b0d0c48a6 in fuzzer::Fuzzer::ReadAndExecuteSeedCorpora(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:836
+    #32 0x561b0d0acd87 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:878
+    #33 0x561b0d0984f2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #34 0x7fefe9fa0bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #35 0x561b0d098549 in _start (/root/qemu/build-san-5/qemu-fuzz-i386+0x2e64549)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

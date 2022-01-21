@@ -1,0 +1,27 @@
+aarch64: xlnx_dp_aux_set_command: invalid command: 14
+==21== ERROR: libFuzzer: deadly signal
+    #0 0x55dc6cc90178 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
+    #1 0x55dc6cbeab32 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x55dc6cb9ccd0 in fuzzer::Fuzzer::CrashCallback() (.part.284) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:233
+    #3 0x55dc6cbc28ac in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:205
+    #4 0x55dc6cbc28ac in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:204
+    #5 0x7ffb5966697f  (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libpthread.so.0+0x1297f)
+    #6 0x7ffb58c7dfb6 in raise (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x3efb6)
+    #7 0x7ffb58c7f920 in abort (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x40920)
+    #8 0x55dc6d3fb47c in xlnx_dp_aux_set_command /root/qemu/build-oss-fuzz/../hw/display/xlnx_dp.c:530:9
+    #9 0x55dc6d3fa91a in xlnx_dp_write /root/qemu/build-oss-fuzz/../hw/display/xlnx_dp.c:783:9
+    #10 0x55dc6e0676a7 in memory_region_write_accessor /root/qemu/build-oss-fuzz/../softmmu/memory.c:491:5
+    #11 0x55dc6e06708d in access_with_adjusted_size /root/qemu/build-oss-fuzz/../softmmu/memory.c:552:18
+    #12 0x55dc6e06708d in memory_region_dispatch_write /root/qemu/build-oss-fuzz/../softmmu/memory.c:1502:16
+    #13 0x55dc6df15ed1 in flatview_write_continue /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2746:23
+    #14 0x55dc6df08a67 in flatview_write /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2786:14
+    #15 0x55dc6df0820c in address_space_write /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2878:18
+    #16 0x55dc6ccd7dfc in __wrap_qtest_writel /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/qtest_wrappers.c:177:9
+    #17 0x55dc6ccd2cfa in stateful_fuzz /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/stateful_fuzz.c:402:13
+    #18 0x55dc6ccd4470 in LLVMFuzzerTestOneInput /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/fuzz.c:151:5
+    #19 0x55dc6cbc3213 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:603
+    #20 0x55dc6cba665a in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
+    #21 0x55dc6cbb1431 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:858
+    #22 0x55dc6cb9cfa2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #23 0x7ffb58c60bf6 in __libc_start_main (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x21bf6)
+    #24 0x55dc6cb9cff9 in _start (/root/qemu/build-oss-fuzz/DEST_DIR/qemu-fuzz-aarch64-target-stateful-fuzz-xlnx-dp+0x123cff9)

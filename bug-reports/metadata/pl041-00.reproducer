@@ -1,0 +1,10 @@
+```
+#!/bin/bash -x
+export QEMU=/root/qemu/build-oss-fuzz/qemu-system-arm
+export BUILDROOT=./
+cat << EOF | $QEMU \
+-machine integratorcp,accel=qtest -qtest stdio -monitor none -serial none \
+-display none -nodefaults -qtest stdio
+writel 0x1d000054 0x2c000
+EOF
+```

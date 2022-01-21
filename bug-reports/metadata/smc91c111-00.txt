@@ -1,0 +1,65 @@
+# OOB read/write in hw/smc91c111
+
+There is an OOB read/write in hw/smc91c111 because there is no bound check of
+s->data[4][2048].
+
+## Common settings
+1 s->packet_num can set max to 0xff
+```
+// smc91c111_writefn
+for (; i < size; i++) {
+    smc91c111_writeb(opaque, addr + i, extract32(value, i * 8, 8));}
+                                       // only 8 bits
+// smc91c111_writeb
+case 2: /* Packet Number Register */
+	s->packet_num = value;
+	return;
+```
+2 s->ptr can be set with any uint16 but max to 0x7ff
+```
+case 6: /* Pointer */
+    SET_LOW(ptr, value);
+    return;
+case 7:
+    SET_HIGH(ptr, value);
+    return;
+```
+3 target address for read/write primitives
+```
+int p;
+int n;
+
+if (s->ptr & 0x8000)
+else
+    n = s->packet_num;
+p = s->ptr & 0x07ff;
+if (s->ptr & 0x4000) {
+} else {
+    p += (offset & 3);
+}
+s->data[n][p] = value;
+```
+Make sure that s->ptr is in [0, 0x7FF] and offset is 8.
+
+The target write address is data + n * 2048 + p => data + s->packet_num * 2048 + s->ptr
+
+Suppose the base address of smc81c111 is 0x10000300,
+then to set the target address to s->data[255][2047], you need:
+
+```
+writel 0x1000030E 0x00000002
+# set s->ptr.low
+writel 0x10000306 0x000000ff
+# set s->ptr.high
+writel 0x10000307 0x00000007
+# set s->packet_num
+writel 0x10000302 0x000000ff
+```
+## Read/Write primitives
+
+```
+# read data[s->packet_num][s->ptr]
+readl 0x10000308
+# write data[s->packet_num][s->ptr]
+writel 0x10000308 0xdeadbeef
+```

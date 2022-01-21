@@ -1,0 +1,34 @@
+I wrote a kernel module to reproduce this crash.
+>uint32_t address = (uint32_t)ioremap(0xfebd0000, 16 * 1024);
+>writel(0xffffffff, (void *)(address + 0xe04)); // trigger
+
+Execute
+```
+#!/bin/bash
+export QEMU=/root/qemu/build-coverage/qemu-system-i386
+export BUILDROOT=/root/images
+$QEMU \
+    -M q35 \
+    -kernel $BUILDROOT/bzImage \
+    -drive file=$BUILDROOT/rootfs.ext2,if=virtio,format=raw \
+    -append "root=/dev/vda console=ttyS0" \
+    -nic user,model=virtio-net-pci \
+    -drive id=nvm,file=null-co://,file.read-zeroes=on,if=none,format=raw \
+    -device nvme,serial=deadbeef,drive=nvm \
+    -nographic \
+    -m 64
+```
+
+The username is root and the password is empty.
+Then, `modprobe nvme-00` and you will see the crash.
+
+```
+# modprobe nvme-00
+nvme_00: loading out-of-tree module taints kernel.
+UndefinedBehaviorSanitizer:DEADLYSIGNAL
+==34==ERROR: UndefinedBehaviorSanitizer: SEGV on unknown address 0x0000000000ea (pc 0x56486060a980 bp 0x7f413b2fbfb0 sp 0x7f413b2fbf90 T36)
+==34==The signal is caused by a READ memory access.
+==34==Hint: address points to the zero page.
+```
+
+Attachment: https://drive.google.com/file/d/1Ou7hcu_tdFNJAF5W1M0XPAqevxZ_jO8V/view?usp=sharing

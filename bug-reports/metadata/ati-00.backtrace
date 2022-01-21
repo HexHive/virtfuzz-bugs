@@ -1,0 +1,39 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==698==ERROR: AddressSanitizer: SEGV on unknown address 0x7f471e600000 (pc 0x7f476b3f1a80 bp 0x0000fffffffe sp 0x7f471f9fd8c0 T2)
+==698==The signal is caused by a WRITE memory access.
+    #0 0x7f476b3f1a80  (/usr/lib/x86_64-linux-gnu/libpixman-1.so.0+0x6ca80)
+    #1 0x7f476b3d6b28  (/usr/lib/x86_64-linux-gnu/libpixman-1.so.0+0x51b28)
+    #2 0x7f476b38ffe8 in pixman_fill (/usr/lib/x86_64-linux-gnu/libpixman-1.so.0+0xafe8)
+    #3 0x55668538d545 in ati_2d_blt /root/qemu/build-oss-fuzz/../hw/display/ati_2d.c:201:9
+    #4 0x556685886e5a in ati_mm_write /root/qemu/build-oss-fuzz/../hw/display/ati.c
+    #5 0x556685f90f67 in memory_region_write_accessor /root/qemu/build-oss-fuzz/../softmmu/memory.c:491:5
+    #6 0x556685f9092d in access_with_adjusted_size /root/qemu/build-oss-fuzz/../softmmu/memory.c:552:18
+    #7 0x556685f9092d in memory_region_dispatch_write /root/qemu/build-oss-fuzz/../softmmu/memory.c:1502:16
+    #8 0x556685eb663e in io_writex /root/qemu/build-oss-fuzz/../accel/tcg/cputlb.c:1425:9
+    #9 0x556685ea0963 in store_helper /root/qemu/build-oss-fuzz/../accel/tcg/cputlb.c:2444:13
+    #10 0x7f472b32e836  (<unknown module>)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (/usr/lib/x86_64-linux-gnu/libpixman-1.so.0+0x6ca80)
+Thread T2 created by T0 here:
+    #0 0x55668524c0df in __interceptor_pthread_create /root/llvm-project/compiler-rt/lib/asan/asan_interceptors.cpp:205
+    #1 0x55668654e45a in qemu_thread_create /root/qemu/build-oss-fuzz/../util/qemu-thread-posix.c:558:11
+    #2 0x556685f7d736 in mttcg_start_vcpu_thread /root/qemu/build-oss-fuzz/../accel/tcg/tcg-accel-ops-mttcg.c:127:5
+    #3 0x556685e215fe in qemu_init_vcpu /root/qemu/build-oss-fuzz/../softmmu/cpus.c:628:5
+    #4 0x556685b5766a in x86_cpu_realizefn /root/qemu/build-oss-fuzz/../target/i386/cpu.c:6910:5
+    #5 0x5566860df960 in device_set_realized /root/qemu/build-oss-fuzz/../hw/core/qdev.c:761:13
+    #6 0x556686116895 in property_set_bool /root/qemu/build-oss-fuzz/../qom/object.c:2257:5
+    #7 0x5566861116ec in object_property_set /root/qemu/build-oss-fuzz/../qom/object.c:1402:5
+    #8 0x55668611a577 in object_property_set_qobject /root/qemu/build-oss-fuzz/../qom/qom-qobject.c:28:10
+    #9 0x55668611202f in object_property_set_bool /root/qemu/build-oss-fuzz/../qom/object.c:1472:15
+    #10 0x556685aed696 in x86_cpu_new /root/qemu/build-oss-fuzz/../hw/i386/x86.c:111:5
+    #11 0x556685aed847 in x86_cpus_init /root/qemu/build-oss-fuzz/../hw/i386/x86.c:138:9
+    #12 0x556685af71e9 in pc_q35_init /root/qemu/build-oss-fuzz/../hw/i386/pc_q35.c:180:5
+    #13 0x5566856602a5 in machine_run_board_init /root/qemu/build-oss-fuzz/../hw/core/machine.c:1237:5
+    #14 0x556685ec7a1a in qemu_init_board /root/qemu/build-oss-fuzz/../softmmu/vl.c:2514:5
+    #15 0x556685ec7a1a in qmp_x_exit_preconfig /root/qemu/build-oss-fuzz/../softmmu/vl.c:2588:5
+    #16 0x556685ecfd39 in qemu_init /root/qemu/build-oss-fuzz/../softmmu/vl.c:3611:9
+    #17 0x55668530a820 in main /root/qemu/build-oss-fuzz/../softmmu/main.c:49:5
+    #18 0x7f4769227bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+==698==ABORTING

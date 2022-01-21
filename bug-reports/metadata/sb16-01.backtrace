@@ -1,0 +1,33 @@
+    #0 0x560b68d6f3d9 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/ubsan/ubsan_diag_standalone.cpp:33
+    #1 0x560b68d3e322 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x560b68cf0620 in fuzzer::Fuzzer::CrashCallback() (.part.296) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:233
+    #3 0x560b68d17e3c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:205
+    #4 0x560b68d17e3c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:204
+    #5 0x7f49b4e0b97f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1297f)
+    #6 0x7f49b4422fb6 in __libc_signal_restore_set /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80    #7 0x7f49b4422fb6 in raise /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
+    #8 0x7f49b4424920 in abort /build/glibc-S9d2JN/glibc-2.27/stdlib/abort.c:79
+    #9 0x560b68fdf5e0 in audio_bug /root/qemu/build-clean/../audio/audio.c:119:9
+    #10 0x560b68fdf5e0 in audio_calloc /root/qemu/build-clean/../audio/audio.c:154:9
+    #11 0x560b68fe0a83 in audio_pcm_sw_alloc_resources_out /root/qemu/build-clean/../audio/audio_template.h:115:15
+    #12 0x560b68fe0a83 in audio_pcm_sw_init_out /root/qemu/build-clean/../audio/audio_template.h:174:11
+    #13 0x560b68fe010e in AUD_open_out /root/qemu/build-clean/../audio/audio_template.h:496:13
+    #14 0x560b69078f25 in continue_dma8 /root/qemu/build-clean/../hw/audio/sb16.c:219:20
+    #15 0x560b69077206 in command /root/qemu/build-clean/../hw/audio/sb16.c:569:13
+    #16 0x560b69077206 in dsp_write /root/qemu/build-clean/../hw/audio/sb16.c:963:13
+    #17 0x560b69230d71 in memory_region_write_accessor /root/qemu/build-clean/../softmmu/memory.c:491:5
+    #18 0x560b69230a45 in access_with_adjusted_size /root/qemu/build-clean/../softmmu/memory.c:552:18
+    #19 0x560b69230a45 in memory_region_dispatch_write /root/qemu/build-clean/../softmmu/memory.c:1502:16
+    #20 0x560b6934263b in flatview_write_continue /root/qemu/build-clean/../softmmu/physmem.c:2746:23
+    #21 0x560b6933cbf8 in flatview_write /root/qemu/build-clean/../softmmu/physmem.c:2786:14
+    #22 0x560b6933c8e2 in address_space_write /root/qemu/build-clean/../softmmu/physmem.c:2878:18
+    #23 0x560b692bd726 in cpu_outb /root/qemu/build-clean/../softmmu/ioport.c:60:5
+    #24 0x560b68d7aa9a in stateful_fuzz /root/qemu/build-clean/../tests/qtest/fuzz/stateful_fuzz.c:415:13
+    #25 0x560b68d73413 in LLVMFuzzerTestOneInput /root/qemu/build-clean/../tests/qtest/fuzz/fuzz.c:151:5
+    #26 0x560b68d187a3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:603
+    #27 0x560b68d1bc38 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:509
+    #28 0x560b68d1d266 in fuzzer::Fuzzer::ReadAndExecuteSeedCorpora(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:825
+    #29 0x560b68d1f859 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:856
+    #30 0x560b68d04f41 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:909
+    #31 0x560b68cf08f2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #32 0x7f49b4405bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #33 0x560b68cf0949 in _start (/root/qemu/build-clean/qemu-fuzz-i386+0x7b5949)

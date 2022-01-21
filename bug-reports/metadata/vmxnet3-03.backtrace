@@ -1,0 +1,52 @@
+root@fff5a5933072:~/qemu/build-san-5# ./qemu-fuzz-i386 --fuzz-target=stateful-fuzz-vmxnet3 crash-8e383bc213a0d9f5232b5e63eabe89b4ecdf4f4f 
+INFO: found LLVMFuzzerCustomMutator (0x55f6cada09f0). Disabling -len_control by default.
+INFO: libFuzzer ignores flags that start with '--'
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 68774139
+INFO: Loaded 1 modules   (842759 inline 8-bit counters): 842759 [0x55f6ce1e6000, 0x55f6ce2b3c07),
+INFO: Loaded 1 PC tables (842759 PCs): 842759 [0x55f6cd509310,0x55f6ce1e5380),
+./qemu-fuzz-i386: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+Matching objects by name , *vmxnet3-b0*, *vmxnet3-b1*
+This process will fuzz the following MemoryRegions:
+  * vmxnet3-b0[0] (size 1000)
+  * vmxnet3-b1[0] (size 1000)
+This process will fuzz through the following interfaces:
+  * vmxnet3-b0, EVENT_TYPE_MMIO_READ, 0xe0001000 +0x1000, 4,4
+  * vmxnet3-b0, EVENT_TYPE_MMIO_WRITE, 0xe0001000 +0x1000, 4,4
+  * vmxnet3-b1, EVENT_TYPE_MMIO_READ, 0xe0002000 +0x1000, 4,4
+  * vmxnet3-b1, EVENT_TYPE_MMIO_WRITE, 0xe0002000 +0x1000, 4,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 11 ft: 12 corp: 1/1b exec/s: 0 rss: 198Mb
+Running: crash-8e383bc213a0d9f5232b5e63eabe89b4ecdf4f4f
+[+] TraceStateCallback 4 (0)
+=================================================================
+==23730==ERROR: AddressSanitizer: allocator is out of memory trying to allocate 0xffffffff0 bytes
+    #0 0x55f6c755a920 in malloc /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:145
+    #1 0x7f9233c44bd8 in g_malloc (/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x51bd8)
+    #2 0x55f6c93e560e in vmxnet3_activate_device vmxnet3.c
+    #3 0x55f6c93dfd60 in vmxnet3_handle_command vmxnet3.c
+    #4 0x55f6c93dd68c in vmxnet3_io_bar1_write vmxnet3.c
+    #5 0x55f6c80f0451 in memory_region_write_accessor memory.c
+    #6 0x55f6c80efa26 in access_with_adjusted_size memory.c
+    #7 0x55f6c80ed96c in memory_region_dispatch_write (/root/qemu/build-san-5/qemu-fuzz-i386+0x3ad996c)
+    #8 0x55f6c75fdfa9 in flatview_write_continue exec.c
+    #9 0x55f6c75e8402 in flatview_write exec.c
+    #10 0x55f6c75e7f51 in address_space_write (/root/qemu/build-san-5/qemu-fuzz-i386+0x2fd3f51)
+    #11 0x55f6cad8c6e9 in __wrap_qtest_writel (/root/qemu/build-san-5/qemu-fuzz-i386+0x67786e9)
+    #12 0x55f6cae30e10 in dispatch_mmio_write stateful_fuzz.c
+    #13 0x55f6cadaae15 in dispatch_event stateful_fuzz.c
+    #14 0x55f6cae330fa in stateful_fuzz stateful_fuzz.c
+    #15 0x55f6cad829ae in LLVMFuzzerTestOneInput (/root/qemu/build-san-5/qemu-fuzz-i386+0x676e9ae)
+    #16 0x55f6c749edf3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #17 0x55f6c748211a in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
+    #18 0x55f6c748cdd4 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:883
+    #19 0x55f6c74784f2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #20 0x7f922f04fbf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+
+==23730==HINT: if you don't care about these errors you may set allocator_may_return_null=1
+SUMMARY: AddressSanitizer: out-of-memory /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:145 in malloc
+==23730==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

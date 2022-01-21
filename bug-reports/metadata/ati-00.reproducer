@@ -1,0 +1,23 @@
+I wrote a kernel module to reproduce this crash.
+
+```
+#!/bin/bash
+export QEMU=/root/qemu/build-oss-fuzz/qemu-system-i386
+export BUILDROOT=./
+$QEMU \
+    -M q35 \
+    -kernel $BUILDROOT/bzImage \
+    -drive file=$BUILDROOT/rootfs.ext2,if=virtio,format=raw \
+    -append "root=/dev/vda console=ttyS0" \
+    -nic user,model=virtio-net-pci \
+    -device ati-vga,romfile="" \
+    -nographic \
+    -m 64
+```
+
+Execute. The username is root and the password is empty.
+Then, `modprobe ati-00`, and you will see the crash.
+
+The bzImage and rootfs.ext2 are attached.
+
+Attachment: https://drive.google.com/file/d/17ZxZcq2Wt0kzNyxXsF1sXRirh37jIGk-/view?usp=sharing

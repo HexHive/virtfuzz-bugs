@@ -1,0 +1,27 @@
+# Abort in audio_bug triggered in sb16/pl041
+
+The abort bug w.s.t sb16 was reported
+[here](https://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg1698894.html),
+[here](https://bugzilla.redhat.com/show_bug.cgi?id=1829185),
+[here](https://lists.gnu.org/archive/html/qemu-devel/2021-01/msg01146.html),
+[here](https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=30574&q=label%3AProj-qemu),
+and fixed
+[here](https://bugs.launchpad.net/qemu/+bug/1910603/comments/2)
+
+The abort bug w.s.t pl041 is new.
+
+## Root Cause Analysis
+
+There exists a path from pl041 to lm4549_write then to
+AUD_open_out along which as->freq is 0. The audio_validate_settings
+will fail when (audsettings *)as->freq is 0.
+
+```
+pl041_write(..., offset, ..., ...)
+    // offset=0x54, control=0x2c, data=0
+    => lm4549_write(&..., control, data)
+        // as.freq = data
+        AUD_open_out(..., &as)
+```
+
+To fix this issue, we need to guarantee that s->regs.sl2tx is not empty.

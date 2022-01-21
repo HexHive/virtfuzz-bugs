@@ -1,0 +1,49 @@
+# Another ssertion failure in audio_calloc caused by sb16
+
+With the previous patch, having tested more, I find another way to
+trigger the assertion failure.
+
+## Root cause analysis
+
+The previous patch limits s->freq in dma_cmd8 before continue_dma8
+followed by AUD_open_out. It's good to prevent the flow by this path.
+However, we can directly call continue_dma8 via command 0xd4 but there
+is no limit check there.
+
+To trigger this assertion, we can manipulate s->freq in the following way.
+
+1. dsp_write, offset=0xc, val=0x41
+Because s->needed_bytes = 0, command() is called.
+```
+case 0x41:
+    s->freq = -1;
+    s->time_const = -1;
+    s->needed_bytes = 2; // look at here
+...
+s->cmd = cmd; // 0x41, and here
+```
+
+2. dsp_write, offset=0xc, val=0x14
+Because s->needed_bytes = 2, complete() is called.
+```
+s->in2_data[s->in_index++] = 0x14; // remembere this
+s->needed_bytes = 0
+```
+Because s->cmd = 0x41, s->freq will be reset.
+```
+case 0x41:
+case 0x42:
+    s->freq = dsp_get_hilo (s);
+                    // return s->in2_data[--s->in_index]
+                    // s->freq will be 0x14, there is no check ...
+```
+
+3. dsp_write, offset=0xc, val=0xd4
+Call continue_dma8 directly then we can trigger this assertion because
+s->freq is too small.
+
+Maybe we can fix this flaw by adding s->freq check after s->freq =
+dsp_get_hilo (s) in the second step?
+
+Best,
+Qiang

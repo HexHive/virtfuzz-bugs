@@ -1,0 +1,71 @@
+# Inconsistent dst_[x|y] and s->regs.dst_[x|y] in ati_2d_blt causing an OOB write of vram_ptr
+
+## Root Cause Analysis
+
+There is an inconsistent check and use of dst_[x|y] and s->regs.dst_[x|y] in
+ati_2d_blt. This inconsistent check will cause an OOB write of vram_ptr.
+
+In the latest ati_2d_blt(), according to s->regs.dp_cntrl, dst_[x|y] has
+different semantics.
+
+```
+    unsigned dst_x = (s->regs.dp_cntl & DST_X_LEFT_TO_RIGHT ?
+                      s->regs.dst_x : s->regs.dst_x + 1 - s->regs.dst_width);
+    unsigned dst_y = (s->regs.dp_cntl & DST_Y_TOP_TO_BOTTOM ?
+                      s->regs.dst_y : s->regs.dst_y + 1 - s->regs.dst_height);
+```
+Especially, when DST_X_RIGHT_TO_LEFT is set, dst_x will be s->regs.dst_x + 1 -
+s->regs.dst_width.
+
+Following is a check to fix CVE-2020-27616.
+```
+   if (dst_x > 0x3fff || dst_y > 0x3fff || dst_bits >= end
+        || dst_bits + dst_x
+         + (dst_y + s->regs.dst_height) * dst_stride >= end) {
+        qemu_log_mask(LOG_UNIMP, "blt outside vram not implemented\n");
+        return;
+    }
+```
+
+So far so good. However, in the following branch switch(s->regs.dp_mix &
+GMC_ROP3_MASK) case ROP3_WHITENESS,
+ when DST_X_RIGHT_TO_LEFT or
+DST_Y_BOTTOM_TO_TOP is set, pixman_fill will use s->regs.dst_[x|y] that are not
+equal to dst_[x|y] in the check, which will cause an OOB write of vram_ptr.
+
+```
+        pixman_fill((uint32_t *)dst_bits, dst_stride, bpp,
+                    s->regs.dst_x, s->regs.dst_y,
+                    s->regs.dst_width, s->regs.dst_height,
+                    filler);
+```
+
+pixman_fill, e.g., pixman_fill8, will write `filler` to the destination bytes.
+
+```
+static void pixman_fill8 (
+	uint32_t *bits,  int stride, int x, int y,
+	int width, int height, uint32_t  filler) {
+    int byte_stride = stride * (int) sizeof (uint32_t);
+    uint8_t *dst = (uint8_t *) bits;
+    uint8_t v = filler & 0xff;
+    int i;
+
+    dst = dst + y * byte_stride + x;
+
+    while (height--)
+    {
+	for (i = 0; i < width; ++i)
+	    dst[i] = v;
+
+	dst += byte_stride;
+    }
+}
+```
+
+## Security Impact
+
+The parameter of pixman_fill, i.e., dst_stride, bpp, s->regs.dst_x,
+s->regs.dst_y, s->regs.dst_width, and s->regs.dst_height, all can be controlled
+by a malicious guest. But not I am not clear what memory objects can be written by
+this primitive.

@@ -1,0 +1,132 @@
+common:
+  "QEMU version, upstream commit/tag": c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50
+  "Host and Guest": Ubuntu 18.04 docker/QTest Fuzzer
+metadata:
+  fuzz_target: []
+  arch: [i386, arm, aarch64]
+  type: [NLPTR deref, ASS failure]
+  novelty: [true, false]
+  report: [editing, reported]
+  patch: [prepared, sent, discussed, queued]
+  status: [pending, confirmed]
+  url: None
+  title: None
+nvme-00: {id: 1, fuzz_target: nvme, arch: i386, type: NLPTR deref, target_type: storage,
+  novelty: true, report: reported, patch: merged, status: confirmed,
+  url: commit/2b02aabc9d02f9e95946cf639f546bb61f1721}
+vmxnet3-00: {id: 2, fuzz_target: vmxnet3, arch: i386, type: ASS failure, target_type: net,
+  novelty: false, report: reported, patch: queued, status: confirmed,
+  url: issues/309}
+vmxnet3-01: {id: 35, fuzz_target: vmxnet3, arch: i386, type: ASS failure, target_type: net,
+  novelty: false, report: None, patch: None, status: pending,
+  url: None}
+vmxnet3-02: {id: 33, fuzz_target: vmxnet3, arch: i386, type: ASS failure, target_type: net,
+  novelty: false, report: None, patch: None, status: pending,
+  url: None}
+vmxnet3-03: {id: 26, fuzz_target: vmxnet3, arch: i386, type: OOM, target_type: net,
+  novelty: false, report: None, patch: None, status: pending,
+  url: None}
+vmxnet3-04: {id: 32, fuzz_target: vmxnet3, arch: i386, type: ASS failure, target_type: net,
+  novelty: false, report: None, patch: None, status: pending,
+  url: None}
+vmxnet3-05: {id: 13, fuzz_target: vmxnet3, arch: i386, type: ASS failure, target_type: net,
+  novelty: false, report: None, patch: None, status: pending,
+  url: None}
+ati-00: {id: 3, fuzz_target: ati, arch: i386, type: OOB write, target_type: display,
+  novelty: true, report: reported, patch: None, status: confirmed,
+  url: email}
+ati-01: {id: 37, fuzz_target: ati, arch: i386, type: OOB write, target_type: display,
+  novelty: false, report: None, patch: None, status: None,
+  url: None}
+lsi53c895a-00: {id: 4, fuzz_target: lsi53c895a, arch: i386, type: ASS failure, target_type: storage,
+  novelty: false, report: reported, patch: sent, status: pending,
+  url: https://gitlab.com/qemu-project/qemu/-/issues/305}
+ftgmac100-00: {id: 5, fuzz_target: ftgmac100, arch: arm, type: HBO, target_type: net,
+  novelty: true, report: reported, patch: None, status: confirmed,
+  url: email}
+lan9118-00: {id: 6, fuzz_target: lan9118, arch: arm, type: BO/OOB read, target_type: net,
+  novelty: true, report: reported, patch: None, status: confirmed,
+  url: email}
+lan9118-01: {id: 16, fuzz_target: lan9118, arch: arm, type: ASS failure, target_type: net,
+  novelty: true, report: None, patch: None, status: pending,
+  url: None}
+omap-dss-00: {id: 7, fuzz_target: omap-dss, arch: arm, type: OOM, target_type: display,
+  novelty: true, report: reported, patch: None, status: confirmed,
+  url: email}
+smc91c111-00: {id: 8, fuzz_target: scm91c111, arch: arm, type: OOB read/write, target_type: net,
+  novelty: true, report: reported, patch: None, status: confirmed,
+  url: email}
+pl041-00: {id: 9, fuzz_target: pl041, arch: arm, type: Abort, target_type: audio,
+  novelty: true, report: reported, patch: gitlab, status: pending,
+  url: https://gitlab.com/qemu-project/qemu/-/issues/410}
+dwc2-00: {id: 10, fuzz_target: dwc2, arch: arm, type: ASS failure, target_type: usb,
+  novelty: true, report: reported, patch: sent, status: pending,
+  url: email}
+tc6393xb-00: {id: 11, fuzz_target: tc6393xb, arch: arm, type: HBO, target_type: display,
+  novelty: true, report: None, patch: None, status: None,
+  url: None}
+exynos421-fimd-00: {id: 12, fuzz_target: exynos421-fimd, arch: arm, type: ASS failure, target_type: display,
+  novelty: true, report: None, patch: None, status: None}
+xlnx-dp-01: {id: 14, fuzz_target: xlnx-dp, arch: aarch64, type: Abort, target_type: display,
+  novelty: true, report: reported, patch: sent, status: confirmed,
+  url: email}
+xlnx-dp-02: {id: 18, fuzz_target: xlnx-dp, arch: aarch64, type: OOB read/write, target_type: display,
+  novelty: true, report: None, patch: None, status: None,
+  url: None}
+xlnx-dp-03: {id: 19, fuzz_target: xlnx-dp, arch: aarch64, type: ASS failure, target_type: display,
+  novelty: true, report: None, patch: None, status: None,
+  url: None}
+xlnx-dp-04: {id: 24, fuzz_target: xlnx-dp, arch: aarch64, type: OOM, target_type: display,
+  novelty: true, report: None, patch: None, status: None,
+  url: None}
+imx-usb-phy-00: {id: 15, fuzz_target: imx-usb-phy, arch: arm, type: OOB read, target_type: usb,
+  novelty: true, report: None, patch: None, status: pending,
+  url: None}
+xlnx-dp-00: {id: 20, fuzz_target: xlnx-dp, arch: aarch64, type: Abort, target_type: display,
+  novelty: true, report: reported, patch: gitlab, status: pending,
+  url: https://gitlab.com/qemu-project/qemu/-/issues/411}
+sb16-01: {id: 22, fuzz_target: sb16, arch: i386, type: Abort, target_type: audio,
+  novelty: true, report: reported, patch: merged, status: confirmed,
+  url: commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9}
+sb16-00: {id: 30, fuzz_target: sb16, arch: i386, type: Abort, target_type: audio,
+  novelty: false, report: reported, patch: merged, status: confirmed,
+  url: commit/a2cd86a94a881b38a7d8bb67c61920ab3b23e82d}
+ac97-00: {id: 17, fuzz_target: ac97, arch: i386, type: Abort, target_type: audio,
+  novelty: true, report: None, patch: None, status: pending,
+  url: None}
+ehci-00: {id: 31, fuzz_target: ehci, arch: i386, type: ASS failure, target_type: usb,
+  novelty: false, report: skipped, patch: sent, status: pending,
+  url: TBD}
+ehci-02: {id: 25, fuzz_target: ehci, arch: i386, type: ASS failure, target_type: usb,
+  novelty: false, report: None, patch: None, status: pending,
+  url: TBD}
+am53c974-01: {id: 34, fuzz_target: am53c974, arch: i386, type: NLPTR, target_type: storage,
+  novelty: false, report: None, patch: None, status: pending,
+  url: TBD}
+cadence-uart-00: {id: 29, fuzz_target: cadence-uart, arch: aarch64, type: DivZero, target_type: char,
+  novelty: true, report: None, patch: None, status: pending,
+  url: None}
+xlnx-zynqmp-qspips-00: {id: 28, fuzz_target: xlnx-zynqmp-qspips, arch: aarch64, type: OOB read/write, target_type: storage,
+  novelty: true, report: None, patch: None, status: pending,
+  url: None}
+xlnx-zynqmp-qspips-01: {id: 27, fuzz_target: xlnx-zynqmp-qspips, arch: aarch64, type: Large shift, target_type: storage,
+  novelty: true, report: None, patch: None, status: pending,
+  url: None}
+xlnx-zynqmp-can-00: {id: 21, fuzz_target: xlnx-zynqmp-can, arch: aarch64, type: ASS failure, target_type: net,
+  novelty: true, report: None, patch: None, status: pending,
+  url: None}
+rtl8139-00: {id: 23, fuzz_target: rtl8139, arch: i386, type: HBO, target_type: net,
+  novelty: true, report: None, patch: None, status: pending,
+  url: None}
+ohci-00: {id: 36, fuzz_target: ohci, arch: i386, type: OOB, target_type: usb,
+  novelty: false, report: None, patch: None, status: None,
+  url: None}
+megasas-00: {id: 38, fuzz_target: megasas, arch: i386, type: ASS failure, target_type: usb,
+  novelty: false, report: None, patch: None, status: None,
+  url: None}
+megasas-01: {id: 39, fuzz_target: megasas, arch: i386, type: ASS failure, target_type: usb,
+  novelty: false, report: None, patch: None, status: None,
+  url: None}
+e1000-00: {id: 40, fuzz_target: e1000, arch: i386, type: Infinite loop, target_type: net,
+  novelty: false, report: None, patch: None, status: None,
+  url: None}

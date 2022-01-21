@@ -1,0 +1,43 @@
+qemu-fuzz-i386-target-stateful-fuzz-ehci: /root/qemu/exec.c:3621: void address_space_unmap(AddressSpace *, void *, hwaddr, _Bool, hwaddr): Assertion `mr != NULL' failed.
+==20132== ERROR: libFuzzer: deadly signal
+    #0 0x5573d720cb08 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
+    #1 0x5573d71674c2 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
+    #2 0x5573d711a220 in fuzzer::Fuzzer::CrashCallback() (.part.290) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235
+    #3 0x5573d714048c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207
+    #4 0x5573d714048c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206
+    #5 0x7fe8e877f97f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1297f)
+    #6 0x7fe8e7f9efb6 in __libc_signal_restore_set /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80
+    #7 0x7fe8e7f9efb6 in raise /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
+    #8 0x7fe8e7fa0920 in abort /build/glibc-S9d2JN/glibc-2.27/stdlib/abort.c:79
+    #9 0x7fe8e7f90489 in __assert_fail_base /build/glibc-S9d2JN/glibc-2.27/assert/assert.c:92
+    #10 0x7fe8e7f90501 in __assert_fail /build/glibc-S9d2JN/glibc-2.27/assert/assert.c:101
+    #11 0x5573d7290cf2 in address_space_unmap (/root/qemu/build-clean-5/qemu-fuzz-i386+0x2fd9cf2)
+    #12 0x5573d963d607 in dma_memory_unmap libhw.c
+    #13 0x5573d963d502 in usb_packet_unmap (/root/qemu/build-clean-5/qemu-fuzz-i386+0x5386502)
+    #14 0x5573d96ff163 in ehci_execute_complete hcd-ehci.c
+    #15 0x5573d96f6f1e in ehci_state_executing hcd-ehci.c
+    #16 0x5573d97154fe in ehci_advance_state hcd-ehci.c
+    #17 0x5573d9713285 in ehci_advance_periodic_state hcd-ehci.c
+    #18 0x5573d96e4dc4 in ehci_work_bh hcd-ehci.c
+    #19 0x5573dade0a05 in aio_bh_call (/root/qemu/build-clean-5/qemu-fuzz-i386+0x6b29a05)
+    #20 0x5573dade21eb in aio_bh_poll (/root/qemu/build-clean-5/qemu-fuzz-i386+0x6b2b1eb)
+    #21 0x5573dad157a5 in aio_dispatch (/root/qemu/build-clean-5/qemu-fuzz-i386+0x6a5e7a5)
+    #22 0x5573dadeae6a in aio_ctx_dispatch async.c
+    #23 0x7fe8ecb71536 in g_main_context_dispatch (/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x4c536)
+    #24 0x5573dae303cb in glib_pollfds_poll main-loop.c
+    #25 0x5573dae2df07 in os_host_main_loop_wait main-loop.c
+    #26 0x5573dae2d940 in main_loop_wait (/root/qemu/build-clean-5/qemu-fuzz-i386+0x6b76940)
+    #27 0x5573daa2239f in flush_events (/root/qemu/build-clean-5/qemu-fuzz-i386+0x676b39f)
+    #28 0x5573daad3b03 in stateful_fuzz stateful_fuzz.c
+    #29 0x5573daa23bce in LLVMFuzzerTestOneInput (/root/qemu/build-clean-5/qemu-fuzz-i386+0x676cbce)
+    #30 0x5573d7140df3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
+    #31 0x5573d712411a in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
+    #32 0x5573d712edd4 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:883
+    #33 0x5573d711a4f2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
+    #34 0x7fe8e7f81bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #35 0x5573d711a549 in _start (/root/qemu/build-clean-5/qemu-fuzz-i386+0x2e63549)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

@@ -1,0 +1,26 @@
+UndefinedBehaviorSanitizer:DEADLYSIGNAL
+==536==ERROR: UndefinedBehaviorSanitizer: SEGV on unknown address 0x55efaf82bbdb (pc 0x55efab1a63fb bp 0x7ffc13baa950 sp 0x7ffc13baa8c0 T536)
+==536==The signal is caused by a WRITE memory access.
+    #0 0x55efab1a63fb in smc91c111_writeb /root/qemu/build-clean/../hw/net/smc91c111.c:458:31
+    #1 0x55efab1a63fb in smc91c111_writefn /root/qemu/build-clean/../hw/net/smc91c111.c:669:9
+    #2 0x55efab59c811 in memory_region_write_accessor /root/qemu/build-clean/../softmmu/memory.c:491:5
+    #3 0x55efab59c504 in access_with_adjusted_size /root/qemu/build-clean/../softmmu/memory.c:552:18
+    #4 0x55efab59c504 in memory_region_dispatch_write /root/qemu/build-clean/../softmmu/memory.c:1502:16
+    #5 0x55efab71d5db in flatview_write_continue /root/qemu/build-clean/../softmmu/physmem.c:2746:23
+    #6 0x55efab717e78 in flatview_write /root/qemu/build-clean/../softmmu/physmem.c:2786:14
+    #7 0x55efab717b62 in address_space_write /root/qemu/build-clean/../softmmu/physmem.c:2878:18
+    #8 0x55efab735631 in qtest_process_command /root/qemu/build-clean/../softmmu/qtest.c
+    #9 0x55efab735631 in qtest_process_inbuf /root/qemu/build-clean/../softmmu/qtest.c:797:9
+    #10 0x55efab7ad077 in fd_chr_read /root/qemu/build-clean/../chardev/char-fd.c:68:9
+    #11 0x7fb124f6d3a4 in g_main_context_dispatch (/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x4c3a4)
+    #12 0x55efaba92e11 in glib_pollfds_poll /root/qemu/build-clean/../util/main-loop.c:231:9
+    #13 0x55efaba92e11 in os_host_main_loop_wait /root/qemu/build-clean/../util/main-loop.c:254:5
+    #14 0x55efaba92e11 in main_loop_wait /root/qemu/build-clean/../util/main-loop.c:530:11
+    #15 0x55efab58cd34 in qemu_main_loop /root/qemu/build-clean/../softmmu/runstate.c:725:9
+    #16 0x55efaaf3f215 in main /root/qemu/build-clean/../softmmu/main.c:50:5
+    #17 0x7fb1237c9bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
+    #18 0x55efaaf0efa9 in _start (/root/qemu/build-clean/qemu-system-arm+0x8bffa9)
+
+UndefinedBehaviorSanitizer can not provide additional info.
+SUMMARY: UndefinedBehaviorSanitizer: SEGV /root/qemu/build-clean/../hw/net/smc91c111.c:458:31 in smc91c111_writeb
+==536==ABORTING

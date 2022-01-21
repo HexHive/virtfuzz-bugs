@@ -1,0 +1,31 @@
+I wrote a kernel module to reproduce this crash.
+>uint32_t address = (uint32_t)ioremap(0xfebd4000, 4 * 1024);
+>writel(0x82828282, (void *)(address + 0x38));
+
+Execute
+```
+#!/bin/bash
+export QEMU=/root/qemu/build-coverage/qemu-system-i386
+export BUILDROOT=./
+$QEMU \
+    -M q35 \
+    -kernel $BUILDROOT/bzImage \
+    -drive file=$BUILDROOT/rootfs.ext2,if=virtio,format=raw \
+    -append "root=/dev/vda console=ttyS0" \
+    -device vmxnet3,netdev=net0 -netdev user,id=net0 \
+    -nographic \
+    -m 512M
+```
+
+The username is root and the password is empty.
+Then, `modprobe vmxnet3-00`.  You will see the crash.
+
+```
+# modprobe vmxnet3-00
+vmxnet3_00: loading out-of-tree module taints kernel.
+**
+ERROR:../hw/net/vmxnet3.c:1793:vmxnet3_io_bar1_write: code should not be reached
+./run.sh: line 11:   192 Aborted                 (core dumped)
+```
+
+Attachment: https://drive.google.com/file/d/1X422a-8eT-hsLaog5J5fx9Z4S5D4_0Qh/view?usp=sharing
