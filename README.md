@@ -20,21 +20,20 @@ target-idx, e.g., ati-00, ati-01, ati-02, the idx has two digits
 ### 3 MTATDATA-FILES
 
 + BUG-ID.metadata
-  + arch  
-  + target  
-  + bug-types  
-  + novelty  
-  + existing-bug-reports if novelty is False  
-  + existing-patches if novelty is False  
-  + introduce-commit  
-  + patches  
-  + patch-status  
-  + fix-commit if patch-status is merged  
-  + bug-report  
-  + bug-report-status  
-+ BUG-ID.backtrace  
-+ BUG-ID.patch  
-+ BUG-ID.reproducer  
+  + hypervisor
+  + arch
+  + target
+  + bug-types
+  + novelty
+  + existing-bug-reports if novelty is False
+  + existing-patches if novelty is False
+  + introduce-commit
+  + patch-status
+  + fix-commit if patch-status is merged
+  + bug-report-status
++ BUG-ID.backtrace
++ BUG-ID.patch
++ BUG-ID.reproducer
 + BUG-ID.description
 
 ## Contribution
