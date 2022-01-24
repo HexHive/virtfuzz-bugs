@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
     # step 3: generate summary
     if args.markdown:
-        markdown = ['|{}|'.format('|'.join(markdown_title)), '|{}|'.format('|'.join(':---:' * (len(markdown_title))))]
+        markdown = ['|{}|'.format('|'.join(markdown_title)), '|{}|'.format('|'.join([':---:'] * (len(markdown_title))))]
     sorted_metadata_list = dict(sorted(metadata_list.items()))
     for bug_id, metadata in sorted_metadata_list.items(): # maybe we need to sort
         if args.markdown:
@@ -136,7 +136,6 @@ if __name__ == '__main__':
                     row.append(str(cell))
                 else:
                     row.append(cell)
-            row.insert(0, bug_id)
             markdown.append('|{}|'.format('|'.join(row)))
     if args.markdown:
         print('\n'.join(markdown))
