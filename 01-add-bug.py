@@ -19,28 +19,21 @@ print('[+] Creating {} ...'.format(bug_id))
 bug_pathname = os.path.join(METADIR, bug_id)
 os.mkdir(bug_pathname)
 
-# hypervisor: qemu, bhyve, virtualbox
-# arch: i386, arm, aarch64
-# bug-types, novelty: True or False
-# existing-bug-reports, exsiting-patches: link0\nlink1
-# introduce-commit: link
-# patches: pathname0\npathname1
-# patch-status: prepared or sent or revising or merged
-# fix-commit: link
-# bug-report-status: prepared or sent
-
 metadata = {
     'hypervisor': None,
     'arch': None,
     'target': bug_id.split('-')[0],
+    'target-type': None,
     'bug-types': None,
     'novelty': None,
     'existing-bug-reports': None,
     'existing-patches': None,
-    'introduce-commit': None,
-    'patch-status': None,
-    'fix-commit': None,
-    'bug-report-status': None,
+    'reproducible-version': None,
+    'reproducible-host': None,
+    'reproducible-commit': None,
+    'introducing-commit': None,
+    'fixing-commit': None,
+    'reward': None,
 }
 
 yaml.safe_dump({bug_id: metadata}, open('{}/{}.metadata'.format(bug_pathname, bug_id), 'w'), default_flow_style=False)

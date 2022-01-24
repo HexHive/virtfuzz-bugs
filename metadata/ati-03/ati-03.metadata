@@ -1,0 +1,16 @@
+ati-03:
+  arch: i386
+  short-description: "hw/display/ati_2d: Third SEGV in ati_2d.c"
+  bug-types: ['SEGV Write']
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: qemu
+  introducing-commit: 862b4a291dcf143fdb227e97feb7fd45e6466aca
+  novelty: True
+  reproducible-commit: aeb0ae95b7f18c66158792641cb6ba0cde5789ab
+  reproducible-host: Ubuntu 18.04
+  reproducible-version: 6.2.50
+  reward: null
+  target: ati
+  target-type: display
