@@ -1,7 +1,6 @@
-# OOB read/write in hw/smc91c111
-
 There is an OOB read/write in hw/smc91c111 because there is no bound check of
-s->data[4][2048].
+s->data[4][2048]. One of QEMU maintainers said: "this device is only used by
+some TCG only Arm boards, so it is a bug, but not a security bug."
 
 ## Common settings
 1 s->packet_num can set max to 0xff

@@ -1,0 +1,16 @@
+smc91c111-00:
+  arch: arm
+  bug-types: ['OOB read/wirte']
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: qemu
+  introducing-commit: null
+  novelty: true
+  reproducible-commit: aeb0ae95b7f18c66158792641cb6ba0cde5789ab
+  reproducible-host: Ubuntu 18.04
+  reproducible-version: 6.2.50
+  reward: null
+  short-description: "OOB read/write in smc91c111"
+  target: smc91c111
+  target-type: net
