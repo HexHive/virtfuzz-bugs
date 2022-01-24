@@ -1,18 +1,3 @@
-# An abort was just triggered in audio_calloc
-
-## More technique details
-
-### Hypervisor, hypervisor version, upstream commit/tag, host
-qemu, 6.2.50, aeb0ae95b7f18c66158792641cb6ba0cde5789ab, Ubuntu 18.04
-
-### VM architecture, device, device type
-i386, ac97, audio
-
-### Bug Type: Abort
-
-### Stack traces, crash details
-
-```
 ==8121==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
 INFO: found LLVMFuzzerCustomMutator (0x560b571044d0). Disabling -len_control by default.
 INFO: Running with entropic power schedule (0xFF, 100).
@@ -63,12 +48,3 @@ Context:
     #18 0x560b59641ae6 in access_with_adjusted_size /home/liuqiang/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:554:18
     #19 0x560b5963fa28 in memory_region_dispatch_write /home/liuqiang/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1514:16
     #20 0x560b595f6519 in flatview_write_continue /home/liuqiang/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2782:23
-```
-
-### Reproducer steps
-
-1. Please check the attachment and run: qemu-fuzz-i386-target-videzzo-fuzz-ac97 crash-ae133515f9fb85d186cf23e010a00f1cba61b366
-
-## Contact
-
-Let us know if I need to provide more information.

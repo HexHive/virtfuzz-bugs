@@ -20,6 +20,7 @@ bug_pathname = os.path.join(METADIR, bug_id)
 os.mkdir(bug_pathname)
 
 metadata = {
+    'short-description': None,
     'hypervisor': None,
     'arch': None,
     'target': bug_id.split('-')[0],
