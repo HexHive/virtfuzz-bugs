@@ -11,6 +11,6 @@ ohci-00:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.0.50"
   reward: null
-  short-description: "qemu-videzzo-i386-target-videzzo-fuzz-ohci: ../hw/usb/dev-storage.c:228: void usb_msd_transfer_data(SCSIRequest *, uint32_t): Assertion `(s->mode == USB_MSDM_DATAOUT) == (req->cmd.mode == SCSI_XFER_TO_DEV)' failed"
+  short-description: "Assertion failed in usb_msd_transfer_data"
   target: ohci
   target-type: usb
