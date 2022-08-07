@@ -1,0 +1,16 @@
+ohci-00:
+  arch: i386
+  bug-types: ["Assertion Failure"]
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: qemu
+  introducing-commit: null
+  novelty: true
+  reproducible-commit: 5288bee45fbd33203b61f8c76e41b15bb5913e6e
+  reproducible-host: "Ubuntu 20.04"
+  reproducible-version: "7.0.50"
+  reward: null
+  short-description: "qemu-videzzo-i386-target-videzzo-fuzz-ohci: ../hw/usb/dev-storage.c:228: void usb_msd_transfer_data(SCSIRequest *, uint32_t): Assertion `(s->mode == USB_MSDM_DATAOUT) == (req->cmd.mode == SCSI_XFER_TO_DEV)' failed"
+  target: ohci
+  target-type: usb
