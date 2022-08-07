@@ -106,7 +106,7 @@ if __name__ == '__main__':
     elif len(bug_pathname_list) == 1:
         print('[+] process {}'.format(bug_pathname_list[0]))
     else:
-        print('[+] process {}'.format(' '.join(' '.join(bug_pathname_list))))
+        print('[+] process {}'.format(' '.join(bug_pathname_list)))
 
     metadata_list = {}
     for bug_pathname in bug_pathname_list:
