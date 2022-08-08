@@ -51,7 +51,7 @@ Predefined values
 |ati-03|ati|display|i386|SEGV Write|hw/display/ati_2d: Third SEGV in ati_2d.c|True|None|generated|None|None|
 |ac97-00|ac97|audio|i386|Abort|An abort was just triggered in audio_calloc|True|None|generated|None|None|
 |smc91c111-00|smc91c111|net|arm|OOB read/wirte|OOB read/write in smc91c111|True|None|generated|None|None|
-|xlnx_dp-00|xlnx_dp|display|aarch64|Abort|Abort in xlnx_dp_aux_set_command|True|None|generated|None|None|
+|xlnx_dp-00|xlnx_dp|display|aarch64|Abort|Abort in xlnx_dp_aux_set_command|True|None|reported|revising|None|
 
 
 

@@ -65,7 +65,8 @@ def generate_report(bug_pathname, metadata):
             report.extend(patch)
             report.append("```\n\n")
             metadata['patch-status'] = 'prepared'
-        metadata['patch-status'] = 'None'
+        else:
+            metadata['patch-status'] = 'None'
 
     report.extend(["## Contact\n\n"])
     report.extend([
