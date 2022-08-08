@@ -1,0 +1,8 @@
+``` bash
+#!/bin/bash -x
+cat << EOF | /path/to/qemu-system-aarch64 \
+-machine xlnx-zcu102,accel=qtest -qtest stdio -monitor none -serial none \
+-display none -nodefaults -qtest stdio
+writel 0xfd4a0100 0x7e04
+EOF
+```

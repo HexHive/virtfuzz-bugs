@@ -1,0 +1,16 @@
+xlnx_dp-00:
+  arch: aarch64 
+  bug-types: ["Abort"]
+  existing-bug-reports: "https://gitlab.com/qemu-project/qemu/-/issues/411"
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: "qemu"
+  introducing-commit: "58ac482a66de09a7590f705e53fc6a3fb8a055e8"
+  novelty: true
+  reproducible-commit: "c669f22f1a47897e8d1d595d6b8a59a572f9158c"
+  reproducible-host: "Ubuntu 20.04"
+  reproducible-version: "7.0.91"
+  reward: null
+  short-description: "Abort in xlnx_dp_aux_set_command"
+  target: "xlnx_dp"
+  target-type: "display"
