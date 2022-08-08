@@ -40,6 +40,14 @@ discuss in communities. Apply for CVE and advertise if it is necessary. Update
 6. Generate reports and a latex table by `python3 02-summarize-bug.py
 all|bug-id`.
 
+To send a patch, please refer to
++ https://www.qemu.org/docs/master/devel/submitting-a-patch.html
+    + `git config sendemail.cccmd 'scripts/get_maintainer.pl --nogit-fallback'`
+    + `git send-email -to qemu-devel@nongnu.org -suppress-cc=self --confirm=always path/to/patch`
++ https://github.com/qemu/qemu/commit/2b02aabc9d02f9e95946cf639f546bb61f1721b7
++ https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9
++ https://github.com/qemu/qemu/commit/2b3a98255c90d8d2f9f87a73eb33371961508517
+
 ## Status
 
 Predefined values
