@@ -1,0 +1,12 @@
+# dev-storage: assertion (s->mode == USB_MSDM_DATAOUT) == (req->cmd.mode == SCSI_XFER_TO_DEV) failed
+
+When I fuzzed ohci with dev-storage device, I found the assertion in
+usb_msd_handle_data() failed due to req->cmd.mode != SCSI_XFER_TO_DEV. This
+new bug (AFAIK) happens because of two reasons.
+
+1) The control flow goes into usb_msd_transfer_data() that is not easily covered.
+
+2) The value of `cbw.cmd` in usb_msd_handle_data() is controlled and then
+`req->cmd.mode` that is coped from `cbw.cmd` is controlled.
+
+Details are in the following.
