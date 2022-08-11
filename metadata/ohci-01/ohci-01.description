@@ -1,0 +1,10 @@
+# Abort in ohci_frame_boundary
+
+This was reported in https://bugs.launchpad.net/qemu/+bug/1911216/,
+https://lists.gnu.org/archive/html/qemu-devel/2021-06/msg03613.html, and
+https://gitlab.com/qemu-project/qemu/-/issues/545.
+
+TODO: Report this bug in https://gitlab.com/qemu-project/qemu/-/issues/545.
+
+TODO: We used 8 virtual device messages to trigger this while QEMUFuzzer used
+14. Mark this.
