@@ -7,25 +7,25 @@ This repo includes all bugs found by ViDeZZo and all bug reports.
 + BUG_ID
   + target-idx, e.g., ati-00, ati-01, ati-02, the idx has two digits
 + BUG_ID.metadata
-  + arch:                str: "i386|arm|aarch64|x86_64"
-  + bug-types:          list: ["Assertion Failure"[, "Abort"]]
-  + existing-bug-reports str: e.g., "https://xxx"
-  + existing-patches     str: e.g., "https://xxx"
-  + fixing-commit        str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
-  + hypervisor:          str: "qemu|vbox"
-  + introducing-commit:  str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
-  + novelty:            bool: true|false
-  + reproducible-commit: str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
-  + reproducible-host:   str: e.g., "Ubuntu 20.04"
-  + reproducible-version:str: e.g., "7.0.50"
-  + reward:              str: e.g., "CVE-XXXX-XXXX"
-  + short-description:   str: e.g., "an assertion failure found in ati_2d()"
-  + target:              str: e.g., "ati"
-  + target-type:         str: audio|network|storage|usb|display
-+ BUG_ID.backtrace:     text (ends with an empty line)
-+ BUG_ID.patch:         text
-+ BUG_ID.reproduce:     text: command lines to reproduce (ends with an empty line)
-+ BUG_ID.description:     md: root cause and impact analysis (ends with an empty line)
+  + arch:                 str: "i386|arm|aarch64|x86_64"
+  + bug-types:           list: ["Assertion Failure"[, "Abort"]]
+  + existing-bug-reports:list: ["https://xxx"]
+  + existing-patches      str: e.g., "https://xxx"
+  + fixing-commit         str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
+  + hypervisor:           str: "qemu|vbox"
+  + introducing-commit:   str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
+  + novelty:             bool: true|false
+  + reproducible-commit:  str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
+  + reproducible-host:    str: e.g., "Ubuntu 20.04"
+  + reproducible-version: str: e.g., "7.0.50"
+  + reward:               str: e.g., "CVE-XXXX-XXXX"
+  + short-description:    str: e.g., "an assertion failure found in ati_2d()"
+  + target:               str: e.g., "ati"
+  + target-type:          str: audio|network|storage|usb|display
++ BUG_ID.backtrace:      text (ends with an empty line)
++ BUG_ID.patch:          text
++ BUG_ID.reproduce:      text: command lines to reproduce (ends with an empty line)
++ BUG_ID.description:      md: root cause and impact analysis (ends with an empty line)
 
 ## Usage
 
