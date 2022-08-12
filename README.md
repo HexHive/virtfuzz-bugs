@@ -8,13 +8,13 @@ This repo includes all bugs found by ViDeZZo and all bug reports.
   + target-idx, e.g., ati-00, ati-01, ati-02, the idx has two digits
 + BUG_ID.metadata
   + arch:                 str: "i386|arm|aarch64|x86_64"
-  + bug-types:           list: ["Assertion Failure"[, "Abort"]]
+  + bug-types:           list: ["Assertion Failure"[, "Abort"][, "Heap UAF"]]
   + existing-bug-reports:list: ["https://xxx"]
   + existing-patches      str: e.g., "https://xxx"
   + fixing-commit         str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
   + hypervisor:           str: "qemu|vbox"
   + introducing-commit:   str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
-  + novelty:             bool: true|false
+  + novelty:             bool: "true|false"
   + reproducible-commit:  str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
   + reproducible-host:    str: e.g., "Ubuntu 20.04"
   + reproducible-version: str: e.g., "7.0.50"
