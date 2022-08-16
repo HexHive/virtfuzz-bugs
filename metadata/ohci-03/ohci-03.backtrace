@@ -1,0 +1,67 @@
+root@54773e3cfadc:~/videzzo/videzzo_qemu/out-san# /tmp/tmp.SmtxWaZl9r/picire_reproduce.sh /tmp/tmp.SmtxWaZl9r/picire_inputs.20220815_084552/tests/a0_r13_assert/picire_inputs 
+==133815==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x55f9c6f45930). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 3011583389
+INFO: Loaded 1 modules   (423101 inline 8-bit counters): 423101 [0x55f9c95cb000, 0x55f9c96324bd), 
+INFO: Loaded 1 PC tables (423101 PCs): 423101 [0x55f9c8f55b50,0x55f9c95ca720), 
+/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *ohci*
+This process will fuzz the following MemoryRegions:
+  * ohci[0] (size 100)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * ohci, EVENT_TYPE_MMIO_READ, 0xe0000000 +0x100, 1,4
+  * ohci, EVENT_TYPE_MMIO_WRITE, 0xe0000000 +0x100, 1,4
+INFO: seed corpus: files: 2511 min: 10b max: 3303848b total: 301897420b rss: 193Mb
+i386: usb-msd: Bad CBW size
+#1024   pulse  cov: 2681 ft: 6553 corp: 214/43Mb exec/s: 341 rss: 376Mb
+#2048   pulse  cov: 2693 ft: 7601 corp: 282/50Mb exec/s: 341 rss: 404Mb
+#2512   INITED cov: 3125 ft: 8321 corp: 305/56Mb exec/s: 358 rss: 412Mb
+Running: /root/videzzo/videzzo_qemu/out-san/./crash-2dd2c6ca803314e8f5ae24133d11d7964215d14f
+qemu-videzzo-i386-target-videzzo-fuzz-ohci: ../hw/usb/core.c:520: void usb_cancel_packet(USBPacket *): Assertion `usb_packet_is_inflight(p)' failed.
+==133815== ERROR: libFuzzer: deadly signal
+    #0 0x55f9c36e674e in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86:3
+    #1 0x55f9c36353c1 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:38
+    #2 0x55f9c360ec06 in fuzzer::Fuzzer::CrashCallback() (.part.0) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235:18
+    #3 0x55f9c360ecd2 in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207:1
+    #4 0x55f9c360ecd2 in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206:19
+    #5 0x7fc94811a41f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1441f)
+    #6 0x7fc947f2c00a in __libc_signal_restore_set /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/internal-signals.h:86:3
+    #7 0x7fc947f2c00a in raise /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/raise.c:48:3
+    #8 0x7fc947f0b858 in abort /build/glibc-SzIz7B/glibc-2.31/stdlib/abort.c:79:7
+    #9 0x7fc947f0b728 in __assert_fail_base /build/glibc-SzIz7B/glibc-2.31/assert/assert.c:92:3
+    #10 0x7fc947f1cfd5 in __assert_fail /build/glibc-SzIz7B/glibc-2.31/assert/assert.c:101:3
+    #11 0x55f9c4aeed4d in usb_cancel_packet /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/core.c:520:5
+    #12 0x55f9c4b6f490 in ohci_stop_endpoints /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:285:9
+    #13 0x55f9c4b75a46 in ohci_frame_boundary /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1186:9
+    #14 0x55f9c6cf121e in timerlist_run_timers /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/qemu-timer.c:576:9
+    #15 0x55f9c6cf154c in qemu_clock_run_timers /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/qemu-timer.c:590:12
+    #16 0x55f9c5f83a44 in qtest_clock_warp /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:358:9
+    #17 0x55f9c5f82916 in qtest_process_command /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:751:9
+    #18 0x55f9c5f75f8d in qtest_process_inbuf /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:796:9
+    #19 0x55f9c5f75caf in qtest_server_inproc_recv /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:927:9
+    #20 0x55f9c68db9c5 in send_wrapper /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:1386:5
+    #21 0x55f9c68d5c81 in qtest_sendf /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:453:5
+    #22 0x55f9c68d5e45 in qtest_clock_step /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:810:5
+    #23 0x55f9c37252c1 in dispatch_clock_step /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1202:5
+    #24 0x55f9c6f412ef in videzzo_dispatch_event /root/videzzo/videzzo.c:1118:5
+    #25 0x55f9c6f3f09c in dispatch_group_event /root/videzzo/videzzo.c:1013:9
+    #26 0x55f9c6f412ef in videzzo_dispatch_event /root/videzzo/videzzo.c:1118:5
+    #27 0x55f9c6f385cb in __videzzo_execute_one_input /root/videzzo/videzzo.c:256:9
+    #28 0x55f9c6f384a0 in videzzo_execute_one_input /root/videzzo/videzzo.c:297:9
+    #29 0x55f9c372987c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1435:12
+    #30 0x55f9c6f45bd2 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1887:18
+    #31 0x55f9c360f73d in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:589:17
+    #32 0x55f9c35f24c4 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #33 0x55f9c35fd43e in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:882:19
+    #34 0x55f9c35e9a46 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #35 0x7fc947f0d082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #36 0x55f9c35e9a9d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci+0x2655a9d)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

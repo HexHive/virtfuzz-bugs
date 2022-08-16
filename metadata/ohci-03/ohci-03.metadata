@@ -1,0 +1,16 @@
+ohci-03:
+  arch: "i386"
+  bug-types: ["Assertion Failure"]
+  existing-bug-reports: ["https://bugs.launchpad.net/qemu/+bug/1687309", "https://lore.kernel.org/all/1484120159.16576.5.camel@redhat.com/T/"]
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: "qemu"
+  introducing-commit: null
+  novelty: "false"
+  reproducible-commit: "c669f22f1a47897e8d1d595d6b8a59a572f9158c"
+  reproducible-host: "Ubuntu 20.04"
+  reproducible-version: "7.0.91"
+  reward: null
+  short-description: "assertion failure in usb_cancel_packet"
+  target: "ohci"
+  target-type: "usb"
