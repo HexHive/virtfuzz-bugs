@@ -2,9 +2,131 @@
 
 This was reported in https://bugs.launchpad.net/qemu/+bug/1911216/,
 https://lists.gnu.org/archive/html/qemu-devel/2021-06/msg03613.html, and
-https://gitlab.com/qemu-project/qemu/-/issues/545.
+https://gitlab.com/qemu-project/qemu/-/issues/545. This crash is triggered via
+crafted Endpoint Descriptors and attached Transfer Descriptors.
 
-TODO: Report this bug in https://gitlab.com/qemu-project/qemu/-/issues/545.
+As shown below, if ohci->done is NULL, OHCI will abort.
 
-TODO: We used 8 virtual device messages to trigger this while QEMUFuzzer used
-14. Mark this.
+``` c
+static void ohci_frame_boundary(void *opaque)
+{
+    // ...
+    if (ohci->done_count == 0 && !(ohci->intr_status & OHCI_INTR_WD)) {
+        if (!ohci->done)
+            abort();
+```
+
+With our poc, I found the reason why ohci->done is NULL is, in
+ohci_service_iso_td, ohci->done is assigned to NULL that is an address of
+ed->head.
+
+``` c
+static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
+{
+    // ...
+    addr = ed->head & OHCI_DPTR_MASK;              // 1) NULL 
+
+    if (ohci_read_iso_td(ohci, addr, &iso_td)) {   // 2) controllable
+        // ...
+    }
+
+    starting_frame = OHCI_BM(iso_td.flags, TD_SF); // 3) controllable due to 2)
+    frame_count = OHCI_BM(iso_td.flags, TD_FC);    // 4) controllable due to 2)
+
+    // ohci->frame_number is 0, then goes by 1 in ohci_frame_boundary
+    // The second time when ohci_service_iso_td is visted, we can make
+    // sure relative_frame_number is 1 as the starting_frame can be 0
+    // due to 3). Meanwhile, we can make frame_count to be 0 due to 4).
+    relative_frame_number = USUB(ohci->frame_number, starting_frame);
+
+    if (relative_frame_number < 0) {
+        return 1;
+    } else if (relative_frame_number > frame_count) {
+        // ...
+        ohci->done = addr;                         // !!!
+        // ...
+    }
+```
+
+We can control the value of ed->head and thus this issue is reliably reproduced.
+
+``` c
+static void ohci_frame_boundary(void *opaque)
+{
+    // ...
+    if (ohci_read_hcca(ohci, ohci->hcca, &hcca)) { // 5) controllable
+    }
+
+    if (ohci->ctl & OHCI_CTL_PLE) {                // 6) ohci->ctl, controllable
+        // ...
+        ohci_service_ed_list(ohci, le32_to_cpu(hcca.intr[n]));
+                                                   // 7) hcca.intr controllable
+                                                   // due to 5)
+    }
+
+static int ohci_service_ed_list(OHCIState *ohci, uint32_t head)
+{
+    // ...
+    for (cur = head; cur && link_cnt++ < ED_LINK_LIMIT; cur = next_ed) {
+        if (ohci_read_ed(ohci, cur, &ed)) {        // 8)  controllable due to 7
+            // ...
+        }
+
+        next_ed = ed.next & OHCI_DPTR_MASK;
+
+        // ...
+        while ((ed.head & OHCI_DPTR_MASK) != ed.tail) {
+            // ...
+            if ((ed.flags & OHCI_ED_F) == 0) {     // 9) controllable due to 8
+                // ...
+            } else {
+                if (ohci_service_iso_td(ohci, &ed)) {
+                                                   // 10) controllable due to 8
+                    break;
+                }
+            }
+        }
+
+```
+
+As 10) is controllable, ed->head is of cource controllable and can be NULL.
+
+I double checked the OHCI spec
+[here](https://composter.com.ua/documents/OHCI_Specification_Rev.1.0a.pdf).
+
++ Page 7: 5): HCCA is the second communication channel. The Host Controller is
+the master for all communication on this channel. The HCCA contains the head
+pointers to the interrupt Endpoint Descriptor lists, the head pointer to the
+done queue, and status information associated with startof-frame processing.
++ Page 8: 7), while loop before 9): Endpoint Descriptors are linked in a list.
+A queue of Transfer Descriptors is linked to the Endpoint Descriptor for the
+specific endpoint.
+
+This crash is triggered if the Endpoint Descriptor has zero Transfer Descriptor.
+
+Let's review our PoC.
+
+a) enable OHCI_CTL_PLE -> 6)
+
+    EVENT_TYPE_MMIO_WRITE, 0xe0000004, 0x2, 0x1fd0298e` 
+
+b) sleep, invoke ohci_frame_boundary and increase ohci->frame by 1
+
+    EVENT_TYPE_CLOCK_STEP, 0xc3d8d
+    EVENT_TYPE_CLOCK_STEP, 0x53c16
+
+c) fill hcca and make sure the second interrupt ED is avaiablel -> 5), 7-10)
+
+    EVENT_TYPE_MEM_WRITE, 0x1010100c, 0x4, 00901200
+    EVENT_TYPE_MEM_WRITE, 0x10129000, 0x4, 8080be25
+    EVENT_TYPE_MEM_WRITE, 0x10129004, 0x4, 00b01200
+    EVENT_TYPE_MMIO_WRITE, 0xe0000004, 0x2, 0x1fd0298e
+
+    hcca = {intr = {0x0, 0x101000, 0x0 <repeats 30 times>},
+            frame = 0x0, pad = 0x0, done = 0x0}
+
+
+    ```
+
+d) sleep, invoke ohci_frame_boundary again, boom
+
