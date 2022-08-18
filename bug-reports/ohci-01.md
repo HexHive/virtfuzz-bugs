@@ -1,15 +1,135 @@
 # abort in ohci_frame_boundary
 
-# Abort in ohci_frame_boundary
-
 This was reported in https://bugs.launchpad.net/qemu/+bug/1911216/,
 https://lists.gnu.org/archive/html/qemu-devel/2021-06/msg03613.html, and
-https://gitlab.com/qemu-project/qemu/-/issues/545.
+https://gitlab.com/qemu-project/qemu/-/issues/545. 
 
-TODO: Report this bug in https://gitlab.com/qemu-project/qemu/-/issues/545.
+This crash is triggered due to two reasons.
 
-TODO: We used 8 virtual device messages to trigger this while QEMUFuzzer used
-14. Mark this.
+1) Endpoint Descriptors and the attached Transfer Descriptors are crafted
+2) QEMU DMA controllers allow to read from 0.
+
+## Some background about acca, ED and TD.
+
+I double checked the OHCI spec
+[here](https://composter.com.ua/documents/OHCI_Specification_Rev.1.0a.pdf).
+
++ Page 7: HCCA is the second communication channel. The Host Controller is
+the master for all communication on this channel. The HCCA contains the head
+pointers to the interrupt Endpoint Descriptor lists, the head pointer to the
+done queue, and status information associated with startof-frame processing.
+
++ Page 8: Endpoint Descriptors are linked in a list.  A queue of Transfer
+Descriptors is linked to the Endpoint Descriptor for the specific endpoint.
+
+## Crashing position
+
+As shown below, if ohci->done is NULL, OHCI will abort.
+
+``` c
+static void ohci_frame_boundary(void *opaque)
+{
+    // ...
+    if (ohci->done_count == 0 && !(ohci->intr_status & OHCI_INTR_WD)) {
+        if (!ohci->done)
+            abort();
+```
+
+## Crash analysis
+
+a) set ohci->ctl and enable OHCI_CTL_PLE
+
+    EVENT_TYPE_MMIO_WRITE, 0xe0000004, 0x2, 0x1fd0298e
+
+b) sleep, invoke ohci_frame_boundary and increase ohci->frame by 1
+
+    EVENT_TYPE_CLOCK_STEP, 0xc3d8d
+    EVENT_TYPE_CLOCK_STEP, 0x53c16
+
+``` c
+static void ohci_frame_boundary(void *opaque)
+{
+    // ...
+    if (ohci_read_hcca(ohci, ohci->hcca, &hcca)) { // 1) controllable
+    }
+
+    if (ohci->ctl & OHCI_CTL_PLE) {                // 2) ohci->ctl, controllable
+        n = ohci->frame_number & 0x1f;
+        ohci_service_ed_list(ohci, le32_to_cpu(hcca.intr[n]));
+                                                   // 3) hcca.intr controllable
+                                                   // due to 1)
+    }
+    // ...
+    ohci->frame_number = (ohci->frame_number + 1) & 0xffff;
+    // ...
+```
+
+    In this step, hcca is empty. ohci_service_ed_list will immediatly return.
+
+c) fill hcca and make sure hcca.intr (ED) is avaiable as ohci->frame_number is 1
+
+    EVENT_TYPE_MEM_WRITE, 0x1010100c, 0x4, 00901200 // ed0->next
+    EVENT_TYPE_MEM_WRITE, 0x10129000, 0x4, 8080be25 // ed1->falgs
+    EVENT_TYPE_MEM_WRITE, 0x10129004, 0x4, 00b01200 // ed1->tail
+    EVENT_TYPE_MEM_WRITE, 0x10000004, 0x4, 00101000 // hcca->intr[1]
+
+    hcca = { intr = {0x0, 0x101000, 0x0 <repeats 30 times>},
+             frame = 0x0, pad = 0x0, done = 0x0 }
+    0x101000: ed0 = hcca->intr[1] = { flags = 0x0, tail = 0x0, head = 0x0, next = 0x129000 }
+    0x129000: ed1 = ed0->next = { flags = 0x25be8080, tail = 0x12b000, head = 0x0, next = 0x0 }
+
+d) sleep, invoke ohci_frame_boundary again
+
+``` c
+static int ohci_service_ed_list(OHCIState *ohci, uint32_t head)
+{
+    // ...
+    for (cur = head; cur && link_cnt++ < ED_LINK_LIMIT; cur = next_ed) {
+        if (ohci_read_ed(ohci, cur, &ed)) {        // 4)  controllable due to 3
+            // ...
+        }
+
+        next_ed = ed.next & OHCI_DPTR_MASK;
+
+        // ...
+        while ((ed.head & OHCI_DPTR_MASK) != ed.tail) {
+            // ...
+            if ((ed.flags & OHCI_ED_F) == 0) {     // 5) controllable due to 4
+                // ...
+            } else {
+                if (ohci_service_iso_td(ohci, &ed)) {
+                                                   // 6) controllable due to 4
+                    break;
+                }
+            }
+        }
+
+static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
+{
+    // ...
+    addr = ed->head & OHCI_DPTR_MASK;              // 7) controllable due to 6
+
+    if (ohci_read_iso_td(ohci, addr, &iso_td)) {   // 8) controllable due to 7
+        // ...
+    }
+
+    starting_frame = OHCI_BM(iso_td.flags, TD_SF); // 9) controllable due to 7
+    frame_count = OHCI_BM(iso_td.flags, TD_FC);    //10) controllable due to 8
+
+    relative_frame_number = USUB(ohci->frame_number, starting_frame);
+
+    if (relative_frame_number < 0) {
+        return 1;
+    } else if (relative_frame_number > frame_count) {
+        // ...
+        ohci->done = addr;                         // ohci->done = addr = 0
+        // ...
+    }
+```
+
+e) ohci_service_iso_td returns, then ohci_service_ed_list returns,
+ohci_frame_boundary will then abort due to ohci->done is NULL.
+
 
 ## More technique details
 
@@ -88,7 +208,13 @@ MS: 0 ; base unit: 0000000000000000000000000000000000000000
 
 ### Reproducer steps
 
-DEFAULT_INPUT_MAXSIZE=10000000 /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci -max_len=10000000 /root/videzzo/videzzo_qemu/out-san/poc-qemu-videzzo-i386-target-videzzo-fuzz-ohci-crash-9a5bf80e15f7ecfe3f8c918b3b5cb629d96a5f57.minimized
+# cp /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci .
+# cp -r pc-bios /root/videzzo/videzzo_qemu/out-san/pc-bios .
+ASAN_OPTIONS=detect_leaks=0 \
+DEFAULT_INPUT_MAXSIZE=10000000 \
+    ./qemu-videzzo-i386-target-videzzo-fuzz-ohci \
+    -max_len=10000000 -detect_leaks=0 \
+    poc-qemu-videzzo-i386-target-videzzo-fuzz-ohci-crash-9a5bf80e15f7ecfe3f8c918b3b5cb629d96a5f57.minimized
 
 ## Contact
 
