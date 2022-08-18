@@ -1,12 +1,58 @@
-# dev-storage: assertion (s->mode == USB_MSDM_DATAOUT) == (req->cmd.mode == SCSI_XFER_TO_DEV) failed
+When I fuzzed ohci with dev-storage device, I found the assertion (s->mode ==
+USB_MSDM_DATAOUT) == (req->cmd.mode == SCSI_XFER_TO_DEV) failed in
+usb_msd_handle_data() failed due to req->cmd.mode != SCSI_XFER_TO_DEV. This new
+bug (AFAIK) happens because of two reasons.
 
-When I fuzzed ohci with dev-storage device, I found the assertion in
-usb_msd_handle_data() failed due to req->cmd.mode != SCSI_XFER_TO_DEV. This
-new bug (AFAIK) happens because of two reasons.
++ The control flow goes into usb_msd_transfer_data().
 
-1) The control flow goes into usb_msd_transfer_data() that is not easily covered.
-
-2) The value of `cbw.cmd` in usb_msd_handle_data() is controlled and then
++ The value of `cbw.cmd` in usb_msd_handle_data() is controlled and then
 `req->cmd.mode` that is coped from `cbw.cmd` is controlled.
 
-Details are in the following.
+## crash analysis
+
+1) control flow
+
+ohci_frame_boundary
+ohci_service_ed_list
+ohci_service_td
+usb_handle_packet
+usb_process_one
+usb_device_handle_data
+usb_msd_handle_data
+    scsi_req_enqueue
+        scsi_target_send_command
+            scsi_build_sense_buf
+    scsi_req_continue
+        scsi_target_read_data
+            scsi_req_data
+                usb_msd_transfer_data // boom!
+        
+2) data flow
+
+ohci_frame_boundary
+ohci_service_ed_list
+|ohci_service_td
+    |usb_packet_addbuf(&ohci->usb_packet, ohci->usb_buf, pktlen);
+    |usb_handle_packet(dev=dev, p=&ohci->usb_packet)
+        |usb_process_one(p=p)
+            |usb_device_handle_data(dev=dev, p=p)
+                |usb_msd_handle_data(dev=p, p=p)
+                    |usb_packet_copy(p=p, ptr=&cbw, bytes=31);
+                        |iov=p->combined ? &p->combined->iov : &p->iov;
+                        |iov_to_buf(iov=iov->iov, iov_cnt=iov->niov, offset=p->actual_length, buf=ptr, bytes=bytes);
+                            |iov_from_buf_full(iov=iov, iov_cnt=iov_cnt, offset=offset, buf=buf, bytes=bytes); 
+                                |memcpy(buf + done, iov[i].iov_base + offset, len);
+                    |s-req = scsi_req_new(d=scsi_dev, tag=tag, len=cbw.lun, buf=cbw.cmd, hba_private=NULL)
+                        |ret = scsi_req_parse_cdb(dev=d, cmd=&cmd, buf=buf);
+                            |cmd->len = scsi_cdb_length(buf);
+                            |memcpy(cmd->buf, buf, cmd->len);
+                            |scsi_cmd_xfer_mode(cmd);
+                            |cmd->lba = scsi_cmd_lba(cmd);
+                        |req->cmd = cmd
+                    |scsi_req_continue(req=s->req)
+                        |req->ops->read_data(req=req) // scsi_target_read_data(req)
+                            |SCSITargetReq *r = DO_UPCAST(SCSITargetReq, req, req);
+                            |n = r->len;
+                            |scsi_req_data(req=&r->req, len=n);
+                                |req->bus->info->transfer_data(req=req, len=len); //usb_msd_transfer_data(req, len)
+                                    | req->cmd.mod = SCSI_XFER_FROM_DEV (1) but SCSI_XFER_TO_DEV (2) is required
