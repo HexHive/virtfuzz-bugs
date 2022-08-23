@@ -17,9 +17,9 @@ This crash is triggered based on three assumptions.
 
 Suppose that a user with root priviledge is an attacker,
 
-1) the attacker can craft ED and put the attached TD at 0x0 (phys)
-2) ohci can read/write data from/to 0x0 (phys)
-3) the attacker might modify the physical memory from 0 to sizeof(ohci_iso_td)
+1) the attacker can craft ED and put the attached TD at 0x0 (guest phys)
+2) ohci can read/write data from/to 0x0 (guest phys)
+3) the attacker might modify the guest phys from 0 to sizeof(ohci_iso_td)
 
 Potenial fixes are
 1) drop ohci_service_td when ed->head & OHCI_DPTR_MASK is 0
@@ -105,8 +105,8 @@ d) sleep, invoke ohci_frame_boundary again
 
     In this step, we enforce the control flow to ohci_service_iso_td. Here, as
     we can control ed, then `addr = ed->head & OHCI_DPTR_MASK (= 0)`. As we
-    might control physical memory from 0 to sizeof(ohci_iso_td), we can make
-    sure the control flow to `ohci->done = addr (= 0)`.
+    might control the guest physical memory from 0 to sizeof(ohci_iso_td), we
+    can make sure the control flow to `ohci->done = addr (= 0)`.
 
 ``` c
 static int ohci_service_ed_list(OHCIState *ohci, uint32_t head)
