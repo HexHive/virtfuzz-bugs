@@ -1,0 +1,41 @@
+From add4aa13c0e922811859af869c721511371c0ab6 Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Tue, 23 Aug 2022 23:40:15 +0800
+Subject: [PATCH] drop ohci_service_iso_td and ohci_service_td if ed->head &
+ OHCI_DPTR_MASK is zero
+
+---
+ hw/usb/hcd-ohci.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/hw/usb/hcd-ohci.c b/hw/usb/hcd-ohci.c
+index 895b29fb86..72bdde9261 100644
+--- a/hw/usb/hcd-ohci.c
++++ b/hw/usb/hcd-ohci.c
+@@ -571,6 +571,11 @@ static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
+ 
+     addr = ed->head & OHCI_DPTR_MASK;
+ 
++    if (addr == 0) {
++        ohci_die(ohci);
++        return 1;
++    }
++
+     if (ohci_read_iso_td(ohci, addr, &iso_td)) {
+         trace_usb_ohci_iso_td_read_failed(addr);
+         ohci_die(ohci);
+@@ -858,6 +863,11 @@ static int ohci_service_td(OHCIState *ohci, struct ohci_ed *ed)
+     int completion;
+ 
+     addr = ed->head & OHCI_DPTR_MASK;
++    if (addr == 0) {
++        ohci_die(ohci);
++        return 1;
++    }
++
+     /* See if this TD has already been submitted to the device.  */
+     completion = (addr == ohci->async_td);
+     if (completion && !ohci->async_complete) {
+-- 
+2.25.1
+
