@@ -1,13 +1,31 @@
 # abort in ohci_frame_boundary
 
+I managed to trigger an abort in ohci_frame_boundary and make QEMU dos.
+
+``` c
+static void ohci_frame_boundary(void *opaque)
+{
+    // ...
+    if (ohci->done_count == 0 && !(ohci->intr_status & OHCI_INTR_WD)) {
+        if (!ohci->done)
+            abort();
+```
+
 This was reported in https://bugs.launchpad.net/qemu/+bug/1911216/,
 https://lists.gnu.org/archive/html/qemu-devel/2021-06/msg03613.html, and
 https://gitlab.com/qemu-project/qemu/-/issues/545. 
 
-This crash is triggered due to two reasons.
+This crash is triggered based on three assumptions.
 
-1) Endpoint Descriptors and the attached Transfer Descriptors are crafted
-2) QEMU DMA controllers allow to read from 0.
+Suppose that a user with root priviledge is an attacker,
+
+1) the attacker can craft ED and put the attached TD at 0x0 (phys)
+2) ohci can read/write data from/to 0x0 (phys)
+3) the attacker might modify the physical memory from 0 to sizeof(ohci_iso_td)
+
+Potenial fixes are
+1) drop ohci_service_td when ed->head & OHCI_DPTR_MASK is 0
+2) drop ohci_service_iso_td when ed->head & OHCI_DPTR_MASK is 0
 
 ## Some background about acca, ED and TD.
 
@@ -22,29 +40,36 @@ done queue, and status information associated with startof-frame processing.
 + Page 8: Endpoint Descriptors are linked in a list.  A queue of Transfer
 Descriptors is linked to the Endpoint Descriptor for the specific endpoint.
 
-## Crashing position
 
-As shown below, if ohci->done is NULL, OHCI will abort.
+``` txt
 
-``` c
-static void ohci_frame_boundary(void *opaque)
-{
-    // ...
-    if (ohci->done_count == 0 && !(ohci->intr_status & OHCI_INTR_WD)) {
-        if (!ohci->done)
-            abort();
+                ┌──┐  ┌──┐  ┌──┐
+ hcca.intr[1]──►│ED├─►│ED├─►│ED│
+                └─┬┘  └─┬┘  └─┬┘
+                  │     │     │
+                  ▼     ▼     ▼
+                ┌──┐  ┌──┐  ┌──┐
+                │TD│  │TD│  │TD│
+                └─┬┘  └──┘  └──┘
+                  │
+                  ▼
+                ┌──┐
+                │TD│
+                └──┘
 ```
 
 ## Crash analysis
 
 a) set ohci->ctl and enable OHCI_CTL_PLE
 
-    EVENT_TYPE_MMIO_WRITE, 0xe0000004, 0x2, 0x1fd0298e
+    MMIO_WRITE, addr=0xe0000004, size=0x4, valu=0x1fd0298e
+
+    Note that 0x1fd02983 is derived from our fuzzer
 
 b) sleep, invoke ohci_frame_boundary and increase ohci->frame by 1
 
-    EVENT_TYPE_CLOCK_STEP, 0xc3d8d
-    EVENT_TYPE_CLOCK_STEP, 0x53c16
+    In this step, we make hcca all zeros. ohci_service_ed_list will immediatly
+    return. ohci->frame_number will be increased by 1.
 
 ``` c
 static void ohci_frame_boundary(void *opaque)
@@ -64,21 +89,26 @@ static void ohci_frame_boundary(void *opaque)
     // ...
 ```
 
-    In this step, hcca is empty. ohci_service_ed_list will immediatly return.
 
-c) fill hcca and make sure hcca.intr (ED) is avaiable as ohci->frame_number is 1
-
-    EVENT_TYPE_MEM_WRITE, 0x1010100c, 0x4, 00901200 // ed0->next
-    EVENT_TYPE_MEM_WRITE, 0x10129000, 0x4, 8080be25 // ed1->falgs
-    EVENT_TYPE_MEM_WRITE, 0x10129004, 0x4, 00b01200 // ed1->tail
-    EVENT_TYPE_MEM_WRITE, 0x10000004, 0x4, 00101000 // hcca->intr[1]
+c) fill hcca and make sure hcca.intr[1] (ED) is avaiable as ohci->frame_number is 1
 
     hcca = { intr = {0x0, 0x101000, 0x0 <repeats 30 times>},
              frame = 0x0, pad = 0x0, done = 0x0 }
-    0x101000: ed0 = hcca->intr[1] = { flags = 0x0, tail = 0x0, head = 0x0, next = 0x129000 }
-    0x129000: ed1 = ed0->next = { flags = 0x25be8080, tail = 0x12b000, head = 0x0, next = 0x0 }
+    0x0:
+        iso_td0 = { 0 }
+    0x101000: 
+        ed0 = hcca->intr[1] =
+        { flags = 0x0, tail = 0x0, head = 0x0, next = 0x129000 }
+    0x129000: 
+        ed1 = ed0->next =
+        { flags = 0x25be8080, tail = 0x12b000, head = 0x0, next = 0x0 }
 
 d) sleep, invoke ohci_frame_boundary again
+
+    In this step, we enforce the control flow to ohci_service_iso_td. Here, as
+    we can control ed, then `addr = ed->head & OHCI_DPTR_MASK (= 0)`. As we
+    might control physical memory from 0 to sizeof(ohci_iso_td), we can make
+    sure the control flow to `ohci->done = addr (= 0)`.
 
 ``` c
 static int ohci_service_ed_list(OHCIState *ohci, uint32_t head)
@@ -98,6 +128,7 @@ static int ohci_service_ed_list(OHCIState *ohci, uint32_t head)
                 // ...
             } else {
                 if (ohci_service_iso_td(ohci, &ed)) {
+                                                   // goes here, 
                                                    // 6) controllable due to 4
                     break;
                 }
@@ -107,15 +138,15 @@ static int ohci_service_ed_list(OHCIState *ohci, uint32_t head)
 static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
 {
     // ...
-    addr = ed->head & OHCI_DPTR_MASK;              // 7) controllable due to 6
-
+    addr = ed->head & OHCI_DPTR_MASK;              // 0, 
+                                                   // 7) controllable due to 6
     if (ohci_read_iso_td(ohci, addr, &iso_td)) {   // 8) controllable due to 7
         // ...
-    }
 
-    starting_frame = OHCI_BM(iso_td.flags, TD_SF); // 9) controllable due to 7
-    frame_count = OHCI_BM(iso_td.flags, TD_FC);    //10) controllable due to 8
-
+    starting_frame = OHCI_BM(iso_td.flags, TD_SF); // 0, 
+                                                   // 9) controllable due to 8
+    frame_count = OHCI_BM(iso_td.flags, TD_FC);    // 0,
+                                                   // 10) controllable due to 8
     relative_frame_number = USUB(ohci->frame_number, starting_frame);
 
     if (relative_frame_number < 0) {
@@ -124,14 +155,15 @@ static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
         // ...
         ohci->done = addr;                         // ohci->done = addr = 0
         // ...
+        if (ohci_put_iso_td(ohci, addr, &iso_td)) {// iso_td.flags+TD_CC
+        // ...
     }
 ```
 
 e) ohci_service_iso_td returns, then ohci_service_ed_list returns,
 ohci_frame_boundary will then abort due to ohci->done is NULL.
 
-
-## More technique details
+## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
 qemu, 7.0.50, c669f22f1a47897e8d1d595d6b8a59a572f9158c, Ubuntu 20.04
@@ -208,13 +240,30 @@ MS: 0 ; base unit: 0000000000000000000000000000000000000000
 
 ### Reproducer steps
 
-# cp /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci .
-# cp -r pc-bios /root/videzzo/videzzo_qemu/out-san/pc-bios .
-ASAN_OPTIONS=detect_leaks=0 \
-DEFAULT_INPUT_MAXSIZE=10000000 \
-    ./qemu-videzzo-i386-target-videzzo-fuzz-ohci \
-    -max_len=10000000 -detect_leaks=0 \
-    poc-qemu-videzzo-i386-target-videzzo-fuzz-ohci-crash-9a5bf80e15f7ecfe3f8c918b3b5cb629d96a5f57.minimized
+Step 1: download the prepared rootfs and the image.
+
+Step 2: run the following script.
+
+``` bash
+QEMU_PATH=../../../qemu/build/qemu-system-x86_64
+KERNEL_PATH=../../../buildroot-2022.02.4/output/images/bzImage
+ROOTFS_PATH=../../../buildroot-2022.02.4/output/images/rootfs.ext2
+$QEMU_PATH \
+    -M q35 -m 1G \
+    -kernel $KERNEL_PATH \
+    -drive file=$ROOTFS_PATH,if=virtio,format=raw \
+    -append "root=/dev/vda console=ttyS0" \
+    -net nic,model=virtio -net user \
+    -usb \
+    -device pci-ohci,num-ports=6 \
+    -drive file=null-co://,if=none,format=raw,id=disk0 \
+    -device usb-storage,port=1,drive=disk0 \
+    -nographic
+```
+
+Step 3: with spawned shell (the user is root and the password is empty), run
+`userspace_program`.
+
 
 ## Contact
 

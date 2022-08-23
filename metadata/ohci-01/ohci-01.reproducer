@@ -1,7 +1,24 @@
-# cp /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci .
-# cp -r pc-bios /root/videzzo/videzzo_qemu/out-san/pc-bios .
-ASAN_OPTIONS=detect_leaks=0 \
-DEFAULT_INPUT_MAXSIZE=10000000 \
-    ./qemu-videzzo-i386-target-videzzo-fuzz-ohci \
-    -max_len=10000000 -detect_leaks=0 \
-    poc-qemu-videzzo-i386-target-videzzo-fuzz-ohci-crash-9a5bf80e15f7ecfe3f8c918b3b5cb629d96a5f57.minimized
+Step 1: download the prepared rootfs and the image.
+
+Step 2: run the following script.
+
+``` bash
+QEMU_PATH=../../../qemu/build/qemu-system-x86_64
+KERNEL_PATH=../../../buildroot-2022.02.4/output/images/bzImage
+ROOTFS_PATH=../../../buildroot-2022.02.4/output/images/rootfs.ext2
+$QEMU_PATH \
+    -M q35 -m 1G \
+    -kernel $KERNEL_PATH \
+    -drive file=$ROOTFS_PATH,if=virtio,format=raw \
+    -append "root=/dev/vda console=ttyS0" \
+    -net nic,model=virtio -net user \
+    -usb \
+    -device pci-ohci,num-ports=6 \
+    -drive file=null-co://,if=none,format=raw,id=disk0 \
+    -device usb-storage,port=1,drive=disk0 \
+    -nographic
+```
+
+Step 3: with spawned shell (the user is root and the password is empty), run
+`userspace_program`.
+

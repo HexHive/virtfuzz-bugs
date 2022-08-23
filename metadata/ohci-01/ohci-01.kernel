@@ -1,8 +1,8 @@
-# git checkout -b ohci-02 c669f22f1a47897e8d1d595d6b8a59a572f9158c
+# git checkout -b ohci-01 c669f22f1a47897e8d1d595d6b8a59a572f9158c
 # ./configure --target-list=x86_64-softmmu --enable-debug --disable-pie
 # make
 ../../../qemu/build/qemu-system-x86_64 \
-    -M q35 -m 4G \
+    -M q35 -m 1G \
     -kernel ../../../buildroot-2022.02.4/output/images/bzImage \
     -drive file=../../../buildroot-2022.02.4/output/images/rootfs.ext2,if=virtio,format=raw \
     -append "root=/dev/vda console=ttyS0" \

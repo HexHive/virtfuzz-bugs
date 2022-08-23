@@ -21,7 +21,7 @@ def generate_report(bug_pathname, metadata):
 
     ## technique details
     report.extend([
-        "## More technique details\n\n",
+        "## More details\n\n",
         "### Hypervisor, hypervisor version, upstream commit/tag, host\n",
         '{}, {}, {}, {}\n\n'.format(
             metadata['hypervisor'],
