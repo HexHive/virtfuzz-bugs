@@ -2,3 +2,5 @@ __pycache__
 pc-bios
 qemu-videzzo-*
 .vscode
+rootfs.ext2
+bzImage
