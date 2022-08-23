@@ -15,7 +15,7 @@ define USERSPACE_PROGRAM_BUILD_CMDS
 endef
 
 define USERSPACE_PROGRAM_INSTALL_TARGET_CMDS
-    $(INSTALL) -D -m 0755 $(@D)/userspace_program $(TARGET_DIR)/usr/bin
+    $(INSTALL) -D -m 0755 $(@D)/userspace_program $(TARGET_DIR)/usr/bin/ohci-01
 endef
 
 $(eval $(generic-package))

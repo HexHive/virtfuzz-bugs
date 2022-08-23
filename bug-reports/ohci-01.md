@@ -242,12 +242,15 @@ MS: 0 ; base unit: 0000000000000000000000000000000000000000
 
 Step 1: download the prepared rootfs and the image.
 
+https://drive.google.com/file/d/15UrSybIik_lgNNX357KRy9NYYfqjNio7/view?usp=sharing
+https://drive.google.com/file/d/1ZyiQdl98y-pKS1awrDrBZlu4829kWHJ5/view?usp=sharing
+
 Step 2: run the following script.
 
 ``` bash
 QEMU_PATH=../../../qemu/build/qemu-system-x86_64
-KERNEL_PATH=../../../buildroot-2022.02.4/output/images/bzImage
-ROOTFS_PATH=../../../buildroot-2022.02.4/output/images/rootfs.ext2
+KERNEL_PATH=./bzImage
+ROOTFS_PATH=./rootfs.ext2
 $QEMU_PATH \
     -M q35 -m 1G \
     -kernel $KERNEL_PATH \
@@ -262,7 +265,7 @@ $QEMU_PATH \
 ```
 
 Step 3: with spawned shell (the user is root and the password is empty), run
-`userspace_program`.
+`ohci-01`.
 
 
 ## Contact
