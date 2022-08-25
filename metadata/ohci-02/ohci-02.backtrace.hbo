@@ -1,0 +1,102 @@
+root@120cfc753cab:~/bugs/metadata/ohci-02# bash -x ohci-02.videzzo
++ export ASAN_OPTIONS=detect_leaks=0
++ ASAN_OPTIONS=detect_leaks=0
++ export DEFAULT_INPUT_MAXSIZE=10000000
++ DEFAULT_INPUT_MAXSIZE=10000000
++ ./qemu-videzzo-i386-target-videzzo-fuzz-ohci ./crash-8cc902a05593b7cff5c12aedc22bd740ffcd824b -max_len=10000000 -detect_leaks=0 -pre_seed_inputs=@ohci-02.videzzo.pre_seeds
+==3147==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x56260a851fc0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 46801025
+INFO: Loaded 1 modules   (423123 inline 8-bit counters): 423123 [0x56260ced7000, 0x56260cf3e4d3), 
+INFO: Loaded 1 PC tables (423123 PCs): 423123 [0x56260c861e50,0x56260ced6b80), 
+./qemu-videzzo-i386-target-videzzo-fuzz-ohci: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *ohci*
+This process will fuzz the following MemoryRegions:
+  * ohci[0] (size 100)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * ohci, EVENT_TYPE_MMIO_READ, 0xe0000000 +0x100, 1,4
+  * ohci, EVENT_TYPE_MMIO_WRITE, 0xe0000000 +0x100, 1,4
+INFO: seed corpus: files: 116 min: 10b max: 1171944b total: 9536540b rss: 188Mb
+#117    INITED cov: 2627 ft: 4464 corp: 55/5928Kb exec/s: 0 rss: 267Mb
+Running: ./crash-8cc902a05593b7cff5c12aedc22bd740ffcd824b
+=================================================================
+==3147==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x60d000005e20 at pc 0x5626083fb577 bp 0x7ffe48d1f6a0 sp 0x7ffe48d1f698
+WRITE of size 8 at 0x60d000005e20 thread T0
+    #0 0x5626083fb576 in usb_cancel_packet /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/core.c:522:5
+    #1 0x562608487f61 in ohci_child_detach /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1750:9
+    #2 0x562608486a3d in ohci_detach /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1761:5
+    #3 0x5626083e9a21 in usb_detach /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/core.c:70:5
+    #4 0x5626083e9d51 in usb_port_reset /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/core.c:79:5
+    #5 0x56260847f04a in ohci_roothub_reset /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:314:13
+    #6 0x5626084b8666 in ohci_set_ctl /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1346:9
+    #7 0x5626084b2dbe in ohci_mem_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1601:9
+    #8 0x5626097e1a93 in memory_region_write_accessor /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:492:5
+    #9 0x5626097e13d1 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:554:18
+    #10 0x5626097dfcdc in memory_region_dispatch_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1514:16
+    #11 0x56260986a70e in flatview_write_continue /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2825:23
+    #12 0x562609858a8b in flatview_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2867:12
+    #13 0x562609858548 in address_space_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2963:18
+    #14 0x56260702e83b in qemu_writel /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1072:5
+    #15 0x56260702ccbe in dispatch_mmio_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1165:28
+    #16 0x56260a84d97f in videzzo_dispatch_event /root/videzzo/videzzo.c:1115:5
+    #17 0x56260a844cfb in __videzzo_execute_one_input /root/videzzo/videzzo.c:265:9
+    #18 0x56260a844bd0 in videzzo_execute_one_input /root/videzzo/videzzo.c:306:9
+    #19 0x56260703587c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1440:12
+    #20 0x56260a852262 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1884:18
+    #21 0x562606f1b73d in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:589:17
+    #22 0x562606efe4c4 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #23 0x562606f0943e in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:882:19
+    #24 0x562606ef5a46 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #25 0x7f4377715082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #26 0x562606ef5a9d in _start (/root/bugs/metadata/ohci-02/qemu-videzzo-i386-target-videzzo-fuzz-ohci+0x2656a9d)
+
+0x60d000005e20 is located 176 bytes to the right of 144-byte region [0x60d000005ce0,0x60d000005d70)
+allocated by thread T0 here:
+    #0 0x562606fe8ed7 in __interceptor_calloc /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:154:3
+    #1 0x7f43789ccef0 in g_malloc0 (/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x57ef0)
+    #2 0x562609bef265 in type_initialize_interface /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:262:5
+    #3 0x562609bdc0a8 in type_initialize /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:349:13
+    #4 0x562609bdd3af in object_class_foreach_tramp /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:1071:5
+    #5 0x7f43789b51b7 in g_hash_table_foreach (/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x401b7)
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/core.c:522:5 in usb_cancel_packet
+Shadow bytes around the buggy address:
+  0x0c1a7fff8b70: 00 00 00 00 00 00 00 00 00 fa fa fa fa fa fa fa
+  0x0c1a7fff8b80: fa fa 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c1a7fff8b90: 00 00 00 00 fa fa fa fa fa fa fa fa 00 00 00 00
+  0x0c1a7fff8ba0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fa fa
+  0x0c1a7fff8bb0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>0x0c1a7fff8bc0: fa fa fa fa[fa]fa fa fa fa fa fa fa fa fa fa fa
+  0x0c1a7fff8bd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c1a7fff8be0: 00 fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c1a7fff8bf0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c1a7fff8c00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c1a7fff8c10: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==3147==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+0x4,0x2,0xa4,0xee,0x6,0x0,0x0,0x0,0x0,0x0,0x1,0x9,0x4,0x0,0x0,0xe0,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0xb,0xd9,0x93,0x49,0x0,0x0,0x0,0x0,
+\x04\x02\xa4\xee\x06\x00\x00\x00\x00\x00\x01\x09\x04\x00\x00\xe0\x00\x00\x00\x00\x04\x00\x00\x00\x0b\xd9\x93I\x00\x00\x00\x00

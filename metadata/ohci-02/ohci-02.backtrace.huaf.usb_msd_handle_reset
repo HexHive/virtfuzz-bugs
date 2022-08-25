@@ -1,0 +1,138 @@
+root@2210c9b13aa1:~/videzzo/videzzo_qemu/out-san# DEFAULT_INPUT_MAXSIZE=10000000 /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci  -max_len=10000000 -detect_leaks=0 /root/videzzo/videzzo_qemu/out-san/poc-qemu-videzzo-i386-target-videzzo-fuzz-ohci-crash-8cc902a05593b7cff5c12aedc22bd740ffcd824b.minimized
+==168607==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x562fed8fefc0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 2314777814
+INFO: Loaded 1 modules   (423123 inline 8-bit counters): 423123 [0x562feff84000, 0x562feffeb4d3), 
+INFO: Loaded 1 PC tables (423123 PCs): 423123 [0x562fef90ee50,0x562feff83b80), 
+/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *ohci*
+This process will fuzz the following MemoryRegions:
+  * ohci[0] (size 100)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * ohci, EVENT_TYPE_MMIO_READ, 0xe0000000 +0x100, 1,4
+  * ohci, EVENT_TYPE_MMIO_WRITE, 0xe0000000 +0x100, 1,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 193Mb
+Running: /root/videzzo/videzzo_qemu/out-san/poc-qemu-videzzo-i386-target-videzzo-fuzz-ohci-crash-8cc902a05593b7cff5c12aedc22bd740ffcd824b.minimized
+=================================================================
+==168607==ERROR: AddressSanitizer: heap-use-after-free on address 0x60d0000062e4 at pc 0x562feb68d3d0 bp 0x7fff70cee230 sp 0x7fff70cee228
+WRITE of size 4 at 0x60d0000062e4 thread T0
+    #0 0x562feb68d3cf in usb_msd_handle_reset /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/dev-storage.c:312:27
+    #1 0x562feb471c08 in usb_device_handle_reset /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/bus.c:163:9
+    #2 0x562feb496f7a in usb_device_reset /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/core.c:89:5
+    #3 0x562feb496d63 in usb_port_reset /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/core.c:81:5
+    #4 0x562feb52c04a in ohci_roothub_reset /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:314:13
+    #5 0x562feb565666 in ohci_set_ctl /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1346:9
+    #6 0x562feb55fdbe in ohci_mem_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1601:9
+    #7 0x562fec88ea93 in memory_region_write_accessor /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:492:5
+    #8 0x562fec88e3d1 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:554:18
+    #9 0x562fec88ccdc in memory_region_dispatch_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1514:16
+    #10 0x562fec91770e in flatview_write_continue /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2825:23
+    #11 0x562fec905a8b in flatview_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2867:12
+    #12 0x562fec905548 in address_space_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2963:18
+    #13 0x562fea0db83b in qemu_writel /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1072:5
+    #14 0x562fea0d9cbe in dispatch_mmio_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1165:28
+    #15 0x562fed8fa97f in videzzo_dispatch_event /root/videzzo/videzzo.c:1115:5
+    #16 0x562fed8f1cfb in __videzzo_execute_one_input /root/videzzo/videzzo.c:265:9
+    #17 0x562fed8f1bd0 in videzzo_execute_one_input /root/videzzo/videzzo.c:306:9
+    #18 0x562fea0e287c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1440:12
+    #19 0x562fed8ff262 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1884:18
+    #20 0x562fe9fc873d in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:589:17
+    #21 0x562fe9fab4c4 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #22 0x562fe9fb643e in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:882:19
+    #23 0x562fe9fa2a46 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #24 0x7fb451b2b082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #25 0x562fe9fa2a9d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-ohci+0x2656a9d)
+
+0x60d0000062e4 is located 84 bytes inside of 136-byte region [0x60d000006290,0x60d000006318)
+freed by thread T0 here:
+    #0 0x562fea095a27 in __interceptor_free /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:127:3
+    #1 0x562feb546c1e in ohci_service_iso_td /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:730:9
+    #2 0x562feb53b8b1 in ohci_service_ed_list /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1125:21
+    #3 0x562feb52e689 in ohci_frame_boundary /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1191:9
+    #4 0x562fed6aa8ae in timerlist_run_timers /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/qemu-timer.c:576:9
+    #5 0x562fed6aabdc in qemu_clock_run_timers /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/qemu-timer.c:590:12
+    #6 0x562fec93d0d4 in qtest_clock_warp /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:358:9
+    #7 0x562fec93bfa6 in qtest_process_command /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:751:9
+    #8 0x562fec92f61d in qtest_process_inbuf /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:796:9
+    #9 0x562fec92f33f in qtest_server_inproc_recv /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:927:9
+    #10 0x562fed295055 in send_wrapper /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:1386:5
+    #11 0x562fed28f311 in qtest_sendf /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:453:5
+    #12 0x562fed28f4d5 in qtest_clock_step /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:810:5
+    #13 0x562fea0de2c1 in dispatch_clock_step /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1207:5
+    #14 0x562fed8fa97f in videzzo_dispatch_event /root/videzzo/videzzo.c:1115:5
+    #15 0x562fed8f1cfb in __videzzo_execute_one_input /root/videzzo/videzzo.c:265:9
+    #16 0x562fed8f1bd0 in videzzo_execute_one_input /root/videzzo/videzzo.c:306:9
+    #17 0x562fea0e287c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1440:12
+    #18 0x562fed8ff262 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1884:18
+    #19 0x562fe9fc873d in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:589:17
+    #20 0x562fe9fab4c4 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #21 0x562fe9fb643e in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:882:19
+    #22 0x562fe9fa2a46 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #23 0x7fb451b2b082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+
+previously allocated by thread T0 here:
+    #0 0x562fea095ed7 in __interceptor_calloc /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:154:3
+    #1 0x7fb452de2ef0 in g_malloc0 (/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x57ef0)
+    #2 0x562feb53b8b1 in ohci_service_ed_list /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1125:21
+    #3 0x562feb52e689 in ohci_frame_boundary /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/hcd-ohci.c:1191:9
+    #4 0x562fed6aa8ae in timerlist_run_timers /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/qemu-timer.c:576:9
+    #5 0x562fed6aabdc in qemu_clock_run_timers /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/qemu-timer.c:590:12
+    #6 0x562fec93d0d4 in qtest_clock_warp /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:358:9
+    #7 0x562fec93bfa6 in qtest_process_command /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:751:9
+    #8 0x562fec92f61d in qtest_process_inbuf /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:796:9
+    #9 0x562fec92f33f in qtest_server_inproc_recv /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qtest.c:927:9
+    #10 0x562fed295055 in send_wrapper /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:1386:5
+    #11 0x562fed28f311 in qtest_sendf /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:453:5
+    #12 0x562fed28f4d5 in qtest_clock_step /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/libqtest.c:810:5
+    #13 0x562fea0de2c1 in dispatch_clock_step /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1207:5
+    #14 0x562fed8fa97f in videzzo_dispatch_event /root/videzzo/videzzo.c:1115:5
+    #15 0x562fed8f1cfb in __videzzo_execute_one_input /root/videzzo/videzzo.c:265:9
+    #16 0x562fed8f1bd0 in videzzo_execute_one_input /root/videzzo/videzzo.c:306:9
+    #17 0x562fea0e287c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1440:12
+    #18 0x562fed8ff262 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1884:18
+    #19 0x562fe9fc873d in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:589:17
+    #20 0x562fe9fab4c4 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #21 0x562fe9fb643e in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:882:19
+    #22 0x562fe9fa2a46 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #23 0x7fb451b2b082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+
+SUMMARY: AddressSanitizer: heap-use-after-free /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/usb/dev-storage.c:312:27 in usb_msd_handle_reset
+Shadow bytes around the buggy address:
+  0x0c1a7fff8c00: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c1a7fff8c10: 00 00 00 00 00 03 fa fa fa fa fa fa fa fa fd fd
+  0x0c1a7fff8c20: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x0c1a7fff8c30: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+  0x0c1a7fff8c40: fd fd fd fd fd fd fd fd fd fd fa fa fa fa fa fa
+=>0x0c1a7fff8c50: fa fa fd fd fd fd fd fd fd fd fd fd[fd]fd fd fd
+  0x0c1a7fff8c60: fd fd fd fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c1a7fff8c70: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c1a7fff8c80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c1a7fff8c90: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c1a7fff8ca0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==168607==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

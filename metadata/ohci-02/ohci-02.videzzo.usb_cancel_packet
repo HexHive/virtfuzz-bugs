@@ -4,4 +4,4 @@ ASAN_OPTIONS=detect_leaks=0 \
 DEFAULT_INPUT_MAXSIZE=10000000 \
     ./qemu-videzzo-i386-target-videzzo-fuzz-ohci \
     -max_len=10000000 -detect_leaks=0 \
-    poc-qemu-videzzo-i386-target-videzzo-fuzz-ohci-crash-4707b65e8650a05d33feb91239ae40c80006d461
+    poc-qemu-videzzo-i386-target-videzzo-fuzz-ohci-crash-8cc902a05593b7cff5c12aedc22bd740ffcd824b.minimized.usb_cancel_packet
