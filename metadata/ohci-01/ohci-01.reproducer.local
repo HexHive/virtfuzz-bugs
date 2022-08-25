@@ -1,11 +1,3 @@
-Step 1: download the prepared rootfs and the image.
-
-https://drive.google.com/file/d/1qn0FlGBWSnE7L6X08f-6lMhDG--YKr6C/view?usp=sharing
-https://drive.google.com/file/d/1Z6b2X00C7zXMoRrmyXi6Poas1OeCC4Ni/view?usp=sharing
-
-Step 2: run the following script.
-
-``` bash
 QEMU_PATH=../../../qemu/build/qemu-system-x86_64
 KERNEL_PATH=./bzImage
 ROOTFS_PATH=./rootfs.ext2
@@ -20,8 +12,3 @@ $QEMU_PATH \
     -drive file=null-co://,if=none,format=raw,id=disk0 \
     -device usb-storage,port=1,drive=disk0 \
     -nographic
-```
-
-Step 3: with spawned shell (the user is root and the password is empty), run
-`ohci-00`.
-
