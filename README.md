@@ -47,6 +47,7 @@ To send a patch, please refer to
 + https://github.com/qemu/qemu/commit/2b02aabc9d02f9e95946cf639f546bb61f1721b7
 + https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9
 + https://github.com/qemu/qemu/commit/2b3a98255c90d8d2f9f87a73eb33371961508517
++ https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17
 
 ## Status
 
