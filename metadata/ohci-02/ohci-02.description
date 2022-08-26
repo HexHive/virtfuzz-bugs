@@ -1,5 +1,6 @@
 A heap-use-after-free related to a USBPacket whose status is USB_RET_ASYNC was
-found. The packet is allocated at [1], freed at [2], and used at [3] or [4].
+found. I trigger it through hcd-ohci with dev-storage. The packet is allocated
+at [1], freed at [2], and used at [3] or [4].
 
 ``` c
 static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
@@ -7,7 +8,7 @@ static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
     // ...
     ep = usb_ep_get(dev, pid, OHCI_BM(ed->flags, ED_EN));
     pkt = g_new0(USBPacket, 1); // <----------------- allocate [1]
-    usb_packet_init(pkt);
+    usb_packet_init(pkt);       // <---------------------------[8]
     int_req = relative_frame_number == frame_count &&
               OHCI_BM(iso_td.flags, TD_DI) == 0;
     usb_packet_setup(pkt, pid, ep, 0, addr, false, int_req);
@@ -76,7 +77,7 @@ else
 // ...
 ```
 
-In usb_cancel_packet(p=0x623000001260), packet p (0x627000001248) still thinks
+In usb_cancel_packet(p=0x623000001260), packet p (0x627000001260) still thinks
 packet p1 = p->queue.tqe_next (0x60d000005c10) exists, while packet p1 has been
 freed. p1->queue.tqe_circ.tql_prev points to a freed space and thus [3] fails.
 
@@ -189,7 +190,9 @@ ohci_service_iso_td
 
 4 Detach USBPort and cancel ohci->usb_packet
 
+```
 MMIO_WRITE addr=0x4, val=0x4993d90b, size=0x4
+```
 
 The above mmio write will invoke ohci_child_detach() and then invoke
 usb_cancel_packet() which will unlink ohci->usb_packet from the endpoint
@@ -212,3 +215,9 @@ static void ohci_child_detach(USBPort *port1, USBDevice *dev)
 Occasionally, ohci->usb_packet and pkt share the same endpoint and
 ohci->usb_packet is in front of the pkt. When unlinking the USBPacket
 ohci->usb_packet, as ohci does not know that pkt is freed, and thus [3] fails.
+
+## Fixes
+
+As pkt is freed at [2], maybe we should fully drop the USBPacket, even from the
+endpoint queue. BTW, there is a small memory leakage at [8].
+

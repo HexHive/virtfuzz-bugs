@@ -11,6 +11,6 @@ ohci-02:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.0.50"
   reward: null
-  short-description: "Head UAF in usb_cancel_packet"
+  short-description: "Heap-use-after-free in usb_cancel_packet"
   target: "ohci"
   target-type: "usb"

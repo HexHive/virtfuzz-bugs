@@ -1,6 +1,6 @@
 # git pull
 # git checkout -b ohci-02
-# ./configure --target-list=x86_64-softmmu --enable-debug --disable-pie
+# ./configure --target-list=x86_64-softmmu --enable-debug --disable-pie --enable-sanitizers
 # make
 gdb --args ../../../qemu/build/qemu-system-x86_64 \
     -M q35 -m 1G \
