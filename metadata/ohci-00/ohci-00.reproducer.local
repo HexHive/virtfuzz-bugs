@@ -1,4 +1,6 @@
-QEMU_PATH=../../../qemu/build/qemu-system-x86_64
+# QEMU_PATH=../../../qemu/build/qemu-system-x86_64
+# Test: https://git.kraxel.org/cgit/qemu/log/?h=sirius/usb-storage-assert
+QEMU_PATH=../../../qemu-devel/build/qemu-system-x86_64
 KERNEL_PATH=./bzImage
 ROOTFS_PATH=./rootfs.ext2
 $QEMU_PATH \

@@ -91,12 +91,12 @@ In usb_msd_handle_reset(), s->packet has been freed at [2] and thus [4] fails.
 We want to make dev-storage to USB_MSDM_CSW.
 
 ```
-0x1d4000 ed = { flags = 0xda9d3900, tail = 0x0, head = 0x0, next = 0x140000 }
+0x1d4000 ed = { flags = 0xda9d3900, tail = 0x0, head = 0x137000, next = 0x140000 }
 
 # the following is in ohci_service_td()
 completion = 0
-0x1d5000 td = { flags = 0x0, cbp = 0x1d6ffc, next = 0x0, be = 0x1d701a }
-dir = 1
+0x137000 td = { flags = 0xb548ffdd, cbp = 0x138ffc, next = 0x0, be = 0x13901a }
+dir = 3
 pid = USB_TOKEN_OUT
 len = 0x1f
 pktlen = 0x1f
@@ -126,7 +126,7 @@ of ohci->usb_packet.
 0x137000 ed = { flags = 0x1a31080, tail = 0x0, head = 0x138000, next = 0x141000 }
 
 # the following is in ohci_service_td()
-completion = 1
+completion = 0
 0x138000 td = { flags = 0x0, cbp = 0x139ffc, next = 0x0, be = 0xf4e15e23 }
 dir = 2
 pid = USB_TOKEN_IN
@@ -161,7 +161,7 @@ We want to allocate a new USBPacket and free it immediately.
                     offset = {0x0, 0x749b, 0xcbe3, 0x0, 0x0, 0x0, 0x0, 0x0} }
 starting_frame = 0
 frame_count = 4
-relative_frame_numer = 1
+relative_frame_number = 1 ( 0 < 1 < frame_count )
 dir = 2
 pid = USB_TOKEN_IN
 start_offset = 0x749b
