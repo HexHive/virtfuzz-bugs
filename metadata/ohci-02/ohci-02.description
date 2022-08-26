@@ -2,6 +2,14 @@ A heap-use-after-free related to a USBPacket whose status is USB_RET_ASYNC was
 found. I trigger it through hcd-ohci with dev-storage. The packet is allocated
 at [1], freed at [2], and used at [3] or [4].
 
+How to exploit: Through GDB, after [2], the pkt is put into an unsorted bin. By
+this artical:
+https://ctf-wiki.mahaloz.re/pwn/linux/glibc-heap/unsorted_bin_attack/, this UAF
+has potential to bypass ALSR and excute random functions.
+
+How to fix: As pkt is freed at [2], maybe we should fully drop the USBPacket,
+even from the endpoint queue.
+
 ``` c
 static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
 {
