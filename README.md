@@ -53,7 +53,7 @@ To send a patch, please refer to
 
 Predefined values
 + report-status: generated, reported
-+ patch-status: None, preprared, revising, testing, merged
++ patch-status: None, preprared, replaced, revised, tested, merged
 
 |bug-id|target|target-type|arch|bug-types|short-description|novelty|reward|report-status|patch-status|fixing-commit|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -61,6 +61,7 @@ Predefined values
 |ac97-00|ac97|audio|i386|Abort|An abort was just triggered in audio_calloc|True|None|generated|None|None|
 |smc91c111-00|smc91c111|net|arm|OOB read/wirte|OOB read/write in smc91c111|True|None|generated|None|None|
 |xlnx_dp-00|xlnx_dp|display|aarch64|Abort|Abort in xlnx_dp_aux_set_command|True|None|reported|revising|None|
+|ohci-00|ohci|usb|i386|Assertion Failure|Assertion failed in usb_msd_transfer_data|True|None|reported|replaced|None|
 |ohci-01|ohci|usb|i386|Abort|abort in ohci_frame_boundary|false|None|reported|prepared|None|
 
 ## Contribution
