@@ -1,0 +1,214 @@
+A heap-use-after-free related to a USBPacket whose status is USB_RET_ASYNC was
+found. The packet is allocated at [1], freed at [2], and used at [3] or [4].
+
+``` c
+static int ohci_service_iso_td(OHCIState *ohci, struct ohci_ed *ed)
+{
+    // ...
+    ep = usb_ep_get(dev, pid, OHCI_BM(ed->flags, ED_EN));
+    pkt = g_new0(USBPacket, 1); // <----------------- allocate [1]
+    usb_packet_init(pkt);
+    int_req = relative_frame_number == frame_count &&
+              OHCI_BM(iso_td.flags, TD_DI) == 0;
+    usb_packet_setup(pkt, pid, ep, 0, addr, false, int_req);
+    usb_packet_addbuf(pkt, buf, len);
+    usb_handle_packet(dev, pkt);
+    if (pkt->status == USB_RET_ASYNC) {
+        usb_device_flush_ep_queue(dev, ep);
+        g_free(pkt); // <-------------------------------- free [2]
+        return 1;
+    }
+    // ...
+
+void usb_cancel_packet(USBPacket * p)
+{
+    bool callback = (p->state == USB_PACKET_ASYNC);
+    assert(usb_packet_is_inflight(p));
+    usb_packet_set_state(p, USB_PACKET_CANCELED);
+    QTAILQ_REMOVE(&p->ep->queue, p, queue); // <---------- use [3]
+    if (callback) {
+        usb_device_cancel_packet(p->ep->dev, p);
+    }
+}
+
+void usb_msd_handle_reset(USBDevice *dev)
+{
+    // ...
+    if (s->packet) {
+        s->packet->status = USB_RET_STALL; // <----------- use [4]
+        usb_msd_packet_complete(s);
+    }
+    // ...
+}
+```
+
+## Crash analysis
+
+1 Unlinking
+
+Let's review some data structs in USBPacket
+
+``` c
+typedef struct QTailQLink {
+    void *tql_next;
+    struct QTailQLink *tql_prev;
+} QTailQLink;
+
+union {
+    struct USBPacket *tqe_next;
+    QTailQLink tqe_circ;
+} queue;
+
+// +000 USBPacket p
+// +104           p->queue
+// +104           p->queue.tqe_next
+// +104           p->queue.tql_circ->tql_next
+// +112           p->queue.tql_circ->tql_prev
+
+// QTAILQ_REMOVE(&p->ep->queue, p, queue)
+if (p->queue.tqe_next != NULL)
+    p->queue.tqe_next->queue.tqe_circ.tql_prev = \
+//                     +104           +112
+        p->queue.tqe_circ.tql_prev;
+else
+    (&p->ep->queue)->tqh_circ.tql_prev = \
+        p->queue.tqe_circ.tql_prev;
+// ...
+```
+
+In usb_cancel_packet(p=0x623000001260), packet p (0x627000001248) still thinks
+packet p1 = p->queue.tqe_next (0x60d000005c10) exists, while packet p1 has been
+freed. p1->queue.tqe_circ.tql_prev points to a freed space and thus [3] fails.
+
+2 usb_msd_handle_reset()
+
+In usb_msd_handle_reset(), s->packet has been freed at [2] and thus [4] fails.
+
+## How to trigger this Heap UAF?
+
+1 Craft ED and TD, visit usb_msd_handle_data() with USB_TOKEN_OUT + USB_MSDM_CBW
+
+We want to make dev-storage to USB_MSDM_CSW.
+
+```
+0x1d4000 ed = { flags = 0xda9d3900, tail = 0x0, head = 0x0, next = 0x140000 }
+
+# the following is in ohci_service_td()
+completion = 0
+0x1d5000 td = { flags = 0x0, cbp = 0x1d6ffc, next = 0x0, be = 0x1d701a }
+dir = 1
+pid = USB_TOKEN_OUT
+len = 0x1f
+pktlen = 0x1f
+# data between cbp to be
+0x00007fffffff7b40     55 53 42 43 00 00 00 00 00 00 00 00 00 00 00 03    USBC............
+0x00007fffffff7b50     d0 9d ea 81 d0 9d ea 81 d0 9d ea 81 d0 9d ea
+
+# control flow
+ohci_service_iso_td
+    usb_handle_packet(dev=dev, p=ohci->usb_packet)
+        usb_process_one(p=p)
+            usb_msd_handle_data(dev=dev, p=p)
+                // USB_TOKEN_OUT + USB_MSDM_CBW
+                if (s->data_len == 0) {
+                    s->mode = USB_MSDM_CSW;
+                assert(s->req)
+```
+
+As such, s->mode is USB_MSDM_CSW and s->req is not NULL.
+
+2 Craft ED and TD, visit usb_msd_handle_data() with USB_TOKEN_IN + USB_MSDM_CSW
+
+We want to trigger ohci_service_td() and control the endpoint of and the status
+of ohci->usb_packet.
+
+```
+0x137000 ed = { flags = 0x1a31080, tail = 0x0, head = 0x138000, next = 0x141000 }
+
+# the following is in ohci_service_td()
+completion = 1
+0x138000 td = { flags = 0x0, cbp = 0x139ffc, next = 0x0, be = 0xf4e15e23 }
+dir = 2
+pid = USB_TOKEN_IN
+len = 0xe28
+pktlen = 0xe28
+flag_r = 0
+ep = (USBEndpoint *) 0x623000001248
+
+# control flow
+ohci_service_iso_td
+    usb_handle_packet(dev=dev, p=ohci->usb_packet)
+        usb_process_one(p=p)
+            usb_msd_handle_data(dev=dev, p=p)
+                // USB_TOKEN_IN + USB_MSDM_CSW
+                if (s->req) p->status = USB_RET_ASYNC    // s->req is not NULL
+        if (p->status == USB_RET_ASYNC) 
+            QTAILQ_INSERT_TAIL(&p->ep->queue, p, queue); // <-- [7]
+```
+
+As shown, ohci->usb_packet is the tail of the endpoint's USBPacket queue [7].
+Besides, ohci->usb_packet's status is USB_RET_ASYNC.
+
+3 Craft ED and TD and visit usb_queue_one()
+
+We want to allocate a new USBPacket and free it immediately.
+
+```
+0x1c0000 ed = { flags = 0xadb9080, tail = 0x0, head = 0x1c1000, next = 0x0 }
+
+# the following is in ohci_service_iso_td()
+0x1c1000 iso_td = { flags = 0xa4200000, bp = 0x22a2edc3, next = 0x0, be = 0x1173548,
+                    offset = {0x0, 0x749b, 0xcbe3, 0x0, 0x0, 0x0, 0x0, 0x0} }
+starting_frame = 0
+frame_count = 4
+relative_frame_numer = 1
+dir = 2
+pid = USB_TOKEN_IN
+start_offset = 0x749b
+next_offset = 0xcbe3
+start_addr = 0x117349b
+end_addr = 0x22a2edc3
+len = 0x1748
+ep = (USBEndpoint *) 0x623000001248
+```
+
+Interesting, usb_handle_packet() invokes usb_queue_one() where the pkt is added
+to the tail of the USBPacket queue of the endpoint (p->ep) [5]. However, the pkt
+is immediately freed at [6].
+
+```
+ohci_service_iso_td
+    pkt = g_new0(USBPacket, 1);
+    usb_handle_packet(dev=dev, p=pkt)
+        usb_queue_one(p=p)
+            usb_packet_set_state(p, USB_PACKET_QUEUED);
+            QTAILQ_INSERT_TAIL(&p->ep->queue, p, queue); // <--- [5]
+            p->status = USB_RET_ASYNC
+    if (p->status == USB_RET_ASYNC) g_free(pkt) // <------------ [6]
+```
+
+4 Detach USBPort and cancel ohci->usb_packet
+
+MMIO_WRITE addr=0x4, val=0x4993d90b, size=0x4
+
+The above mmio write will invoke ohci_child_detach() and then invoke
+usb_cancel_packet() which will unlink ohci->usb_packet from the endpoint
+USBPacket queue [7].
+
+``` c
+static void ohci_child_detach(USBPort *port1, USBDevice *dev)
+{
+    OHCIState *ohci = port1->opaque;
+
+    if (ohci->async_td &&
+        usb_packet_is_inflight(&ohci->usb_packet) &&
+        ohci->usb_packet.ep->dev == dev) {
+        usb_cancel_packet(&ohci->usb_packet); // <------------- [7]
+        ohci->async_td = 0;
+    }
+}
+```
+
+Occasionally, ohci->usb_packet and pkt share the same endpoint and
+ohci->usb_packet is in front of the pkt. When unlinking the USBPacket
+ohci->usb_packet, as ohci does not know that pkt is freed, and thus [3] fails.
