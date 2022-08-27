@@ -1,0 +1,79 @@
+When I ran hcd-ohci with dev-storage, I found an assertion failure in
+usb_cancel_packet() [1] due to p->state == USB_PACKET_COMPLETE. This is due to
+the inconsistancy when resetting device.
+
+``` c
+static inline bool usb_packet_is_inflight(USBPacket *p)
+{
+    return (p->state == USB_PACKET_QUEUED ||
+            p->state == USB_PACKET_ASYNC);
+}
+
+void usb_cancel_packet(USBPacket * p)
+{
+    bool callback = (p->state == USB_PACKET_ASYNC);
+    assert(usb_packet_is_inflight(p)); // <------------------------------- [1]
+    usb_packet_set_state(p, USB_PACKET_CANCELED);
+    QTAILQ_REMOVE(&p->ep->queue, p, queue);
+    if (callback) {
+        usb_device_cancel_packet(p->ep->dev, p);
+    }
+}
+```
+
+## Crash analysis
+
+1 With crafted ED and TD, we can have the ohci->usb_packet's status to be
+USB_RET_ASYNC. And thus ohci->async_td is not NULL any more [2].
+
+``` c
+static int ohci_service_td(OHCIState *ohci, struct ohci_ed *ed)
+{        
+        // ...
+        usb_handle_packet(dev, &ohci->usb_packet);
+        if (ohci->usb_packet.status == USB_RET_ASYNC) {
+            usb_device_flush_ep_queue(dev, ep);
+            ohci->async_td = addr; // <----------------------------------- [2]
+            return 1;
+        }
+```
+
+At the same time, the dev-storage will ref the current usb_packet
+(ohci->usb_packet) [3].
+
+```
+static void usb_msd_handle_data(USBDevice *dev, USBPacket *p) {
+        // ...
+        s->packet = p; // <----------------------------------------------- [3]
+        p->status = USB_RET_ASYNC;
+        // ...
+}
+
+```
+
+2 However, we can first issue `MMIO_WRITE, 0xe0000054, 0x4, 0x4e33b4bf` to reset
+the dev-storage device. This will mark the state of ohci->usb_packet to
+USB_PACKET_COMPLETE and clear s->packet.
+
+```
+ohci_mem_write
+    ohci_port_set_status
+        usb_device_reset
+            usb_device_handle_reset
+                usb_msd_handle_reset
+                    usb_msd_packet_complete
+                        usb_packet_complete
+```
+
+3  We can then issue `MMIO_WRITE, 0xe0000004, 0x4, 0x3d8d323a` to reset the
+roothub and this will invoke ohci_stop_endpoints() where usb_cancel_packet()
+is invoked and thus [1] fails as the state of ohci->usb_packet has been changed
+to USB_PACKET_COMPLETE.
+
+```
+ohci_set_ctl
+    ohci_roothub_reset
+        ohci_stop_endpoints
+            if (ohci->async_td != NULL) usb_cancel_packet(&ohci->usb_packet);
+            assert(usb_packet_is_inflight(p)); // boom
+```
