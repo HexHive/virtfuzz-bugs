@@ -11,6 +11,6 @@ ohci-03:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.0.91"
   reward: null
-  short-description: "assertion failure in usb_cancel_packet"
+  short-description: "Assertion failure in usb_cancel_packet"
   target: "ohci"
   target-type: "usb"

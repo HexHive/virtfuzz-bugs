@@ -1,6 +1,101 @@
-# assertion failure in usb_cancel_packet
+# Assertion failure in usb_cancel_packet
 
-## More technique details
+When I ran hcd-ohci with dev-storage, I found an assertion failure in
+usb_cancel_packet() [1] due to p->state == USB_PACKET_COMPLETE. This is due to
+the inconsistency when resetting device.
+
+``` c
+static inline bool usb_packet_is_inflight(USBPacket *p)
+{
+    return (p->state == USB_PACKET_QUEUED ||
+            p->state == USB_PACKET_ASYNC);
+}
+
+void usb_cancel_packet(USBPacket * p)
+{
+    bool callback = (p->state == USB_PACKET_ASYNC);
+    assert(usb_packet_is_inflight(p)); // <------------------------------- [1]
+    usb_packet_set_state(p, USB_PACKET_CANCELED);
+    QTAILQ_REMOVE(&p->ep->queue, p, queue);
+    if (callback) {
+        usb_device_cancel_packet(p->ep->dev, p);
+    }
+}
+```
+
+## Crash analysis
+
+1 With crafted ED and TD, we can have the ohci->usb_packet's status to be
+USB_RET_ASYNC [5]. And thus ohci->async_td is not NULL anymore [2].
+
+```
+ed0 = { flags = 0x685f0900, tail = 0x0, head = &td0, next = 0 }
+
+td0 = { flags = 0x0, cbp = 0x1b8ffc, next = 0, be = 0x1b901a }
+# data from cbp to be
+55 53 42 43 00 00 00 00 00 00 00 00 00 00 00 03    USBC............
+e8 56 20 40 e8 56 20 40 e8 56 20 40 e8 56 20
+
+ed1 = { flags = 0x08303080, tail = 0x0, head = &td1, next = 0 }
+
+td1 = { flags = 0x90000000, cbp = 0x19affc, next = 0, be = 0x19b01a }
+# data from cbp to be
+55 53 42 43 00 00 00 00 00 00 00 00 00 00 00 03    USBC............
+e8 56 20 40 e8 56 20 40 e8 56 20 40 e8 56 20
+```
+
+``` c
+static int ohci_service_td(OHCIState *ohci, struct ohci_ed *ed)
+{        
+        // ...
+        usb_handle_packet(dev, &ohci->usb_packet); // <------------------- [4]
+        if (ohci->usb_packet.status == USB_RET_ASYNC) {
+            usb_device_flush_ep_queue(dev, ep);
+            ohci->async_td = addr; // <----------------------------------- [2]
+            return 1;
+        }
+```
+
+At the same time, the dev-storage will ref the current usb_packet
+(ohci->usb_packet) [4][3].
+
+```
+static void usb_msd_handle_data(USBDevice *dev, USBPacket *p) {
+        // ...
+        s->packet = p; // <----------------------------------------------- [3]
+        p->status = USB_RET_ASYNC; // <----------------------------------- [5]
+        // ...
+}
+```
+
+2 We can first issue `MMIO_WRITE, 0xe0000054, 0x4, 0x4e33b4bf` to reset
+the dev-storage device. This will mark the state of ohci->usb_packet to
+USB_PACKET_COMPLETE and clear s->packet.
+
+```
+ohci_mem_write
+    ohci_port_set_status
+        usb_device_reset
+            usb_device_handle_reset
+                usb_msd_handle_reset
+                    usb_msd_packet_complete
+                        usb_packet_complete
+```
+
+3  We can then issue `MMIO_WRITE, 0xe0000004, 0x4, 0x3d8d323a` to reset the
+roothub and this will invoke ohci_stop_endpoints() where usb_cancel_packet()
+is invoked and thus [1] fails as the state of ohci->usb_packet has been changed
+to USB_PACKET_COMPLETE.
+
+```
+ohci_set_ctl
+    ohci_roothub_reset
+        ohci_stop_endpoints
+            if (ohci->async_td != NULL) usb_cancel_packet(&ohci->usb_packet);
+            assert(usb_packet_is_inflight(p)); // boom
+```
+
+## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
 qemu, 7.0.91, c669f22f1a47897e8d1d595d6b8a59a572f9158c, Ubuntu 20.04
@@ -81,11 +176,6 @@ NOTE: libFuzzer has rudimentary signal handlers.
 SUMMARY: libFuzzer: deadly signal
 MS: 0 ; base unit: 0000000000000000000000000000000000000000
 ```
-
-### Reproducer steps
-
-# fix pathnames and run
-ohci-03-reproduce.sh ohci-03.reproducer
 
 ## Contact
 

