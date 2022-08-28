@@ -46,7 +46,7 @@ e8 56 20 40 e8 56 20 40 e8 56 20 40 e8 56 20
 
 ``` c
 static int ohci_service_td(OHCIState *ohci, struct ohci_ed *ed)
-{        
+{
         // ...
         usb_handle_packet(dev, &ohci->usb_packet); // <------------------- [4]
         if (ohci->usb_packet.status == USB_RET_ASYNC) {
@@ -94,6 +94,55 @@ ohci_set_ctl
             if (ohci->async_td != NULL) usb_cancel_packet(&ohci->usb_packet);
             assert(usb_packet_is_inflight(p)); // boom
 ```
+
+The above callstack are simplified. The complete callstack is in the following.
+
+```
+ohci_set_ctl
+    ohci_roothub_reset
+        usb_port_reset
+            usb_detach
+                ohci_detach
+                    ohci_child_detach // <-------------------------------- [8]
+            usb_device_reset // <----------------------------------------- [6]
+                usb_device_handle_reset
+                    usb_msd_handle_reset
+                        usb_msd_packet_complete
+                            usb_packet_complete
+        ohci_stop_endpoints // <------------------------------------------ [7]
+            if (ohci->async_td != NULL) usb_cancel_packet(&ohci->usb_packet);
+            assert(usb_packet_is_inflight(p)); // boom
+```
+
+Interestingly, in ohci_roothub_reset(), usb_device_reset() is also invoked [6]
+just like what in step 2. I adjusted my PoC by removing step 2. However, I
+cannot reproduce this assertion failure. Therefore, there is something different
+bewteen [6] and step 2.
+
+Then, I found at [8], ohci_child_detach() cancels the ohci->usb_packet and reset
+ohci->async_td. With step 2, as the status of the ohci->usb_packet has changed
+to USB_PACKET_COMPLETE, usb_cancel_packet() will not be invoked. Without step 2,
+as the status of the ohci->usb_packet is still USB_PACKET_ASYNC,
+usb_cancel_packet() will be invoked and thus everything goes fine.
+
+```
+static void ohci_child_detach(USBPort *port1, USBDevice *dev)
+{
+    OHCIState *ohci = port1->opaque;
+
+    if (ohci->async_td &&
+        usb_packet_is_inflight(&ohci->usb_packet) &&
+        ohci->usb_packet.ep->dev == dev) {
+        usb_cancel_packet(&ohci->usb_packet);
+        ohci->async_td = 0;
+    }
+}
+```
+
+## Suggested fix
+
+I think we may want to detach the port before usb_device_reset() in
+ohci_port_set_status().
 
 ## More details
 
@@ -206,6 +255,36 @@ $QEMU_PATH \
 Step 3: with spawned shell (the user is root and the password is empty), run
 `ohci-03`.
 
+
+## Suggested fix
+
+```
+From f63659addb97c7a3af810bed45f41fc293358121 Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Sun, 28 Aug 2022 18:56:48 +0800
+Subject: [PATCH] hcd-ohci: Fix inconsistency when resetting root hubs
+
+---
+ hw/usb/hcd-ohci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/usb/hcd-ohci.c b/hw/usb/hcd-ohci.c
+index 895b29fb86..72df917834 100644
+--- a/hw/usb/hcd-ohci.c
++++ b/hw/usb/hcd-ohci.c
+@@ -1426,7 +1426,7 @@ static void ohci_port_set_status(OHCIState *ohci, int portnum, uint32_t val)
+ 
+     if (ohci_port_set_if_connected(ohci, portnum, val & OHCI_PORT_PRS)) {
+         trace_usb_ohci_port_reset(portnum);
+-        usb_device_reset(port->port.dev);
++        usb_port_reset(&port->port);
+         port->ctrl &= ~OHCI_PORT_PRS;
+         /* ??? Should this also set OHCI_PORT_PESC.  */
+         port->ctrl |= OHCI_PORT_PES | OHCI_PORT_PRSC;
+-- 
+2.25.1
+
+```
 
 ## Contact
 

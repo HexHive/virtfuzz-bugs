@@ -1,0 +1,25 @@
+From f63659addb97c7a3af810bed45f41fc293358121 Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Sun, 28 Aug 2022 18:56:48 +0800
+Subject: [PATCH] hcd-ohci: Fix inconsistency when resetting root hubs
+
+---
+ hw/usb/hcd-ohci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/usb/hcd-ohci.c b/hw/usb/hcd-ohci.c
+index 895b29fb86..72df917834 100644
+--- a/hw/usb/hcd-ohci.c
++++ b/hw/usb/hcd-ohci.c
+@@ -1426,7 +1426,7 @@ static void ohci_port_set_status(OHCIState *ohci, int portnum, uint32_t val)
+ 
+     if (ohci_port_set_if_connected(ohci, portnum, val & OHCI_PORT_PRS)) {
+         trace_usb_ohci_port_reset(portnum);
+-        usb_device_reset(port->port.dev);
++        usb_port_reset(&port->port);
+         port->ctrl &= ~OHCI_PORT_PRS;
+         /* ??? Should this also set OHCI_PORT_PESC.  */
+         port->ctrl |= OHCI_PORT_PES | OHCI_PORT_PRSC;
+-- 
+2.25.1
+
