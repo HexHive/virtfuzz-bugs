@@ -177,6 +177,36 @@ SUMMARY: libFuzzer: deadly signal
 MS: 0 ; base unit: 0000000000000000000000000000000000000000
 ```
 
+### Reproducer steps
+
+Step 1: download the prepared rootfs and the image.
+
+https://drive.google.com/file/d/1B95zWWcomvZt1wms31Ddc9Xwlq-bfqhq/view?usp=sharing
+https://drive.google.com/file/d/1pxFzn49MKYmMMIIsaL9aUkzebRSYfq3J/view?usp=sharing
+
+Step 2: run the following script.
+
+``` bash
+QEMU_PATH=../../../qemu/build/qemu-system-x86_64
+KERNEL_PATH=./bzImage
+ROOTFS_PATH=./rootfs.ext2
+$QEMU_PATH \
+    -M q35 -m 1G \
+    -kernel $KERNEL_PATH \
+    -drive file=$ROOTFS_PATH,if=virtio,format=raw \
+    -append "root=/dev/vda console=ttyS0" \
+    -net nic,model=virtio -net user \
+    -usb \
+    -device pci-ohci,num-ports=6 \
+    -drive file=null-co://,if=none,format=raw,id=disk0 \
+    -device usb-storage,port=1,drive=disk0 \
+    -nographic
+```
+
+Step 3: with spawned shell (the user is root and the password is empty), run
+`ohci-03`.
+
+
 ## Contact
 
 Let us know if I need to provide more information.

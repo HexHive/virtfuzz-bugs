@@ -394,6 +394,9 @@ MS: 0 ; base unit: 0000000000000000000000000000000000000000
 
 Step 1: download the prepared rootfs and the image.
 
+https://drive.google.com/file/d/1-tEjnRF6suKsNCBcHxYi9aOyv-docj_J/view?usp=sharing
+https://drive.google.com/file/d/18BE7zk1_-yBSyLJDuDlIwlZySbUZahTR/view?usp=sharing
+
 Step 2: run the following script.
 
 ``` bash
