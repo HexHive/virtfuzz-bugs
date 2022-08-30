@@ -1,0 +1,16 @@
+nvme-00:
+  arch: i386
+  bug-types: ["Null Pointer Dereference"]
+  existing-bug-reports: ["https://gitlab.com/qemu-project/qemu/-/issues/362"]
+  existing-patches: null
+  fixing-commit: 2b02aabc9d02f9e95946cf639f546bb61f1721b7
+  hypervisor: qemu
+  introducing-commit: 75c3c9de961db9a76842452c973aea921eb4fa1f
+  novelty: true
+  reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
+  reproducible-host: "Ubunut 18.04"
+  reproducible-version: "6.1.50"
+  reward: null
+  short-description: "Null pointer deference in memory_region_set_enabled()"
+  target: nvme
+  target-type: storage

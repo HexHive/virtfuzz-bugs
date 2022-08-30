@@ -1,0 +1,30 @@
+An access on an unknown address is triggered in memory_region_set_enabled
+because the check of PMR capability is missing for the PMRCTL register write
+when PMR is not set in the launch command line.
+
+## Root Cause Analysis
+
+```
+static void nvme_write_bar(NvmeCtrl *n, hwaddr offset, uint64_t data, ...) {
+  switch (offset) {
+    case 0xE04: /* PMRCTL */
+       // ROOT CAUSE: there should be a check here
+       // when PMR is not configured, return directly
+       // otherwise, n->pmr.dev will be NULL
+       n->bar.pmrctl = data;
+       if (NVME_PMRCTL_EN(data)) {
+           memory_region_set_enabled(&n->pmr.dev->mr, true);
+           n->bar.pmrsts = 0;        //--------------
+       } else {                      // null pointer
+           // omit
+       }
+       return;
+
+void memory_region_set_enabled(MemoryRegion *mr, bool enabled) {
+    if (enabled == mr->enabled) {    // crash at the deref of mr->enabled
+        return;
+    }
+    // omit
+}
+```
+

@@ -1,7 +1,4 @@
-tag: arch: i386
-tag: type: NLPTR deref
-
-# Check of PMR capability is missing for PMRCTL register write
+# Null pointer deference in memory_region_set_enabled()
 
 An access on an unknown address is triggered in memory_region_set_enabled
 because the check of PMR capability is missing for the PMRCTL register write
@@ -33,13 +30,16 @@ void memory_region_set_enabled(MemoryRegion *mr, bool enabled) {
 }
 ```
 
-## More technique details
 
-### QEMU version, upstream commit/tag
-c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50
+## More details
 
-### Host and Guest
-Ubuntu 18.04 docker/QTest Fuzzer
+### Hypervisor, hypervisor version, upstream commit/tag, host
+qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubunut 18.04
+
+### VM architecture, device, device type
+i386, nvme, storage
+
+### Bug Type: Null Pointer Dereference
 
 ### Stack traces, crash details
 
@@ -72,6 +72,7 @@ AddressSanitizer:DEADLYSIGNAL
 
 AddressSanitizer can not provide additional info.
 SUMMARY: AddressSanitizer: SEGV /root/qemu/build-oss-fuzz/../softmmu/memory.c:2482:24 in memory_region_set_enabled
+
 ```
 
 ### Reproducer steps
@@ -111,17 +112,33 @@ UndefinedBehaviorSanitizer:DEADLYSIGNAL
 
 Attachment: https://drive.google.com/file/d/1Ou7hcu_tdFNJAF5W1M0XPAqevxZ_jO8V/view?usp=sharing
 
+
 ## Suggested fix
 
 ```
-diff --git a/hw/block/nvme.c b/hw/block/nvme.c
-index 5fe082e..da95fa5 100644
---- a/hw/block/nvme.c
-+++ b/hw/block/nvme.c
-@@ -5580,6 +5580,10 @@ static void nvme_write_bar(NvmeCtrl *n, hwaddr offset, uint64_t data,
+From: Klaus Jensen <k.jen...@samsung.com>
+
+Qiang Liu reported that an access on an unknown address is triggered in
+memory_region_set_enabled because a check on CAP.PMRS is missing for the
+PMRCTL register write when no PMR is configured.
+
+Cc: qemu-sta...@nongnu.org
+Fixes: 75c3c9de961d ("hw/block/nvme: disable PMR at boot up")
+Resolves: https://gitlab.com/qemu-project/qemu/-/issues/362
+Signed-off-by: Klaus Jensen <k.jen...@samsung.com>
+---
+ hw/nvme/ctrl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/hw/nvme/ctrl.c b/hw/nvme/ctrl.c
+index 0bcaf7192f99..463772602c4e 100644
+--- a/hw/nvme/ctrl.c
++++ b/hw/nvme/ctrl.c
+@@ -5583,6 +5583,10 @@ static void nvme_write_bar(NvmeCtrl *n, hwaddr offset, 
+uint64_t data,
                         "invalid write to PMRCAP register, ignored");
          return;
-     case 0xE04: /* PMRCTL */
+     case 0xe04: /* PMRCTL */
 +        if (!NVME_CAP_PMRS(n->bar.cap)) {
 +            return;
 +        }
@@ -129,8 +146,10 @@ index 5fe082e..da95fa5 100644
          n->bar.pmrctl = data;
          if (NVME_PMRCTL_EN(data)) {
              memory_region_set_enabled(&n->pmr.dev->mr, true);
+-- 
+2.31.1
 ```
 
 ## Contact
 
-Let me know if I need to provide more information.
+Let us know if I need to provide more information.

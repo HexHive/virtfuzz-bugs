@@ -8,7 +8,7 @@ This repo includes all bugs found by ViDeZZo and all bug reports.
   + target-idx, e.g., ati-00, ati-01, ati-02, the idx has two digits
 + BUG_ID.metadata
   + arch:                 str: "i386|arm|aarch64|x86_64"
-  + bug-types:           list: ["Assertion Failure"[, "Abort"][, "Heap UAF"]]
+  + bug-types:           list: ["Assertion Failure"[, "Abort"][, "Heap UAF"][, "Null Pointer Deference"]]
   + existing-bug-reports:list: ["https://xxx"]
   + existing-patches      str: e.g., "https://xxx"
   + fixing-commit         str: e.g., "5288bee45fbd33203b61f8c76e41b15bb5913e6e"
@@ -44,10 +44,10 @@ To send a patch, please refer to
 + https://www.qemu.org/docs/master/devel/submitting-a-patch.html
     + `git config sendemail.cccmd 'scripts/get_maintainer.pl --nogit-fallback'`
     + `git send-email -to qemu-devel@nongnu.org -suppress-cc=self --confirm=always path/to/patch`
-+ https://github.com/qemu/qemu/commit/2b02aabc9d02f9e95946cf639f546bb61f1721b7
++ nvme-00: https://github.com/qemu/qemu/commit/2b02aabc9d02f9e95946cf639f546bb61f1721b7
 + https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9
 + https://github.com/qemu/qemu/commit/2b3a98255c90d8d2f9f87a73eb33371961508517
-+ https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17
++ xlnc_dp-00: https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17
 + ohci-00: https://git.kraxel.org/cgit/qemu/commit/?h=sirius/usb-storage-assert&id=b92f6b8ed58d1ec27b10c24ff3b5c841455ac279
 + ohci-01: https://lore.kernel.org/qemu-devel/20220826051557.119570-1-cyruscyliu@gmail.com/
 + ohci-02: EMAIL
@@ -57,18 +57,19 @@ To send a patch, please refer to
 
 Predefined values
 + report-status: generated, reported
-+ patch-status: None, preprared, replaced, revised, tested, merged
++ patch-status: None, preprared, revised, tested, merged
 
 |bug-id|target|target-type|arch|bug-types|short-description|novelty|reward|report-status|patch-status|fixing-commit|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|nvme-00|nvme|storage|i386|Null Pointer Dereference|Null pointer deference in memory_region_set_enabled()|True|None|reported|merged|None|
 |ati-03|ati|display|i386|SEGV Write|hw/display/ati_2d: Third SEGV in ati_2d.c|True|None|generated|None|None|
 |ac97-00|ac97|audio|i386|Abort|An abort was just triggered in audio_calloc|True|None|generated|None|None|
 |smc91c111-00|smc91c111|net|arm|OOB read/wirte|OOB read/write in smc91c111|True|None|generated|None|None|
 |xlnx_dp-00|xlnx_dp|display|aarch64|Abort|Abort in xlnx_dp_aux_set_command|True|None|reported|merged|None|
-|ohci-00|ohci|usb|i386|Assertion Failure|Assertion failed in usb_msd_transfer_data|True|None|reported|replaced|None|
+|ohci-00|ohci|usb|i386|Assertion Failure|Assertion failed in usb_msd_transfer_data|True|None|reported|revised|None|
 |ohci-01|ohci|usb|i386|Abort|abort in ohci_frame_boundary|false|None|reported|revised|None|
-|ohci-02|ohci|usb|i386|Heap UAF|Heap-use-after-free in usb_cancel_packet|true|None|generated|prepared|None|
-|ohci-03|ohci|usb|i386|Assertion Failure|Assertion failure in usb_cancel_packet|false|None|generated|revised|None|
+|ohci-02|ohci|usb|i386|Heap UAF|Heap-use-after-free in usb_cancel_packet|true|None|reported|revised|None|
+|ohci-03|ohci|usb|i386|Assertion Failure|Assertion failure in usb_cancel_packet|false|None|reported|revised|None|
 
 ## Contribution
 
