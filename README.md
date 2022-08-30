@@ -45,13 +45,13 @@ To send a patch, please refer to
     + `git config sendemail.cccmd 'scripts/get_maintainer.pl --nogit-fallback'`
     + `git send-email -to qemu-devel@nongnu.org -suppress-cc=self --confirm=always path/to/patch`
 + nvme-00: https://github.com/qemu/qemu/commit/2b02aabc9d02f9e95946cf639f546bb61f1721b7
-+ sb-01: https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9
-+ https://github.com/qemu/qemu/commit/2b3a98255c90d8d2f9f87a73eb33371961508517
++ sb16-01: https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9
 + xlnc_dp-00: https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17
++ xlnx_dp-01: https://github.com/qemu/qemu/commit/2b3a98255c90d8d2f9f87a73eb33371961508517
 + ohci-00: https://git.kraxel.org/cgit/qemu/commit/?h=sirius/usb-storage-assert&id=b92f6b8ed58d1ec27b10c24ff3b5c841455ac279
-+ ohci-01: https://lore.kernel.org/qemu-devel/20220826051557.119570-1-cyruscyliu@gmail.com/
++ ohci-01: https://lore.kernel.org/qemu-devel/20220826051557.119570-1-cyruscyliu@gmail.com
 + ohci-02: EMAIL
-+ ohci-03: https://lore.kernel.org/qemu-devel/TBD
++ ohci-03: https://lore.kernel.org/qemu-devel/20220830033022.1164961-1-cyruscyliu@gmail.com
 
 ## Status
 
@@ -67,6 +67,7 @@ Predefined values
 |ac97-00|ac97|audio|i386|Abort|An abort was just triggered in audio_calloc|True|None|generated|None|None|
 |smc91c111-00|smc91c111|net|arm|OOB read/wirte|OOB read/write in smc91c111|True|None|generated|None|None|
 |xlnx_dp-00|xlnx_dp|display|aarch64|Abort|Abort in xlnx_dp_aux_set_command|True|None|reported|merged|None|
+|xlnx_dp-01|xlnx_dp|display|aarch64|Out-of-bounds Read|OOBR in xlnx_dp_read|True|None|reported|merged|None|
 |ohci-00|ohci|usb|i386|Assertion Failure|Assertion failed in usb_msd_transfer_data|True|None|reported|revised|None|
 |ohci-01|ohci|usb|i386|Abort|abort in ohci_frame_boundary|false|None|reported|revised|None|
 |ohci-02|ohci|usb|i386|Heap UAF|Heap-use-after-free in usb_cancel_packet|true|None|reported|revised|None|

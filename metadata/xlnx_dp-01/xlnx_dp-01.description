@@ -43,3 +43,4 @@ According to the implementation of xlnx_dp_write, when the offset is
 s->core_registers[DP_CORE_REG_ARRAY_SIZE] where DP_CORE_REG_ARRAY_SIZE
 is (0x3AF >> 2) (0x3A8 >> 2 is better). However, in xlxn_dp_read, offset
 0x3A8 and 0x3AC is not handled like what is done in the xlnx_dp_write.
+

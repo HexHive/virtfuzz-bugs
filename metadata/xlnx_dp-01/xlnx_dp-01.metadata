@@ -1,0 +1,16 @@
+xlnx_dp-01:
+  arch: aarch64
+  bug-types: ["Out-of-bounds Read"]
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: qemu
+  introducing-commit: "58ac482a66de09a7590f705e53fc6a3fb8a055e8"
+  novelty: true
+  reproducible-commit: "c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50"
+  reproducible-host: "Ubuntu 18.04"
+  reproducible-version: "6.1.50"
+  reward: null
+  short-description: "OOBR in xlnx_dp_read"
+  target: xlnx_dp
+  target-type: display
