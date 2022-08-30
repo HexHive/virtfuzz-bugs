@@ -1,5 +1,3 @@
-# Another ssertion failure in audio_calloc caused by sb16
-
 With the previous patch, having tested more, I find another way to
 trigger the assertion failure.
 
@@ -45,5 +43,3 @@ s->freq is too small.
 Maybe we can fix this flaw by adding s->freq check after s->freq =
 dsp_get_hilo (s) in the second step?
 
-Best,
-Qiang

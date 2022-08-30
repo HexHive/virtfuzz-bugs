@@ -1,0 +1,16 @@
+sb16-01:
+  arch: i386
+  bug-types: ["Abort"]
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: "qemu"
+  introducing-commit: "85571bc7415c3fa9390f5edc3720ec7975219a68"
+  novelty: true
+  reproducible-commit: "c52d69e7dbaaed0ffdef8125e79218672c30161d"
+  reproducible-host: "Ubuntu 18.04"
+  reproducible-version: "6.1.50"
+  reward: null
+  short-description: "Abort in audio_calloc()"
+  target: sb16
+  target-type: audio

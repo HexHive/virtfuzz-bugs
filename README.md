@@ -45,7 +45,7 @@ To send a patch, please refer to
     + `git config sendemail.cccmd 'scripts/get_maintainer.pl --nogit-fallback'`
     + `git send-email -to qemu-devel@nongnu.org -suppress-cc=self --confirm=always path/to/patch`
 + nvme-00: https://github.com/qemu/qemu/commit/2b02aabc9d02f9e95946cf639f546bb61f1721b7
-+ https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9
++ sb-01: https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9
 + https://github.com/qemu/qemu/commit/2b3a98255c90d8d2f9f87a73eb33371961508517
 + xlnc_dp-00: https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17
 + ohci-00: https://git.kraxel.org/cgit/qemu/commit/?h=sirius/usb-storage-assert&id=b92f6b8ed58d1ec27b10c24ff3b5c841455ac279
@@ -62,6 +62,7 @@ Predefined values
 |bug-id|target|target-type|arch|bug-types|short-description|novelty|reward|report-status|patch-status|fixing-commit|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 |nvme-00|nvme|storage|i386|Null Pointer Dereference|Null pointer deference in memory_region_set_enabled()|True|None|reported|merged|None|
+|sb16-01|sb16|audio|i386|Abort|Abort in audio_calloc()|True|None|reported|merged|None|
 |ati-03|ati|display|i386|SEGV Write|hw/display/ati_2d: Third SEGV in ati_2d.c|True|None|generated|None|None|
 |ac97-00|ac97|audio|i386|Abort|An abort was just triggered in audio_calloc|True|None|generated|None|None|
 |smc91c111-00|smc91c111|net|arm|OOB read/wirte|OOB read/write in smc91c111|True|None|generated|None|None|
