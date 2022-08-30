@@ -44,6 +44,7 @@ To send a patch, please refer to
 + https://www.qemu.org/docs/master/devel/submitting-a-patch.html
     + `git config sendemail.cccmd 'scripts/get_maintainer.pl --nogit-fallback'`
     + `git send-email -to qemu-devel@nongnu.org -suppress-cc=self --confirm=always path/to/patch`
++ ati-01: https://lore.kernel.org/qemu-devel/20210906153103.1661195-1-philmd@redhat.com/
 + nvme-00: https://github.com/qemu/qemu/commit/2b02aabc9d02f9e95946cf639f546bb61f1721b7
 + sb16-01: https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9
 + xlnc_dp-00: https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17
@@ -57,10 +58,11 @@ To send a patch, please refer to
 
 Predefined values
 + report-status: generated, reported
-+ patch-status: None, preprared, revised, tested, merged
++ patch-status: None, preprared, revised, merged
 
 |bug-id|target|target-type|arch|bug-types|short-description|novelty|reward|report-status|patch-status|fixing-commit|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|ati-01|ati|display|i386|Out-of-bounds Write|OOB write in ati_2d_blt()|True|CVE-2021-3638|reported|revised|None|
 |nvme-00|nvme|storage|i386|Null Pointer Dereference|Null pointer deference in memory_region_set_enabled()|True|None|reported|merged|None|
 |sb16-01|sb16|audio|i386|Abort|Abort in audio_calloc()|True|None|reported|merged|None|
 |ati-03|ati|display|i386|SEGV Write|hw/display/ati_2d: Third SEGV in ati_2d.c|True|None|generated|None|None|

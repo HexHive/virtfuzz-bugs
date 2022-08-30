@@ -1,9 +1,7 @@
-# Inconsistent dst_[x|y] and s->regs.dst_[x|y] in ati_2d_blt causing an OOB write of vram_ptr
-
-## Root Cause Analysis
-
 There is an inconsistent check and use of dst_[x|y] and s->regs.dst_[x|y] in
 ati_2d_blt. This inconsistent check will cause an OOB write of vram_ptr.
+
+## Root Cause Analysis
 
 In the latest ati_2d_blt(), according to s->regs.dp_cntrl, dst_[x|y] has
 different semantics.
@@ -69,3 +67,4 @@ The parameter of pixman_fill, i.e., dst_stride, bpp, s->regs.dst_x,
 s->regs.dst_y, s->regs.dst_width, and s->regs.dst_height, all can be controlled
 by a malicious guest. But not I am not clear what memory objects can be written by
 this primitive.
+

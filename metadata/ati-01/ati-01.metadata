@@ -1,0 +1,16 @@
+ati-01:
+  arch: i386
+  bug-types: ["Out-of-bounds Write"]
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: qemu
+  introducing-commit: "584acf34cb05f16e13a46d666196a7583d232616"
+  novelty: true
+  reproducible-commit: "c52d69e7dbaaed0ffdef8125e79218672c30161d"
+  reproducible-host: "Ubuntu 18.04"
+  reproducible-version: "6.1.50"
+  reward: CVE-2021-3638
+  short-description: "OOB write in ati_2d_blt()"
+  target: ati
+  target-type: display
