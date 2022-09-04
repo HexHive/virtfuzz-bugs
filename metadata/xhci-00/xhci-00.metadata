@@ -1,0 +1,16 @@
+xhci-00:
+  arch: "i386"
+  bug-types: ["Abort"]
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: "qemu"
+  introducing-commit: null
+  novelty: true
+  reproducible-commit: "9a99f964b152f8095949bbddca7841744ad418da"
+  reproducible-host: "Ubuntu 20.04"
+  reproducible-version: "7.0.94"
+  reward: null
+  short-description: "Abort in xhci_find_stream()"
+  target: xhci
+  target-type: usb

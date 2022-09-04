@@ -74,6 +74,7 @@ Predefined values
 |ohci-01|ohci|usb|i386|Abort|abort in ohci_frame_boundary|false|None|reported|revised|None|
 |ohci-02|ohci|usb|i386|Heap UAF|Heap-use-after-free in usb_cancel_packet|true|None|reported|revised|None|
 |ohci-03|ohci|usb|i386|Assertion Failure|Assertion failure in usb_cancel_packet|false|None|reported|revised|None|
+|xhci-00|xhci|usb|i386|Abort|Abort in xhci_find_stream()|True|None|reported|revised|None|
 
 ## Contribution
 

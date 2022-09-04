@@ -1,0 +1,30 @@
+Step 1: download the prepared rootfs and the image.
+
+https://drive.google.com/file/d/10C2110VH-GrwACiPebC8-Vgcf5_Ny8Sd/view?usp=sharing
+https://drive.google.com/file/d/1jAMf8rtTM8p88gamhNk4HC5Z34XtjUHw/view?usp=sharing
+
+Step 2: run the following script.
+
+``` bash
+QEMU_PATH=../../../qemu/build/qemu-system-x86_64
+KERNEL_PATH=./bzImage
+ROOTFS_PATH=./rootfs.ext2
+$QEMU_PATH \
+    -M q35 -m 1G \
+    -kernel $KERNEL_PATH \
+    -drive file=$ROOTFS_PATH,if=virtio,format=raw \
+    -append "root=/dev/vda console=ttyS0" \
+    -net nic,model=virtio -net user \
+    -drive file=null-co://,if=none,format=raw,id=disk0 \
+    -device qemu-xhci,id=xhci -device usb-storage,drive=disk0 \
+    -device usb-bot -device usb-tablet,bus=xhci.0 \
+    -chardev null,id=cd0 -chardev null,id=cd1 \
+    -device usb-braille,chardev=cd0 -device usb-ccid -device usb-ccid \
+    -device usb-kbd -device usb-mouse -device usb-serial,chardev=cd1 \
+    -device usb-tablet -device usb-wacom-tablet -device usb-audio \
+    -nographic
+```
+
+Step 3: with spawned shell (the user is root and the password is empty), run
+`xhci-00`.
+

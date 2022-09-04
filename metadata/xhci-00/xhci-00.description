@@ -1,0 +1,18 @@
+I triggered an abort in xhci_find_stream() [1]. This is because the
+secondary stream arrays is enabled by setting linear stream array (LSA) bit (in
+endpoint context) to 0. We may show warnings and drop this operation.
+
+``` c
+static XHCIStreamContext *xhci_find_stream(XHCIEPContext *epctx,
+                                           unsigned int streamid,
+                                           uint32_t *cc_error)
+{
+    // ...
+    if (epctx->lsa) {
+        // ...
+    } else {
+        FIXME("secondary streams not implemented yet"); // <----------- [1]
+    }
+    // ...
+```
+
