@@ -53,6 +53,7 @@ To send a patch, please refer to
 + ohci-01: https://lore.kernel.org/qemu-devel/20220826051557.119570-1-cyruscyliu@gmail.com
 + ohci-02: EMAIL
 + ohci-03: https://lore.kernel.org/qemu-devel/20220830033022.1164961-1-cyruscyliu@gmail.com
++ xhci-00: https://gitlab.com/qemu-project/qemu/-/issues/1192
 
 ## Status
 
