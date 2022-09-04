@@ -107,7 +107,7 @@ typedef struct ohci_iso_td {
 } ohci_iso_td;
 
 int main(int argc, char **argv) {
-    printf("[+]\n[+] Reproduce ohci-01: abort in ohci_frame_boundary!\n[+]\n");
+    printf("[+]\n[+] Reproduce ohci-03: start\n[+]\n");
 
     // lspci -v and we will get ohci's pci address
     int mmio_fd = open("/sys/devices/pci0000:00/0000:00:03.0/resource0", O_RDWR | O_SYNC);
@@ -204,7 +204,7 @@ int main(int argc, char **argv) {
     mmio_write(0x54, 0x4e33b4bf); // ohci_port_set_status
     mmio_write(0x4, 0x3d8d323a); // ohci_roothub_reset
 
-    printf("[+]\n[+] Reproduce ohci-03: failed!\n[+]\n");
+    printf("[+]\n[+] Reproduce ohci-03: fail\n[+]\n");
 
     return 0;
 }

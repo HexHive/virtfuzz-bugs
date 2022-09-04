@@ -180,7 +180,7 @@ static void craft_hcca0_intr2(ohci_hcca *hcca) {
 }
 
 int main(int argc, char **argv) {
-    printf("[+]\n[+] Reproduce ohci-01: abort in ohci_frame_boundary!\n[+]\n");
+    printf("[+]\n[+] Reproduce ohci-02: start\n[+]\n");
 
     // lspci -v and we will get ohci's pci address
     int mmio_fd = open("/sys/devices/pci0000:00/0000:00:03.0/resource0", O_RDWR | O_SYNC);
@@ -243,7 +243,7 @@ int main(int argc, char **argv) {
     mmio_write(0x4, 0x33161e26 | 0xc0);
     mmio_write(0x4, 0x4993d90b); // use
 
-    printf("[+]\n[+] Reproduce ohci-02: failed!\n[+]\n");
+    printf("[+]\n[+] Reproduce ohci-02: fail\n[+]\n");
 
     return 0;
 }
