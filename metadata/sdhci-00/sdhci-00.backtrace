@@ -1,0 +1,107 @@
+root@29910d1792df:~/videzzo/videzzo_qemu/out-san# DEFAULT_INPUT_MAXSIZE=10000000 /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-sdhci-v3  -max_len=10000000 -detect_leaks=0 /root/videzzo/videzzo_qemu/out-san/poc-qemu-videzzo-i386-target-videzzo-fuzz-sdhci-v3-crash-c756d97d60ad4f08f32c7c149ae5149392f1a2ac.minimized
+==9626==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x55eb6a3b63c0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 2848000054
+INFO: Loaded 1 modules   (423415 inline 8-bit counters): 423415 [0x55eb6ca40000, 0x55eb6caa75f7), 
+INFO: Loaded 1 PC tables (423415 PCs): 423415 [0x55eb6c3c9840,0x55eb6ca3f7b0),
+/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-sdhci-v3: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *sdhci*
+This process will fuzz the following MemoryRegions:
+  * sdhci[0] (size 100)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * sdhci, EVENT_TYPE_MMIO_READ, 0xe0000000 +0x100, 1,4
+  * sdhci, EVENT_TYPE_MMIO_WRITE, 0xe0000000 +0x100, 1,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 183Mb
+Running: /root/videzzo/videzzo_qemu/out-san/poc-qemu-videzzo-i386-target-videzzo-fuzz-sdhci-v3-crash-c756d97d60ad4f08f32c7c149ae5149392f1a2ac.minimized
+=================================================================
+==9626==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x615000024400 at pc 0x55eb67e98a4d bp 0x7ffe2dfc3030 sp 0x7ffe2dfc3028
+READ of size 1 at 0x615000024400 thread T0
+    #0 0x55eb67e98a4c in sdhci_read_dataport /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/sd/sdhci.c:474:18
+    #1 0x55eb67e8b875 in sdhci_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/sd/sdhci.c:1022:19
+    #2 0x55eb6938486b in memory_region_read_accessor /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:440:11
+    #3 0x55eb69345001 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:554:18
+    #4 0x55eb6934232c in memory_region_dispatch_read1 /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1424:16
+    #5 0x55eb69341a68 in memory_region_dispatch_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1457:9
+    #6 0x55eb693ba81d in flatview_read_continue /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2875:23
+    #7 0x55eb693bbe28 in flatview_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2917:12
+    #8 0x55eb693bb8e8 in address_space_read_full /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2930:18
+    #9 0x55eb66b837d4 in address_space_read /root/videzzo/videzzo_qemu/qemu/include/exec/memory.h:2869:18
+    #10 0x55eb66b837d4 in qemu_readw /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1007:5
+    #11 0x55eb66b8211a in dispatch_mmio_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1026:35
+    #12 0x55eb6a3b1d7f in videzzo_dispatch_event /root/videzzo/videzzo.c:1122:5
+    #13 0x55eb6a3a90fb in __videzzo_execute_one_input /root/videzzo/videzzo.c:272:9
+    #14 0x55eb6a3a8fd0 in videzzo_execute_one_input /root/videzzo/videzzo.c:313:9
+    #15 0x55eb66b97e7c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1471:12
+    #16 0x55eb6a3b6662 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1891:18
+    #17 0x55eb66a7a73d in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:589:17
+    #18 0x55eb66a5d4c4 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #19 0x55eb66a6843e in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:882:19
+    #20 0x55eb66a54a46 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #21 0x7f025d83b082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #22 0x55eb66a54a9d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-sdhci-v3+0x265aa9d)
+
+0x615000024400 is located 0 bytes to the right of 512-byte region [0x615000024200,0x615000024400)
+allocated by thread T0 here:
+    #0 0x55eb66b47ed7 in __interceptor_calloc /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:154:3
+    #1 0x7f025eaf2ef0 in g_malloc0 (/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x57ef0)
+    #2 0x55eb67eafda7 in sdhci_pci_realize /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/sd/sdhci-pci.c:36:5
+    #3 0x55eb67ad165e in pci_qdev_realize /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/pci/pci.c:2218:9
+    #4 0x55eb69713efb in device_set_realized /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/core/qdev.c:553:13
+    #5 0x55eb6974bb9b in property_set_bool /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:2273:5
+    #6 0x55eb69744acd in object_property_set /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:1408:5
+    #7 0x55eb69758459 in object_property_set_qobject /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/qom-qobject.c:28:10
+    #8 0x55eb6974582d in object_property_set_bool /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:1477:15
+    #9 0x55eb697056f2 in qdev_realize /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/core/qdev.c:333:12
+    #10 0x55eb68371a79 in qdev_device_add_from_qdict /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qdev-monitor.c:714:10
+    #11 0x55eb68373f9f in qdev_device_add /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/qdev-monitor.c:733:11
+    #12 0x55eb68395a50 in device_init_func /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/vl.c:1142:11
+    #13 0x55eb6a08fe25 in qemu_opts_foreach /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/qemu-option.c:1135:14
+    #14 0x55eb683826bc in qemu_create_cli_devices /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/vl.c:2514:5
+    #15 0x55eb68382251 in qmp_x_exit_preconfig /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/vl.c:2582:5
+    #16 0x55eb683897cf in qemu_init /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/vl.c:3584:9
+    #17 0x55eb66b96173 in LLVMFuzzerInitialize /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1728:5
+    #18 0x55eb66a6502b in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:664:29
+    #19 0x55eb66a54a46 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #20 0x7f025d83b082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/sd/sdhci.c:474:18 in sdhci_read_dataport
+Shadow bytes around the buggy address:
+  0x0c2a7fffc830: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c2a7fffc840: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c2a7fffc850: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c2a7fffc860: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0c2a7fffc870: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x0c2a7fffc880:[fa]fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c2a7fffc890: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x0c2a7fffc8a0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x0c2a7fffc8b0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x0c2a7fffc8c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x0c2a7fffc8d0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==9626==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+
