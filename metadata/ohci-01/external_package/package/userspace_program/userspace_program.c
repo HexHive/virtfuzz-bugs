@@ -109,7 +109,7 @@ typedef struct ohci_iso_td {
 int main(int argc, char **argv) {
     printf("[+]\n[+] Reproduce ohci-01: start\n[+]\n");
 
-    // lspci -v and we will get ohci's pci address
+    // lspci -v
     int mmio_fd = open("/sys/devices/pci0000:00/0000:00:03.0/resource0", O_RDWR | O_SYNC);
     if (mmio_fd == -1)
         die("[-] Open mmio_fd failed.\n");
