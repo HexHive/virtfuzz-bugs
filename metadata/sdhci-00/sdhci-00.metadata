@@ -11,6 +11,6 @@ sdhci-00:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.1.50"
   reward: null
-  short-description: "Heap-buffer-overflow in sdhci_read_dataport"
+  short-description: "Heap-buffer-overflow in sdhci_read_dataport()"
   target: "sdhci"
   target-type: "storage"

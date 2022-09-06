@@ -1,0 +1,30 @@
+I found a heap-buffer-overflow read (off-by-one) in sdhci_read_dataport() since
+s->data_count is possibly equal to the size of the heap buffer s->fifo_buffer
+[1]. We can then read at most 8 or 4? bytes after a beap buffer.
+
+``` c
+static uint32_t sdhci_read_dataport(SDHCIState *s, unsigned size)
+{
+    // ...
+    for (i = 0; i < size; i++) {
+        // sizeof(s->fifo_buffer) = 0x200
+        // s->data_count = 0x200
+        value |= s->fifo_buffer[s->data_count] << i * 8; // <------------ [1]
+        // ...
+```
+
+The processes to triggering this off-by-one are in the following.
+
+1 MMIO_WRITE, 0xe0000058, 0x4, physaddr
+
+This sets s->admasysaddr to physaddr that is 256 bytes aligned.
+
+2 MMIO_WRITE, 0xe0000004, 0x4, 0x458735b1
+
+This sets s->blksize to 0x200 and s->data_count to 0.
+
+3 MMIO_WRITE, 0xe000000c, 0x4, 0x406075b7
+
+This will load a DMA descriptor and set s->data_count to s->blksize.
+
+4 MMIO_READ, 0xe0000020, 0x2
