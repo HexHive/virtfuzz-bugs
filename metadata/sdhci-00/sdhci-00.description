@@ -1,30 +1,71 @@
-I found a heap-buffer-overflow read (off-by-one) in sdhci_read_dataport() since
-s->data_count is possibly equal to the size of the heap buffer s->fifo_buffer
-[1]. We can then read at most 8 or 4? bytes after a beap buffer.
+I found a off-by-one heap-buffer-overflow read [3] in sdhci_read_dataport() and
+write [4] in sdhci_write_dataport() to s->fifo_buffer since s->data_count [2] is
+possibly equal to the size of the heap buffer s->fifo_buffer [1]. As
+s->data_count is immediately reset [5], we can only read and write one byte
+after a beap buffer.
 
 ``` c
 static uint32_t sdhci_read_dataport(SDHCIState *s, unsigned size)
 {
     // ...
     for (i = 0; i < size; i++) {
-        // sizeof(s->fifo_buffer) = 0x200
-        // s->data_count = 0x200
-        value |= s->fifo_buffer[s->data_count] << i * 8; // <------------ [1]
+        // sizeof(s->fifo_buffer) = 0x200 // <--------------------------- [1]
+        // s->data_count = 0x200 // <------------------------------------ [2]
+        value |= s->fifo_buffer[s->data_count] << i * 8; // <------------ [3]
         // ...
+        if (s->data_count >= (s->blksize & BLOCK_SIZE_MASK)) {
+            s->data_count = 0; // <-------------------------------------- [5]
+
+static void sdhci_write_dataport(SDHCIState *s, uint32_t value, unsigned size)
+{
+    // ...
+    for (i = 0; i < size; i++) {
+        // sizeof(s->fifo_buffer) = 0x200 // <--------------------------- [1]
+        // s->data_count = 0x200 // <------------------------------------ [2]
+        s->fifo_buffer[s->data_count] = value & 0xFF; // <--------------- [4]
+        // ...
+        if (s->data_count >= (s->blksize & BLOCK_SIZE_MASK)) {
+            s->data_count = 0; // <-------------------------------------- [5]
 ```
 
-The processes to triggering this off-by-one are in the following.
+The key to trigger this off-by-one read/write is producing a dma access error.
 
-1 MMIO_WRITE, 0xe0000058, 0x4, physaddr
+Here is how the off-by-one read works. The write works similarly.
 
-This sets s->admasysaddr to physaddr that is 256 bytes aligned.
+sdhci_do_adma() will load a DMA descriptor [6] and set s->data_count to
+s->blksize (0x200) [7]. Usually, s->data_count will be clear at [10]. However,
+if dma_memory_write() at [8] returns an error, the value of s->data_count will
+be kept since nothing has been done at [9]. One possible way to let
+dma_memory_write() returns error is to set dscr.addr to an invalid address.
+For example, a guest requires 2G physical memory, but dscr.addr is set to 3G.
 
-2 MMIO_WRITE, 0xe0000004, 0x4, 0x458735b1
+ 
+``` c
+static void sdhci_do_adma(SDHCIState *s)
+{
+        // ...
+        get_adma_description(s, &dscr); // <---------------------------- [6]
 
-This sets s->blksize to 0x200 and s->data_count to 0.
+        // ...
+        length = dscr.length ? dscr.length : 64 * KiB;
 
-3 MMIO_WRITE, 0xe000000c, 0x4, 0x406075b7
-
-This will load a DMA descriptor and set s->data_count to s->blksize.
-
-4 MMIO_READ, 0xe0000020, 0x2
+        switch (dscr.attr & SDHC_ADMA_ATTR_ACT_MASK) {
+        case SDHC_ADMA_ATTR_ACT_TRAN:  /* data transfer */
+                    // ...
+                    begin = s->data_count;
+                    if ((length + begin) < block_size) {
+                        // ...
+                     } else {
+                        s->data_count = block_size; // <---------------- [7]
+                        length -= block_size - begin;
+                    }
+                    res = dma_memory_write(s->dma_as, dscr.addr, // <--- [8]
+                    // ...
+                    if (res != MEMTX_OK) {
+                        break; // <------------------------------------- [9]
+                    }
+                    dscr.addr += s->data_count - begin;
+                    if (s->data_count == block_size) {
+                        s->data_count = 0; // <------------------------ [10]
+                        // ...
+```

