@@ -50,7 +50,11 @@ def generate_report(bug_pathname, metadata):
     else:
         ### Existing bug reports
         report.extend(['### Existing bug reports'])
-        report.extend(metadata['existing-bug-reports'])
+        report.append('\n')
+        for i in metadata['existing-bug-reports']:
+            report.append(i)
+            report.append('\n')
+        report.append('\n')
 
     if metadata['existing-patches'] != None:
         report.extend(['## Existing patches'])
