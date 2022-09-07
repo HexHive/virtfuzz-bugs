@@ -1,3 +1,5 @@
+# Heap-buffer-overflow in sdhci_read_dataport()
+
 I re-trigger the off-by-one heap-buffer-overflow read [3] in
 sdhci_read_dataport() (previously reported at
 https://gitlab.com/qemu-project/qemu/-/issues/451) and write [4] in
@@ -85,3 +87,60 @@ glibc 2.29. On Ubuntu 20.04, it's glibc 2.31.
 3 The chunk after what after s->fifo_buffer is a 30 bytes buffer allocated in
 g_hash_table_new_full(), which idk how to free.
 
+
+## More details
+
+### Hypervisor, hypervisor version, upstream commit/tag, host
+qemu, 7.1.50, e93ded1bf6c94ab95015b33e188bc8b0b0c32670, Ubuntu 20.04
+
+### VM architecture, device, device type
+i386, sdhci, storage
+
+### Bug Type: Heap Buffer Overflow
+
+### Existing bug reports
+https://gitlab.com/qemu-project/qemu/-/issues/451
+https://bugs.launchpad.net/qemu/+bug/1913919
+
+## Suggested fix
+
+```
+From 9688c852b8a767f63e7cfa710ca2b3c68c78d531 Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Wed, 7 Sep 2022 13:53:56 +0800
+Subject: [PATCH] sdhci: Fix off-by-one heap-buffer-flow read and write in
+ sdhci
+
+Signed-off-by: Qiang Liu <cyruscyliu@gmail.com>
+---
+ hw/sd/sdhci.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/hw/sd/sdhci.c b/hw/sd/sdhci.c
+index 0e5e988927..374217ca70 100644
+--- a/hw/sd/sdhci.c
++++ b/hw/sd/sdhci.c
+@@ -797,6 +797,7 @@ static void sdhci_do_adma(SDHCIState *s)
+                                            s->data_count - begin,
+                                            attrs);
+                     if (res != MEMTX_OK) {
++                        s->data_count = 0;
+                         break;
+                     }
+                     dscr.addr += s->data_count - begin;
+@@ -826,6 +827,7 @@ static void sdhci_do_adma(SDHCIState *s)
+                                           s->data_count - begin,
+                                           attrs);
+                     if (res != MEMTX_OK) {
++                        s->data_count = 0;
+                         break;
+                     }
+                     dscr.addr += s->data_count - begin;
+-- 
+2.25.1
+
+```
+
+## Contact
+
+Let us know if I need to provide more information.

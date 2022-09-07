@@ -54,6 +54,7 @@ To send a patch, please refer to
 + ohci-02: EMAIL
 + ohci-03: https://lore.kernel.org/qemu-devel/20220830033022.1164961-1-cyruscyliu@gmail.com
 + xhci-00: https://gitlab.com/qemu-project/qemu/-/issues/1192
++ sdhci-00: ?
 
 ## Status
 
@@ -76,6 +77,7 @@ Predefined values
 |ohci-02|ohci|usb|i386|Heap UAF|Heap-use-after-free in usb_cancel_packet|true|None|reported|revised|None|
 |ohci-03|ohci|usb|i386|Assertion Failure|Assertion failure in usb_cancel_packet|false|None|reported|revised|None|
 |xhci-00|xhci|usb|i386|Abort|Abort in xhci_find_stream()|True|None|reported|revised|None|
+|sdhci-00|sdhci|storage|i386|Heap Buffer Overflow|Heap-buffer-overflow in sdhci_read_dataport()|False|None|generated|prepared|None|
 
 ## Contribution
 

@@ -1,12 +1,12 @@
 sdhci-00:
   arch: i386
   bug-types: ["Heap Buffer Overflow"]
-  existing-bug-reports: null
+  existing-bug-reports: ["https://gitlab.com/qemu-project/qemu/-/issues/451", "https://bugs.launchpad.net/qemu/+bug/1913919"]
   existing-patches: null
   fixing-commit: null
   hypervisor: "qemu"
   introducing-commit: null
-  novelty: true
+  novelty: false
   reproducible-commit: "e93ded1bf6c94ab95015b33e188bc8b0b0c32670"
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.1.50"

@@ -1,8 +1,3 @@
-Step 1: download the prepared rootfs and the image.
-
-Step 2: run the following script.
-
-``` bash
 QEMU_PATH=../../../qemu/build/qemu-system-x86_64
 KERNEL_PATH=./bzImage
 ROOTFS_PATH=./rootfs.ext2
@@ -16,8 +11,3 @@ $QEMU_PATH \
     -device sdhci-pci,sd-spec-version=3 \
     -device sd-card,drive=mydrive \
     -nographic
-```
-
-Step 3: with spawned shell (the user is root and the password is empty), run
-`sdhci-00`.
-
