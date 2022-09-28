@@ -1,9 +1,9 @@
 xlnx_dp-00:
-  arch: aarch64 
+  arch: aarch64
   bug-types: ["Abort"]
-  existing-bug-reports: "https://gitlab.com/qemu-project/qemu/-/issues/411"
+  existing-bug-reports: null
   existing-patches: null
-  fixing-commit: null
+  fixing-commit: "https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17"
   hypervisor: "qemu"
   introducing-commit: "58ac482a66de09a7590f705e53fc6a3fb8a055e8"
   novelty: true
