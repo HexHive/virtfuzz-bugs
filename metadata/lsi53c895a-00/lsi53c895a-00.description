@@ -1,6 +1,7 @@
 # Assertion failure in lsi53c810 emulator
 
 This bug was reported many times.
+
 11 years ago https://qemu-devel.nongnu.narkive.com/LtGj28sZ/win2k8-32-bit-mix-of-ide-and-scsi-assertion
 16 Mar 2015 https://lists.gnu.org/archive/html/qemu-devel/2015-03/msg03413.html
 Nov 25, 2020 https://bugs.launchpad.net/qemu/+bug/1905521
