@@ -11,6 +11,6 @@ lan9118-01:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: 7.0.94
   reward: null
-  short-description: "Abort() in lan9118_16bit_mode_read()"
+  short-description: "Abort in lan9118_16bit_mode_read()"
   target: lan9118
   target-type: net

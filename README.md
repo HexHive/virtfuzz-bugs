@@ -67,6 +67,7 @@ Predefined values
 |ohci-02|ohci|usb|i386|Heap UAF|Heap-use-after-free in usb_cancel_packet|true|None|reported|revised|None|
 |ohci-03|ohci|usb|i386|Assertion Failure|Assertion failure in usb_cancel_packet|false|None|reported|revised|None|
 |sdhci-00|sdhci|storage|i386|Heap Buffer Overflow|Heap-buffer-overflow in sdhci_read_dataport()|False|None|generated|prepared|None|
+|lan9118-01|lan9118|net|arm|Abort|Abort in lan9118_16bit_mode_read()|True|None|generated|prepared|None|
 
 ## Contribution
 
