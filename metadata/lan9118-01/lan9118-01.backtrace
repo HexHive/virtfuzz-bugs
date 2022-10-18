@@ -1,12 +1,11 @@
-root@fff5a5933072:~/qemu/build-san-6# ./qemu-fuzz-arm --fuzz-target=stateful-fuzz-lan9118 crash-3cbfcf5cc304fbea55b41bfa4715af70e8eb3461 
-==40670==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
-INFO: found LLVMFuzzerCustomMutator (0x5636ba147310). Disabling -len_control by default.
-INFO: libFuzzer ignores flags that start with '--'
+root@82d3d0d37931:~/videzzo/videzzo_qemu/out-san# ./qemu-videzzo-arm-target-videzzo-fuzz-lan9118 ./crash-663e5408ee573b1e9d073c796ffbaaae9bd583cb
+==1940==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x5654b8eede90). Disabling -len_control by default.
 INFO: Running with entropic power schedule (0xFF, 100).
-INFO: Seed: 2321266193
-INFO: Loaded 1 modules   (1053939 inline 8-bit counters): 1053939 [0x5636c2a59000, 0x5636c2b5a4f3), 
-INFO: Loaded 1 PC tables (1053939 PCs): 1053939 [0x5636c1a43560,0x5636c2a58490), 
-./qemu-fuzz-arm: Running 1 inputs 1 time(s) each.
+INFO: Seed: 3248453476
+INFO: Loaded 1 modules   (601357 inline 8-bit counters): 601357 [0x5654bbdd8000, 0x5654bbe6ad0d), 
+INFO: Loaded 1 PC tables (601357 PCs): 601357 [0x5654bb4aa340,0x5654bbdd7410), 
+./qemu-videzzo-arm-target-videzzo-fuzz-lan9118: Running 1 inputs 1 time(s) each.
 INFO: Reading pre_seed_input if any ...
 INFO: Executing pre_seed_input if any ...
 INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
@@ -14,14 +13,13 @@ Matching objects by name , *lan9118-mmio*
 This process will fuzz the following MemoryRegions:
   * lan9118-mmio[0] (size 100)
 This process will fuzz through the following interfaces:
-  * lan9118-mmio, EVENT_TYPE_MMIO_READ, 0x5000000 +0x100, 1,4
-  * lan9118-mmio, EVENT_TYPE_MMIO_WRITE, 0x5000000 +0x100, 1,4
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
   * lan9118-mmio, EVENT_TYPE_MMIO_READ, 0x5000000 +0x100, 1,4
   * lan9118-mmio, EVENT_TYPE_MMIO_WRITE, 0x5000000 +0x100, 1,4
 INFO: A corpus is not provided, starting from an empty corpus
-#2	INITED cov: 11 ft: 12 corp: 1/1b exec/s: 0 rss: 237Mb
-Running: crash-3cbfcf5cc304fbea55b41bfa4715af70e8eb3461
-qemu: hardware error: lan9118_write: Bad size 0x1
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 221Mb
+Running: ./crash-663e5408ee573b1e9d073c796ffbaaae9bd583cb
+qemu: hardware error: lan9118_read: Bad size 0x1
 
 CPU #0:
 R00=00000000 R01=00000000 R02=00000000 R03=00000000
@@ -101,38 +99,45 @@ s58=00000000 s59=00000000 d29=0000000000000000
 s60=00000000 s61=00000000 d30=0000000000000000
 s62=00000000 s63=00000000 d31=0000000000000000
 FPSCR: 00000000
-==40670== ERROR: libFuzzer: deadly signal
-    #0 0x5636ba0fd118 in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86
-    #1 0x5636ba057ad2 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210
-    #2 0x5636ba0013d0 in fuzzer::Fuzzer::CrashCallback() (.part.290) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235
-    #3 0x5636ba030a9c in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207
-    #4 0x5636ba030a9c in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206
-    #5 0x7fe22ffe897f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1297f)
-    #6 0x7fe22f5fffb6 in __libc_signal_restore_set /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80
-    #7 0x7fe22f5fffb6 in raise /build/glibc-S9d2JN/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
-    #8 0x7fe22f601920 in abort /build/glibc-S9d2JN/glibc-2.27/stdlib/abort.c:79
-    #9 0x5636bd5d12c6 in hw_error /root/qemu/build-san-6/../softmmu/cpus.c:125:5
-    #10 0x5636ba695f63 in lan9118_16bit_mode_write /root/qemu/build-san-6/../hw/net/lan9118.c:1204:5
-    #11 0x5636bdb01e71 in memory_region_write_accessor /root/qemu/build-san-6/../softmmu/memory.c:491:5
-    #12 0x5636bdb01446 in access_with_adjusted_size /root/qemu/build-san-6/../softmmu/memory.c:552:18
-    #13 0x5636bdaff391 in memory_region_dispatch_write /root/qemu/build-san-6/../softmmu/memory.c:1502:16
-    #14 0x5636bd9759e9 in flatview_write_continue /root/qemu/build-san-6/../softmmu/physmem.c:2746:23
-    #15 0x5636bd95eb22 in flatview_write /root/qemu/build-san-6/../softmmu/physmem.c:2786:14
-    #16 0x5636bd95e671 in address_space_write /root/qemu/build-san-6/../softmmu/physmem.c:2878:18
-    #17 0x5636ba13a78d in __wrap_qtest_writeb /root/qemu/build-san-6/../tests/qtest/fuzz/qtest_wrappers.c:157:9
-    #18 0x5636ba1d76d3 in dispatch_mmio_write /root/qemu/build-san-6/../tests/qtest/fuzz/stateful_fuzz_dispatch.h:73:13
-    #19 0x5636ba151735 in dispatch_event /root/qemu/build-san-6/../tests/qtest/fuzz/stateful_fuzz_dispatch.h:175:13
-    #20 0x5636ba1d9a1a in stateful_fuzz /root/qemu/build-san-6/../tests/qtest/fuzz/stateful_fuzz.c:133:13
-    #21 0x5636ba141f8e in LLVMFuzzerTestOneInput /root/qemu/build-san-6/../tests/qtest/fuzz/fuzz.c:151:5
-    #22 0x5636ba031403 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
-    #23 0x5636ba01472a in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
-    #24 0x5636ba01f3e4 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:883
-    #25 0x5636ba0016a2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
-    #26 0x7fe22f5e2bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
-    #27 0x5636ba00ab59 in _start (/root/qemu/build-san-6/qemu-fuzz-arm+0x3a06b59)
+==1940== ERROR: libFuzzer: deadly signal
+    #0 0x5654b48090fe in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86:3
+    #1 0x5654b4757d71 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:38
+    #2 0x5654b4730ca6 in fuzzer::Fuzzer::CrashCallback() (.part.0) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:236:18
+    #3 0x5654b4730d72 in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:208:1
+    #4 0x5654b4730d72 in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207:19
+    #5 0x7fb6db17941f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1441f)
+    #6 0x7fb6daf8b00a in __libc_signal_restore_set /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/internal-signals.h:86:3
+    #7 0x7fb6daf8b00a in raise /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/raise.c:48:3
+    #8 0x7fb6daf6a858 in abort /build/glibc-SzIz7B/glibc-2.31/stdlib/abort.c:79:7
+    #9 0x5654b483964a in __wrap_abort /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/less_crashes_wrappers.c:24:12
+    #10 0x5654b6a64d84 in hw_error /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/cpus.c:128:5
+    #11 0x5654b5ac50c7 in lan9118_16bit_mode_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/net/lan9118.c:1319:5
+    #12 0x5654b7ee045b in memory_region_read_accessor /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:440:11
+    #13 0x5654b7ea0761 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:554:18
+    #14 0x5654b7e9db2c in memory_region_dispatch_read1 /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1424:16
+    #15 0x5654b7e9d268 in memory_region_dispatch_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1457:9
+    #16 0x5654b7f1946d in flatview_read_continue /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2892:23
+    #17 0x5654b7f1aa78 in flatview_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2934:12
+    #18 0x5654b7f1a538 in address_space_read_full /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2947:18
+    #19 0x5654b483a7ea in address_space_read /root/videzzo/videzzo_qemu/qemu/include/exec/memory.h:2869:18
+    #20 0x5654b483a7ea in qemu_readb /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1010:5
+    #21 0x5654b483997e in dispatch_mmio_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1034:35
+    #22 0x5654b8ee984f in videzzo_dispatch_event /root/videzzo/videzzo.c:1122:5
+    #23 0x5654b8ee0bcb in __videzzo_execute_one_input /root/videzzo/videzzo.c:272:9
+    #24 0x5654b8ee0aa0 in videzzo_execute_one_input /root/videzzo/videzzo.c:313:9
+    #25 0x5654b48500fc in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1497:12
+    #26 0x5654b8eee132 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1891:18
+    #27 0x5654b4731816 in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:594:17
+    #28 0x5654b4714444 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #29 0x5654b471f3ee in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:885:19
+    #30 0x5654b470b9d6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #31 0x7fb6daf6c082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #32 0x5654b470ba2d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-arm-target-videzzo-fuzz-lan9118+0x300da2d)
 
 NOTE: libFuzzer has rudimentary signal handlers.
       Combine libFuzzer with AddressSanitizer or similar for better crash reports.
 SUMMARY: libFuzzer: deadly signal
 MS: 0 ; base unit: 0000000000000000000000000000000000000000
+0x4,0x2,0x29,0x92,0xa,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x70,0x0,0x0,0x5,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x1,0x9,0x48,0x0,0x0,0x5,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x29,0x1f,0x8e,0x23,0x0,0x0,0x0,0x0,
+\x04\x02)\x92\x0a\x00\x00\x00\x00\x00\x00\x08p\x00\x00\x05\x00\x00\x00\x00\x01\x00\x00\x00\x01\x09H\x00\x00\x05\x00\x00\x00\x00\x04\x00\x00\x00)\x1f\x8e#\x00\x00\x00\x00
 
