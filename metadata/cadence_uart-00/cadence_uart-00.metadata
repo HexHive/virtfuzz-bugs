@@ -1,16 +1,16 @@
 cadence_uart-00:
-  arch: null
-  bug-types: null
+  arch: aarch64
+  bug-types: ["Devision by Zero"]
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
-  hypervisor: null
+  hypervisor: qemu
   introducing-commit: null
-  novelty: null
+  novelty: true
   reproducible-commit: null
   reproducible-host: null
   reproducible-version: null
   reward: null
   short-description: null
   target: cadence_uart
-  target-type: null
+  target-type: char

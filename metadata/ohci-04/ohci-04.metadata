@@ -1,7 +1,7 @@
-ehci-01:
-  arch: null
-  bug-types: null
-  existing-bug-reports: null
+ohci-04:
+  arch: i386|arm
+  bug-types: ["Assertion Failure"]
+  existing-bug-reports: [""]
   existing-patches: null
   fixing-commit: null
   hypervisor: null
@@ -12,5 +12,5 @@ ehci-01:
   reproducible-version: null
   reward: null
   short-description: null
-  target: ehci
+  target: ohci
   target-type: null

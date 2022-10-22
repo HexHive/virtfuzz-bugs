@@ -1,22 +1,17 @@
-tag: arch: i386
-tag: type: ASS failure
+# None
 
-# eth_get_gso_type: code should not be reached
+## More details
 
-[1](https://yhbt.net/lore/all/38575304-e5ff-c93e-c1e8-997d4148e579@redhat.com/T/)
-[2](https://access.redhat.com/security/cve/cve-2020-27617)
+### Hypervisor, hypervisor version, upstream commit/tag, host
+qemu, None, None, None
 
-## More technique details
+### VM architecture, device, device type
+i386, vmxnet3, net
 
-### QEMU version, upstream commit/tag
-c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50
+### Bug Type: Assertion Failure
 
-### Host and Guest
-Ubuntu 18.04 docker/QTest Fuzzer
+### Existing bug reports
 
-### Reproducer steps
-
-bash 13.sh
 ## Contact
 
-Let me know if I need to provide more information.
+Let us know if I need to provide more information.

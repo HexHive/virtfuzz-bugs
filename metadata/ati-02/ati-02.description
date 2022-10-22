@@ -1,0 +1,5 @@
+With the patch
+https://lore.kernel.org/qemu-devel/20210906153103.1661195-1-philmd@redhat.com/,
+I still can trigger another out-of-bounds write.
+
+

@@ -1,16 +1,16 @@
 lsi53c895a-00:
-  arch: null
-  bug-types: null
-  existing-bug-reports: null
+  arch: i386
+  bug-types: ["Assertion Failure"]
+  existing-bug-reports: []
   existing-patches: null
   fixing-commit: null
-  hypervisor: null
+  hypervisor: qemu
   introducing-commit: null
-  novelty: null
+  novelty: false
   reproducible-commit: null
   reproducible-host: null
   reproducible-version: null
   reward: null
   short-description: null
   target: lsi53c895a
-  target-type: null
+  target-type: storage

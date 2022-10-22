@@ -1,20 +1,17 @@
-tag: arch: i386
-tag: type: ASS failure
+# None
 
-# Three hw_error() in vmxnet3_validate_queues (vmxnet3)
+## More details
 
-[1](https://bugs.launchpad.net/qemu/+bug/1890160)
-## More technique details
+### Hypervisor, hypervisor version, upstream commit/tag, host
+qemu, None, None, None
 
-### QEMU version, upstream commit/tag
-c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50
+### VM architecture, device, device type
+i386, vmxnet3, net
 
-### Host and Guest
-Ubuntu 18.04 docker/QTest Fuzzer
+### Bug Type: Assertion Failure
 
-### Reproducer steps
+### Existing bug reports
 
-./qemu-fuzz-i386 --fuzz-target=stateful-fuzz-vmxnet3 crash-eb61666b091595cce62b00139cc6d45e7470edbc 
 ## Contact
 
-Let me know if I need to provide more information.
+Let us know if I need to provide more information.

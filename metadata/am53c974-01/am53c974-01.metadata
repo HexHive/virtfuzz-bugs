@@ -1,16 +1,16 @@
 am53c974-01:
-  arch: null
-  bug-types: null
-  existing-bug-reports: null
+  arch: i386
+  bug-types: ["Null Pointer Dereference"]
+  existing-bug-reports: []
   existing-patches: null
   fixing-commit: null
-  hypervisor: null
+  hypervisor: qemu
   introducing-commit: null
-  novelty: null
+  novelty: false
   reproducible-commit: null
   reproducible-host: null
   reproducible-version: null
-  reward: null
+  reward: CVE-2020-35505
   short-description: null
   target: am53c974
   target-type: null

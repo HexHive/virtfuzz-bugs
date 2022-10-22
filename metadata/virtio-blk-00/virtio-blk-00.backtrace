@@ -1,0 +1,90 @@
+root@42a1a281fb27:~/videzzo/videzzo_qemu/out-san# DEFAULT_INPUT_MAXSIZE=10000000 /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-virtio-blk  -max_len=10000000 -detect_leaks=0 /root/videzzo/videzzo_qemu/out-san/poc-qemu-videzzo-i386-target-videzzo-fuzz-virtio-blk-crash-ef8dc4999e00b5107a47dd9bd82a34ec6fd25f27.minimized
+==3964==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x5630b71faed0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 471128293
+INFO: Loaded 1 modules   (423845 inline 8-bit counters): 423845 [0x5630b9887000, 0x5630b98ee7a5), 
+INFO: Loaded 1 PC tables (423845 PCs): 423845 [0x5630b920f2c0,0x5630b9886d10), 
+/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-virtio-blk: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *virtio*
+This process will fuzz the following MemoryRegions:
+  * virtio-blk-pci-msix[0] (size 1000)
+  * virtio-pci-notify-pio-virtio-blk[0] (size 4)
+  * virtio-pci[1] (size 80)
+  * virtio-pci-common-virtio-blk[0] (size 1000)
+  * virtio-pci-notify-virtio-blk[0] (size 1000)
+  * virtio-pci-device-virtio-blk[0] (size 1000)
+  * virtio-pci[0] (size 4000)
+  * virtio-pci-isr-virtio-blk[0] (size 1000)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * virtio-pci, EVENT_TYPE_MMIO_READ, 0xe0004000 +0x4000, 1,4
+  * virtio-pci, EVENT_TYPE_MMIO_WRITE, 0xe0004000 +0x4000, 1,4
+  * virtio-pci-common-virtio-blk, EVENT_TYPE_MMIO_READ, 0xe0004000 +0x1000, 1,4
+  * virtio-pci-common-virtio-blk, EVENT_TYPE_MMIO_WRITE, 0xe0004000 +0x1000, 1,4
+  * virtio-blk-pci-msix, EVENT_TYPE_MMIO_READ, 0xe0000000 +0x1000, 1,4
+  * virtio-blk-pci-msix, EVENT_TYPE_MMIO_WRITE, 0xe0000000 +0x1000, 1,4
+  * virtio-pci-device-virtio-blk, EVENT_TYPE_MMIO_READ, 0xe0006000 +0x1000, 1,4
+  * virtio-pci-device-virtio-blk, EVENT_TYPE_MMIO_WRITE, 0xe0006000 +0x1000, 1,4
+  * virtio-pci-isr-virtio-blk, EVENT_TYPE_MMIO_READ, 0xe0005000 +0x1000, 1,4
+  * virtio-pci-isr-virtio-blk, EVENT_TYPE_MMIO_WRITE, 0xe0005000 +0x1000, 1,4
+  * virtio-pci-notify-virtio-blk, EVENT_TYPE_MMIO_READ, 0xe0007000 +0x1000, 1,4
+  * virtio-pci-notify-virtio-blk, EVENT_TYPE_MMIO_WRITE, 0xe0007000 +0x1000, 1,4
+  * virtio-pci, EVENT_TYPE_PIO_READ, 0xc000 +0x80, 1,4
+  * virtio-pci, EVENT_TYPE_PIO_WRITE, 0xc000 +0x80, 1,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 200Mb
+Running: /root/videzzo/videzzo_qemu/out-san/poc-qemu-videzzo-i386-target-videzzo-fuzz-virtio-blk-crash-ef8dc4999e00b5107a47dd9bd82a34ec6fd25f27.minimized
+qemu-videzzo-i386-target-videzzo-fuzz-virtio-blk: /root/videzzo/videzzo_qemu/qemu/include/exec/memory_ldst_cached.h.inc:77: void address_space_stw_le_cached(MemoryRegionCache *, hwaddr, uint16_t, MemTxAttrs, MemTxResult *): Assertion `addr < cache->len && 2 <= cache->len - addr' failed.
+==3964== ERROR: libFuzzer: deadly signal
+    #0 0x5630b398e74e in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86:3
+    #1 0x5630b38dd3c1 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:38
+    #2 0x5630b38b6c06 in fuzzer::Fuzzer::CrashCallback() (.part.0) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:235:18
+    #3 0x5630b38b6cd2 in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207:1
+    #4 0x5630b38b6cd2 in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:206:19
+    #5 0x7f6517ebb41f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1441f)
+    #6 0x7f6517ccd00a in __libc_signal_restore_set /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/internal-signals.h:86:3
+    #7 0x7f6517ccd00a in raise /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/raise.c:48:3
+    #8 0x7f6517cac858 in abort /build/glibc-SzIz7B/glibc-2.31/stdlib/abort.c:79:7
+    #9 0x7f6517cac728 in __assert_fail_base /build/glibc-SzIz7B/glibc-2.31/assert/assert.c:92:3
+    #10 0x7f6517cbdfd5 in __assert_fail /build/glibc-SzIz7B/glibc-2.31/assert/assert.c:101:3
+    #11 0x5630b5f80cb4 in address_space_stw_le_cached /root/videzzo/videzzo_qemu/qemu/include/exec/memory_ldst_cached.h.inc:77:5
+    #12 0x5630b5f7fc4c in stw_le_phys_cached /root/videzzo/videzzo_qemu/qemu/include/exec/memory_ldst_phys.h.inc:109:5
+    #13 0x5630b5f7f1db in virtio_stw_phys_cached /root/videzzo/videzzo_qemu/qemu/include/hw/virtio/virtio-access.h:196:9
+    #14 0x5630b5f81603 in vring_set_avail_event /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/virtio/virtio.c:470:5
+    #15 0x5630b5f2caac in virtio_queue_split_set_notification /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/virtio/virtio.c:479:9
+    #16 0x5630b5f2b59b in virtio_queue_set_notification /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/virtio/virtio.c:540:9
+    #17 0x5630b5b1e7a4 in virtio_blk_handle_vq /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/block/virtio-blk.c:794:13
+    #18 0x5630b5b498ef in virtio_blk_handle_output /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/block/virtio-blk.c:819:5
+    #19 0x5630b5f7ae78 in virtio_queue_notify_vq /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/virtio/virtio.c:2365:9
+    #20 0x5630b5f79ec2 in virtio_queue_host_notifier_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/virtio/virtio.c:3612:9
+    #21 0x5630b6e95bb0 in aio_dispatch_handler /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/aio-posix.c:369:9
+    #22 0x5630b6e8dc9d in aio_dispatch_handlers /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/aio-posix.c:412:20
+    #23 0x5630b6e8d871 in aio_dispatch /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/aio-posix.c:422:5
+    #24 0x5630b6f14bee in aio_ctx_dispatch /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/async.c:320:5
+    #25 0x7f6518f6017c in g_main_context_dispatch (/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x5217c)
+    #26 0x5630b6f7c749 in glib_pollfds_poll /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/main-loop.c:297:9
+    #27 0x5630b6f7b023 in os_host_main_loop_wait /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/main-loop.c:320:5
+    #28 0x5630b6f7abec in main_loop_wait /root/videzzo/videzzo_qemu/qemu/build-san-6/../util/main-loop.c:596:11
+    #29 0x5630b39e4c2f in flush_events /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1459:9
+    #30 0x5630b71f68b9 in videzzo_dispatch_event /root/videzzo/videzzo.c:1125:9
+    #31 0x5630b71edc0b in __videzzo_execute_one_input /root/videzzo/videzzo.c:272:9
+    #32 0x5630b71edae0 in videzzo_execute_one_input /root/videzzo/videzzo.c:313:9
+    #33 0x5630b39db94c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1472:12
+    #34 0x5630b71fb172 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1891:18
+    #35 0x5630b38b773d in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:589:17
+    #36 0x5630b389a4c4 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #37 0x5630b38a543e in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:882:19
+    #38 0x5630b3891a46 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #39 0x7f6517cae082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #40 0x5630b3891a9d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-i386-target-videzzo-fuzz-virtio-blk+0x265fa9d)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+0x3,0x15,0x8,0xc0,0x0,0x0,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x79,0xa5,0x83,0x7e,0x0,0x0,0x0,0x0,0x1,0x9,0x18,0x40,0x0,0xe0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x6e,0xee,0x38,0x10,0x0,0x0,0x0,0x0,0x3,0x15,0x4,0xc0,0x0,0x0,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x58,0xa8,0x43,0x24,0x0,0x0,0x0,0x0,0x1,0x9,0x18,0x40,0x0,0xe0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0xea,0x68,0x4c,0x31,0x0,0x0,0x0,0x0,0x1,0x13,0x0,0x70,0x0,0xe0,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x98,0x86,0x4c,0x21,0x0,0x0,0x0,0x0,
+\x03\x15\x08\xc0\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00y\xa5\x83~\x00\x00\x00\x00\x01\x09\x18@\x00\xe0\x00\x00\x00\x00\x01\x00\x00\x00n\xee8\x10\x00\x00\x00\x00\x03\x15\x04\xc0\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00X\xa8C$\x00\x00\x00\x00\x01\x09\x18@\x00\xe0\x00\x00\x00\x00\x01\x00\x00\x00\xeahL1\x00\x00\x00\x00\x01\x13\x00p\x00\xe0\x00\x00\x00\x00\x04\x00\x00\x00\x98\x86L!\x00\x00\x00\x00
+

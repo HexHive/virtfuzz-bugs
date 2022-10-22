@@ -1,23 +1,17 @@
-tag: arch: i386
-tag: type: ASS failure
+# None
 
-# Assertion `pid == USB_TOKEN_IN || pid == USB_TOKEN_OUT' failed through EHCI
-## More technique details
+## More details
 
-### QEMU version, upstream commit/tag
-c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50
+### Hypervisor, hypervisor version, upstream commit/tag, host
+qemu, None, None, None
 
-### Host and Guest
-Ubuntu 18.04 docker/QTest Fuzzer
+### VM architecture, device, device type
+i386, ehci, usb
 
-### Reproducer steps
+### Bug Type: Abort
 
-
-## Suggested fix
-
-```
-```
+### Existing bug reports
 
 ## Contact
 
-Let me know if I need to provide more information.
+Let us know if I need to provide more information.

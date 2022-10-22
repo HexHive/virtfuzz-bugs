@@ -1,59 +1,14 @@
-tag: arch: arm
-tag: type: HBO
+# None
 
-# HBO in aspeed_smc_flash_do_select because accessible AspeedSMCFlash is unchecked
+## More details
 
-I found a heap buffer overflow in aspeed_smc_flash_do_select because the check of accessible AspeedSMCFlash is missing. This issue is related to two bugs. I will explain them in the following.
+### Hypervisor, hypervisor version, upstream commit/tag, host
+qemu, None, None, None
 
-## Bug 1
-1 `s->cs_lines` is allocated in `aspeed_smc_realize`, where `s->num_cs` is 1 by default.
-```
-s->cs_lines = g_new0(qemu_irq, s->num_cs);
-```
-2 In `aspeed_smc_flash_do_select`, we can overflow `s->cs_lines` by `fl->id` that is larger than 0.
-```
-static void aspeed_smc_flash_do_select(AspeedSMCFlash *fl, bool unselect) {
-    ....
-    qemu_set_irq(s->cs_lines[fl->id], unselect);
-                           // ---if fl->id is 1, then overflow here ---
-}
-```
-3 The root cause is that we can access the second or the third Flash chip without any check when the index of the current Flash chip is larger than `s->num_cs`, say some fmcs,  e.g., aspeed.fmc-ast2400, have more than one Flash chip.
-4 Security impact: this primitive can assist in exploiting QEMU vulnerabilities. I think the primitive cannot be used standalone, but with other arbitrary write primitives, putting a malicious qemu_irq pointer at s->cs_lines[fl->id], the malicious qemu irq handler (a dangerous function) will be triggered when unselect is 1.
+### VM architecture, device, device type
+arm, ftgmac100, net
 
-## Bug 2
-1 The above overflow is not found by directly testing the aspeed smc but found by testing the ftgmac100, a NIC.
-2 Root Cause: In `ftgmac100_read_bd`, the range of `dma_memory_read` is not checked, thus with this primitive, I can load sizeof(*bd)=16 bytes into local variable bd from any a) registered MMIO regions, b) ram. Because of a), I can access the second Flash chip even if the default number of valid Flash chips is 1 and finally trigger the heap buffer overflow.
-```
-static int ftgmac100_read_bd(FTGMAC100Desc *bd, dma_addr_t addr) {
-    if (dma_memory_read(&address_space_memory, addr, bd, sizeof(*bd))) {
-        qemu_log_mask(LOG_GUEST_ERROR, "%s: failed to read descriptor @ 0x%"
-                      HWADDR_PRIx "\n", __func__, addr);
-        return -1;
-    }
-    // omit
-```
-3 Security impact 1: Furthermore, the controlled `bd` can affect the control flow in the following.
-```
-static bool ftgmac100_can_receive(NetClientState *nc) {
-    FTGMAC100Desc bd; // local variable
-    if (ftgmac100_read_bd(&bd, s->rx_descriptor)) {
-        return false;
-    }
-    return !(bd.des0 & FTGMAC100_RXDES0_RXPKT_RDY);
-           // ---- may return true
-}
-```
-4 Security impact 2: When fixing the first bug, if we don’t expose the invalid Flash chips to the guest, we still can access the invalid Flash chips by ftgmac100.
-5 Security impact 3: If fixing the first bug properly, this primitive seems to be useless. However, without IOMMU to control the range the DMA can access, it is still not good. This bug inspires us to check similar issues in i386/86_64 and other arches. I’d like to discuss more.
-
-## More technique details
-
-### QEMU version, upstream commit/tag
-c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50
-
-### Host and Guest
-Ubuntu 18.04 docker/QTest Fuzzer
+### Bug Type: Heap Buffer Overflow
 
 ### Stack traces, crash details
 
@@ -179,4 +134,4 @@ EOF
 
 ## Contact
 
-Let me know if I need to provide more information.
+Let us know if I need to provide more information.

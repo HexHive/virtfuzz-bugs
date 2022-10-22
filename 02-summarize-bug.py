@@ -117,6 +117,7 @@ if __name__ == '__main__':
     for bug_pathname in bug_pathname_list:
         # step 1: load metadata
         bug_id = os.path.basename(bug_pathname)
+        print('[+] processing {}'.format(bug_id))
         metadata_pathname = os.path.join(bug_pathname, '{}.metadata'.format(bug_id))
         metadata = yaml.safe_load(open(metadata_pathname))
         # step 2: generate report

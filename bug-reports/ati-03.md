@@ -2,7 +2,7 @@
 
 This is the 3rd segment fault in pixman_fill through ati-vga device.
 
-## More technique details
+## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
 qemu, 6.2.50, aeb0ae95b7f18c66158792641cb6ba0cde5789ab, Ubuntu 18.04

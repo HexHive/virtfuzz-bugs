@@ -1,16 +1,16 @@
 lan9118-00:
-  arch: null
-  bug-types: null
+  arch: arm
+  bug-types: ["Buffer Overflow", "Out-of-bouds Read"]
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
   hypervisor: null
   introducing-commit: null
-  novelty: null
+  novelty: true
   reproducible-commit: null
   reproducible-host: null
   reproducible-version: null
   reward: null
   short-description: null
   target: lan9118
-  target-type: null
+  target-type: net

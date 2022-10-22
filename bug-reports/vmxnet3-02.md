@@ -1,21 +1,17 @@
-tag: arch: i386
-tag: type: ASS failure
+# None
 
-# Assertion `tx_queue_idx <= s->txq_num' failed
+## More details
 
-[1](https://www.mail-archive.com/qemu-devel@nongnu.org/msg824272.html)
-[2](https://gitlab.com/qemu-project/qemu/-/commit/6a932c4ed8748b08c58c)
-## More technique details
+### Hypervisor, hypervisor version, upstream commit/tag, host
+None, None, None, None
 
-### QEMU version, upstream commit/tag
-c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50
+### VM architecture, device, device type
+i386, vmxnet3, net
 
-### Host and Guest
-Ubuntu 18.04 docker/QTest Fuzzer
+### Bug Type: Assertion Failure
 
-### Reproducer steps
+### Existing bug reports
 
-bash 35.sh
 ## Contact
 
-Let me know if I need to provide more information.
+Let us know if I need to provide more information.

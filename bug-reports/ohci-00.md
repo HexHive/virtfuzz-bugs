@@ -10,7 +10,7 @@ while req->cmd.mode is SCSI_XFER_FROM_DEV. We can trigger this new bug (AFAIK)
 ## crash analysis
 
 1 First, I want to leave an impression on the related control flow and date
-flow. 
+flow.
 
 1.1 key control flow
 

@@ -1,0 +1,16 @@
+virtio-blk-00:
+  arch: i386
+  bug-types: ["Assertion failure"]
+  existing-bug-reports: ["https://gitlab.com/qemu-project/qemu/-/issues/781", "https://bugs.launchpad.net/qemu/+bug/1910941", "https://lists.gnu.org/archive/html/qemu-devel/2018-09/msg03947.html"]
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: qemu
+  introducing-commit: null
+  novelty: false
+  reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da
+  reproducible-host: "Ubuntu 20.04"
+  reproducible-version: 7.0.94
+  reward: null
+  short-description: "Assertion failure in address_space_stw_le_cached()"
+  target: virtio-blk
+  target-type: storage

@@ -1,16 +1,16 @@
 ftgmac100-00:
-  arch: null
-  bug-types: null
+  arch: arm
+  bug-types: ["Heap Buffer Overflow"]
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
-  hypervisor: null
+  hypervisor: qemu
   introducing-commit: null
-  novelty: null
+  novelty: true
   reproducible-commit: null
   reproducible-host: null
   reproducible-version: null
   reward: null
   short-description: null
   target: ftgmac100
-  target-type: null
+  target-type: net
