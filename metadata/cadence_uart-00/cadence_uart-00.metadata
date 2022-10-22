@@ -1,4 +1,4 @@
-dcadence_uart-00:
+cadence_uart-00:
   arch: null
   bug-types: null
   existing-bug-reports: null
@@ -12,5 +12,5 @@ dcadence_uart-00:
   reproducible-version: null
   reward: null
   short-description: null
-  target: dcadence_uart
+  target: cadence_uart
   target-type: null
