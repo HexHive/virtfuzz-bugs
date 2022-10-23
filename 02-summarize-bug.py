@@ -85,7 +85,14 @@ def generate_report(bug_pathname, metadata):
 latex_title =    [
     'id', 'target', 'target-type', 'arch', 'bug-types', 'description', 'novelty', 'CVE']
 markdown_title = [
-    'bug-id', 'target', 'target-type', 'arch', 'bug-types', 'short-description', 'novelty', 'reward', 'report-status', 'patch-status', 'fixing-commit']
+    'bug-id', 'target',
+    'hypervisor', 'reproducible-version', 'arch',
+    'target-type',
+    'short-description', 'bug-types',
+    'novelty', 'reward',
+    'patch-status',
+    'fixing-commit'
+]
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
@@ -127,11 +134,13 @@ if __name__ == '__main__':
 
     # step 3: generate summary
     if args.markdown:
-        markdown = ['|{}|'.format('|'.join(markdown_title)), '|{}|'.format('|'.join([':---:'] * (len(markdown_title))))]
+        markdown = ['|id|{}|'.format('|'.join(markdown_title)), '|:---:|{}|'.format('|'.join([':---:'] * (len(markdown_title))))]
     sorted_metadata_list = dict(sorted(metadata_list.items()))
+    i = 0
     for bug_id, metadata in sorted_metadata_list.items(): # maybe we need to sort
+        i += 1
         if args.markdown:
-            row = []
+            row = [str(i)]
             for column in markdown_title:
                 cell = metadata[column]
                 if cell is None:

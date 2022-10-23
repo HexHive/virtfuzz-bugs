@@ -1,16 +1,16 @@
 dwc2-00:
   arch: arm
   bug-types: ["Assertion Failure"]
-  existing-bug-reports: null
+  existing-bug-reports: []
   existing-patches: null
   fixing-commit: null
   hypervisor: qemu
   introducing-commit: null
-  novelty: true
-  reproducible-commit: null
-  reproducible-host: null
-  reproducible-version: null
+  novelty: false
+  reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
+  reproducible-host: 'Ubuntu 18.04'
+  reproducible-version: 6.1.50
   reward: null
-  short-description: null
+  short-description: 'An assertion failure in hw/usb/core.c from dwc2 usb controller'
   target: dwc2
   target-type: usb
