@@ -1,4 +1,0 @@
-# void net_tx_pkt_reset(struct NetTxPkt *): Assertion `pkt->raw' failed
-
-[1](https://gitlab.com/qemu-project/qemu/-/commit/283f0a05e24a5e5fab783)
-[2](https://bugs.launchpad.net/qemu/+bug/1890157)

@@ -1,2 +1,0 @@
-# With USBAN
-./qemu-fuzz-arm --fuzz-target=stateful-fuzz-imx-usb-phy crash-3f7a852b52d0e3fb62175442730b5b7092218430 

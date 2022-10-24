@@ -1,1 +1,0 @@
-# Assertion failure in fifo8_pop through xlnx-zynqmp-can

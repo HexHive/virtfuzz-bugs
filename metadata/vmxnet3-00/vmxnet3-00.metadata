@@ -7,10 +7,11 @@ vmxnet3-00:
   hypervisor: qemu
   introducing-commit: null
   novelty: false
-  reproducible-commit: null
-  reproducible-host: null
-  reproducible-version: null
+  reported-by: ['VShuttle']
+  reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
+  reproducible-host: 'Ubuntu 18.04'
+  reproducible-version: 6.1.50
   reward: null
-  short-description: null
+  short-description: 'Code should not be reached vmxnet3_io_bar1_write()'
   target: vmxnet3
   target-type: net

@@ -14,3 +14,4 @@ sdhci-00:
   short-description: "Heap buffer overflow in sdhci_read_dataport()"
   target: "sdhci"
   target-type: "storage"
+  messages: 9

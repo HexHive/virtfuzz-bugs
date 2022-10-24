@@ -1,0 +1,120 @@
+# Heap buffer overflow read in rtl8139_do_receive
+
+When rtl8139 receives a packet whose length is 0 through socket (PF_UNIX)
+backend, it will enqueue (g_malloc(0)) that packet because it thinks the current
+receiving buffer is full (by mistake). Then a guest os can issue specific MMIO
+access to dequeue that packet, then get its first six bytes that should be the
+MAC address (heap-buffer-overflow-read).
+
+## How to trigger it?
+
+--- [backtrace 1] ---
+[#0] 0x5555599f55f8 → rtl8139_do_receive
+[#1] 0x5555599f44aa → rtl8139_receive
+[#2] 0x55555904b645 → nc_sendv_compat
+[#3] 0x55555904a91a → qemu_deliver_packet_iov
+[#4] 0x5555590537ed → qemu_net_queue_deliver
+[#5] 0x555559054204 → qemu_net_queue_send
+[#6] 0x555559036a69 → qemu_send_packet_async_with_flags
+[#7] 0x555559036263 → qemu_send_packet_async
+[#8] 0x555559065098 → net_socket_rs_finalize
+[#9] 0x555559049af7 → net_fill_rstate
+[#10] 0x55555906941e → net_socket_send
+
+1. Send an empty packet with the socket (PF_UNIX) backend.
+
+The qemu_net_queue_deliver is one of the pivots to deliver packets to a QEMU
+network interface card. In the above backtrace, if rtl8139 is active, the
+qemu_net_queue_deliver will finally deliver the packet to rtl8130_do_receive
+that would process this packet.
+
+--- [code 1] ---
+ssize_t qemu_net_queue_send(NetQueue *queue, NetClientState *sender,
+                            unsigned flags, const uint8_t *data,
+                            size_t size, NetPacketSent *sent_cb)
+{
+    ret = qemu_net_queue_deliver(queue, sender, flags, data, size);
+    if (ret == 0) {
+        qemu_net_queue_append(queue, sender, flags, data, size, sent_cb);
+        return 0;
+    }
+    return ret;
+}
+
+In the above code, qemu_net_queue_deliver will deliver a packet and return how
+many bytes are delivered. If the return value is zero, qemu_net_queue_append
+will queue the packet and copy the content to a heap buffer (g_malloc(size=0)).
+
+--- [backtrace 2] ---
+#2 0x56232d61afac in rtl8139_do_receive
+#3 0x56232d619929 in rtl8139_receive
+#4 0x56232eac3384 in nc_sendv_compat
+#5 0x56232eac2659 in qemu_deliver_packet_iov
+#6 0x56232ddb85dc in qemu_net_queue_deliver
+#7 0x56232ddbcc01 in qemu_net_queue_flush
+#8 0x56232eaadb77 in qemu_flush_or_purge_queued_packets
+#9 0x56232eaadf16 in qemu_flush_queued_packets
+#10 0x56232d6121a2 in rtl8139_RxBufPtr_write
+#11 0x56232d5fc11f in rtl8139_io_writew
+#12 0x56232d5f3ceb in rtl8139_ioport_write
+
+2. Issue an MMIO write (offset=0x38, size=2, value=any), as shown in the above
+backtrace, the queued packet can be dequeued and consumed.
+
+--- [code 2] ---
+static ssize_t rtl8139_do_receive(
+    NetClientState *nc, const uint8_t *buf, size_t size_, int do_interrupt)
+{
+    size_t size = size_;
+    static const uint8_t broadcast_macaddr[6] =
+        { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+
+    if (s->RxConfig & AcceptAllPhys) {
+    } else {
+        if (!memcmp(buf,  broadcast_macaddr, 6)) { // buf=malloc(0): heap-buffer-overflow-read
+        } else if (buf[0] & 0x01) {                // buf=malloc(0): heap-buffer-overflow-read
+        } else if (s->phys[0] == buf[0] &&         // buf=malloc(0): heap-buffer-overflow-read
+                   s->phys[1] == buf[1] &&
+                   s->phys[2] == buf[2] &&
+                   s->phys[3] == buf[3] &&
+                   s->phys[4] == buf[4] &&
+                   s->phys[5] == buf[5]) {
+        } else {
+            DPRINTF(">>> unknown packet\n");
+            return size;
+        }
+    }
+}
+
+In the above code, when the buf is empty and the size_t is zero, the first six
+bytes are accessed, which triggers heap-buffer-overflow-read flaws.
+
+--- [struct 1] ---
+#define NET_BUFSIZE (4096 + 65536)
+struct SocketReadState {
+    int state;
+    bool vnet_hdr;
+    uint32_t index;
+    uint32_t packet_len;
+    uint32_t vnet_hdr_len;
+    uint8_t buf[NET_BUFSIZE];
+    SocketReadStateFinalize *finalize;
+};
+
+A question you may ask is why rtl8130_do_receive in backtrace 1 doesn't crash.
+That is because even the size of buf is zero, the buf itself is an internal
+array defined in SocketReadState. rtl8130_do_receive in backtrace 1 does have
+out-of-bounds read issues.
+
+## Security Impact: Low
+
+1. This flow is related to memcmp, and thus I think this flaw cannot leak any
+useful information.
+
+2. Because an attacker cannot control the data out of the queued packet in the
+heap without other write primitives, an attacker cannot leverage this flow for a
+data-only attack.
+
+3. In practice, sending a zero-length packet seems impossible, because usually
+the socket type (-netdev socket,id=net0,listen=:1234) would be PF_INET rather
+than PF_UNIX.

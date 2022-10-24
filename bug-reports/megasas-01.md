@@ -1,5 +1,11 @@
 # Assertion failure in bdrv_co_write_req_prepare()
 
+# Assertion `child->perm & BLK_PERM_WRITE' failed in bdrv_co_write_req_prepare
+
+It is reported [here](https://www.mail-archive.com/qemu-devel@nongnu.org/msg782182.html).
+
+
+
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host

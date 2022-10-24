@@ -14,3 +14,4 @@ xhci-00:
   short-description: "Abort in xhci_find_stream()"
   target: xhci
   target-type: usb
+  messages: 56

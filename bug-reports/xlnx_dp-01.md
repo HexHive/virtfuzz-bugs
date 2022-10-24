@@ -1,4 +1,4 @@
-# OOBR in xlnx_dp_read
+# Out of bounds read in xlnx_dp_read
 
 # Out-of-bounds read in xlnx_dp_read
 

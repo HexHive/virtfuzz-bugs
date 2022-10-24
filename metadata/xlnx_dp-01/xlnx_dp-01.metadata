@@ -11,6 +11,6 @@ xlnx_dp-01:
   reproducible-host: "Ubuntu 18.04"
   reproducible-version: "6.1.50"
   reward: null
-  short-description: "OOBR in xlnx_dp_read"
+  short-description: "Out of bounds read in xlnx_dp_read"
   target: xlnx_dp
   target-type: display

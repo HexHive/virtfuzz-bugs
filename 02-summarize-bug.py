@@ -59,7 +59,6 @@ def generate_report(bug_pathname, metadata):
     if metadata['existing-patches'] != None:
         report.extend(['## Existing patches'])
         report.extend(metadata['existing-patches'])
-        metadata['patch-status'] = 'merged'
     else:
         ## Suggested fix
         patch = open("metadata/{0}/{0}.patch".format(bug_id)).readlines()
@@ -68,9 +67,11 @@ def generate_report(bug_pathname, metadata):
             report.append("```\n")
             report.extend(patch)
             report.append("```\n\n")
-            metadata['patch-status'] = 'prepared'
-        else:
-            metadata['patch-status'] = 'None'
+    patch = open("metadata/{0}/{0}.patch".format(bug_id)).readlines()
+    if len(patch) != 0:
+        metadata['patch-provided'] = True
+    else:
+        metadata['patch-provided'] = False
 
     report.extend(["## Contact\n\n"])
     report.extend([
@@ -82,16 +83,23 @@ def generate_report(bug_pathname, metadata):
     metadata['report-status'] = 'generated'
     print('[+] report: {}'.format(report_pathname))
 
-latex_title =    [
-    'id', 'target', 'target-type', 'arch', 'bug-types', 'description', 'novelty', 'CVE']
-markdown_title = [
-    'bug-id', 'target',
+latex_title = [
+    'target', 'target-type',
     'hypervisor', 'reproducible-version', 'arch',
-    'target-type',
-    'short-description', 'bug-types',
-    'novelty', 'reward',
-    'patch-status',
-    'fixing-commit'
+    'short-description',
+    'novelty',
+    'patch-provided',
+    'messages'
+]
+
+markdown_title = [
+    'bug-id',
+    'target', 'target-type',
+    'hypervisor', 'reproducible-version', 'arch',
+    'short-description',
+    'bug-types',
+    'novelty',
+    'patch-provided'
 ]
 
 if __name__ == '__main__':
@@ -135,22 +143,52 @@ if __name__ == '__main__':
     # step 3: generate summary
     if args.markdown:
         markdown = ['|id|{}|'.format('|'.join(markdown_title)), '|:---:|{}|'.format('|'.join([':---:'] * (len(markdown_title))))]
+    if args.latex:
+        latex = []
     sorted_metadata_list = dict(sorted(metadata_list.items()))
     i = 0
     for bug_id, metadata in sorted_metadata_list.items(): # maybe we need to sort
         i += 1
+        row = [str(i)]
         if args.markdown:
-            row = [str(i)]
             for column in markdown_title:
                 cell = metadata[column]
+                if column == 'novelty' and (cell is False or cell == 'false'):
+                    if 'reported-by' in metadata:
+                        cell = ', '.join(metadata['reported-by'])
+                    else:
+                        cell = 'Unknown'
                 if cell is None:
                     row.append('None')
                 elif isinstance(cell, list):
-                    row.append(';'.join(cell))
+                    row.append(', '.join(cell))
                 elif isinstance(cell, bool):
                     row.append(str(cell))
                 else:
                     row.append(cell)
             markdown.append('|{}|'.format('|'.join(row)))
+        if args.latex:
+            for column in latex_title:
+                if column == 'messages' and column not in metadata:
+                    metadata['messages'] = 'N/A'
+                cell = metadata[column]
+                if column == 'novelty' and (cell is False or cell == 'false'):
+                    if 'reported-by' in metadata:
+                        cell = ', '.join(metadata['reported-by'])
+                    else:
+                        cell = 'Unknown'
+                if cell is None:
+                    row.append('None')
+                elif isinstance(cell, list):
+                    row.append(', '.join(cell).replace('_', '\\_'))
+                elif isinstance(cell, bool):
+                    row.append(str(cell).replace('_', '\\_'))
+                elif isinstance(cell, int):
+                    row.append(str(cell))
+                else:
+                    row.append(cell.replace('_', '\\_'))
+            latex.append('{} \\\\'.format(' & '.join(row)))
     if args.markdown:
         print('\n'.join(markdown))
+    if args.latex:
+        print('\n'.join(latex))

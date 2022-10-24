@@ -1,0 +1,10 @@
+# An assertion failure in hw/usb/core.c from dwc2 usb controller
+
+A similar bug was found [here](https://bugs.launchpad.net/qemu/+bug/1907042),
+[here](https://bugs.launchpad.net/qemu/+bug/1525123/),
+[here](https://gitlab.com/qemu-project/qemu/-/issues/119),
+and [here](https://gitlab.com/qemu-project/qemu/-/issues/303).
+
+## Root cause analysis
+
+`epnum` is not enforced to 0 when `pid` is `USB_TOKEN_SETUP`

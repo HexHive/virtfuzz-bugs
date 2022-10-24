@@ -1,0 +1,4 @@
+# Assertion `tx_queue_idx <= s->txq_num' failed
+
+[1](https://www.mail-archive.com/qemu-devel@nongnu.org/msg824272.html)
+[2](https://gitlab.com/qemu-project/qemu/-/commit/6a932c4ed8748b08c58c)

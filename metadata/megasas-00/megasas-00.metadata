@@ -7,6 +7,7 @@ megasas-00:
   hypervisor: qemu
   introducing-commit: null
   novelty: false
+  reported-by: ['QEMUFuzzer']
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50

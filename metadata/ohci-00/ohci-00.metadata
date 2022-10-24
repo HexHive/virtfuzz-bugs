@@ -14,3 +14,4 @@ ohci-00:
   short-description: "Assertion failure in usb_msd_transfer_data()"
   target: ohci
   target-type: usb
+  messages: 29

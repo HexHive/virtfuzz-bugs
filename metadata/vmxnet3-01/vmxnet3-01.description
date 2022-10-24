@@ -1,0 +1,3 @@
+# Three hw_error() in vmxnet3_validate_queues (vmxnet3)
+
+[1](https://bugs.launchpad.net/qemu/+bug/1890160)

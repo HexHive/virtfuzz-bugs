@@ -1,5 +1,0 @@
-# Assertion `child->perm & BLK_PERM_WRITE' failed in bdrv_co_write_req_prepare
-
-It is reported [here](https://www.mail-archive.com/qemu-devel@nongnu.org/msg782182.html).
-
-

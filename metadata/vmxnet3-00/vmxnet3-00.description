@@ -1,0 +1,6 @@
+# Code should not be reached vmxnet3_io_bar1_write
+
+Because this bug was reported
+[here](https://gitlab.com/qemu-project/qemu/-/issues/309), I just provide our
+reproducer. This bug can also be reproduced in the QEMU 6.0.50,
+3e13d8e34b53d8f9a3421a816ccfbdc5fa874e98.

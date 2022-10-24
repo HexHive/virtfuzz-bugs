@@ -14,4 +14,3 @@ ac97-00:
   short-description: "Abort in audio_calloc()"
   target: ac97
   target-type: audio
-  n_messages: null
