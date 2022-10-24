@@ -1,4 +1,4 @@
-# Assertion failure in usb_cancel_packet
+# Assertion failure in usb_cancel_packet()
 
 When I ran hcd-ohci with dev-storage, I found an assertion failure in
 usb_cancel_packet() [1] due to p->state == USB_PACKET_COMPLETE. This is due to

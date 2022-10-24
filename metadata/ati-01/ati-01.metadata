@@ -11,6 +11,6 @@ ati-01:
   reproducible-host: "Ubuntu 18.04"
   reproducible-version: "6.1.50"
   reward: CVE-2021-3638
-  short-description: "OOB write in ati_2d_blt()"
+  short-description: "Out of bounds write in ati_2d_blt()"
   target: ati
   target-type: display

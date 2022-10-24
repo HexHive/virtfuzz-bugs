@@ -1,4 +1,4 @@
-# Assertion failed in usb_msd_transfer_data
+# Assertion failure in usb_msd_transfer_data()
 
 When I fuzzed ohci with dev-storage device, I found the assertion (s->mode ==
 USB_MSDM_DATAOUT) == (req->cmd.mode == SCSI_XFER_TO_DEV) failed in

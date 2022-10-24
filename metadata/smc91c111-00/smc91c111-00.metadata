@@ -1,6 +1,6 @@
 smc91c111-00:
   arch: arm
-  bug-types: ['OOB read/wirte']
+  bug-types: ['Out-of-bounds Read/Wirte']
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
@@ -11,6 +11,6 @@ smc91c111-00:
   reproducible-host: Ubuntu 18.04
   reproducible-version: 6.2.50
   reward: null
-  short-description: "OOB read/write in smc91c111"
+  short-description: "Out of bounds read/write in smc91c111"
   target: smc91c111
   target-type: net

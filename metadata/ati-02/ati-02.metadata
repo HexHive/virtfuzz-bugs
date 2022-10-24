@@ -1,6 +1,6 @@
 ati-02:
   arch: i386
-  bug-types: ["Out-of-bounds write"]
+  bug-types: ["Out-of-bounds Write"]
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
@@ -11,6 +11,6 @@ ati-02:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.0.94"
   reward: null
-  short-description: "OOB write in ati_2d_blt()"
+  short-description: "Out of bounds write in ati_2d_blt()"
   target: ati
   target-type: display

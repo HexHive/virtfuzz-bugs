@@ -1,4 +1,4 @@
-# Heap-buffer-overflow in sdhci_read_dataport()
+# Heap buffer overflow in sdhci_read_dataport()
 
 I re-trigger the off-by-one heap-buffer-overflow read [3] in
 sdhci_read_dataport() (previously reported at
@@ -96,7 +96,7 @@ qemu, 7.1.50, e93ded1bf6c94ab95015b33e188bc8b0b0c32670, Ubuntu 20.04
 ### VM architecture, device, device type
 i386, sdhci, storage
 
-### Bug Type: Heap Buffer Overflow
+### Bug Type: Heap-Buffer-Overflow
 
 ### Existing bug reports
 https://gitlab.com/qemu-project/qemu/-/issues/451

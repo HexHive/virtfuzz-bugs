@@ -1,4 +1,4 @@
-# OOB write in ati_2d_blt()
+# Out of bounds write in ati_2d_blt()
 
 With the patch
 https://lore.kernel.org/qemu-devel/20210906153103.1661195-1-philmd@redhat.com/,
@@ -14,7 +14,7 @@ qemu, 7.0.94, 9a99f964b152f8095949bbddca7841744ad418da, Ubuntu 20.04
 ### VM architecture, device, device type
 i386, ati, display
 
-### Bug Type: Out-of-bounds write
+### Bug Type: Out-of-bounds Write
 
 ### Stack traces, crash details
 

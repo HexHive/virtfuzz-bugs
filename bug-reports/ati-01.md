@@ -1,4 +1,4 @@
-# OOB write in ati_2d_blt()
+# Out of bounds write in ati_2d_blt()
 
 There is an inconsistent check and use of dst_[x|y] and s->regs.dst_[x|y] in
 ati_2d_blt. This inconsistent check will cause an OOB write of vram_ptr.

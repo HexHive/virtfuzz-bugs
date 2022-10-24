@@ -1,4 +1,4 @@
-# Heap-use-after-free in usb_cancel_packet
+# Heap use after free in usb_cancel_packet()
 
 A heap-use-after-free related to a USBPacket whose status is USB_RET_ASYNC was
 found. I trigger it through hcd-ohci with dev-storage. The packet is allocated
@@ -240,7 +240,7 @@ qemu, 7.0.50, c669f22f1a47897e8d1d595d6b8a59a572f9158c, Ubuntu 20.04
 ### VM architecture, device, device type
 i386, ohci, usb
 
-### Bug Type: Heap UAF
+### Bug Type: Heap-Use-After-Free
 
 ### Stack traces, crash details
 

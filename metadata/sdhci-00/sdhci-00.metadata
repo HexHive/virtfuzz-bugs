@@ -1,6 +1,6 @@
 sdhci-00:
   arch: i386
-  bug-types: ["Heap Buffer Overflow"]
+  bug-types: ["Heap-Buffer-Overflow"]
   existing-bug-reports: ["https://gitlab.com/qemu-project/qemu/-/issues/451", "https://bugs.launchpad.net/qemu/+bug/1913919"]
   existing-patches: null
   fixing-commit: null
@@ -11,6 +11,6 @@ sdhci-00:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.1.50"
   reward: null
-  short-description: "Heap-buffer-overflow in sdhci_read_dataport()"
+  short-description: "Heap buffer overflow in sdhci_read_dataport()"
   target: "sdhci"
   target-type: "storage"

@@ -1,6 +1,6 @@
 ohci-02:
   arch: "i386"
-  bug-types: ["Heap UAF"]
+  bug-types: ["Heap-Use-After-Free"]
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
@@ -11,6 +11,6 @@ ohci-02:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.0.50"
   reward: null
-  short-description: "Heap-use-after-free in usb_cancel_packet"
+  short-description: "Heap use after free in usb_cancel_packet()"
   target: "ohci"
   target-type: "usb"

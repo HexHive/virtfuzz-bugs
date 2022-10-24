@@ -1,4 +1,4 @@
-# abort in ohci_frame_boundary()
+# Abort in ohci_frame_boundary()
 
 I managed to trigger an abort in ohci_frame_boundary and make QEMU dos.
 
