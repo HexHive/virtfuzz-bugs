@@ -22,6 +22,7 @@ This repo includes all bugs found by ViDeZZo and all bug reports.
   + short-description:    str: e.g., "an assertion failure found in ati_2d()"
   + target:               str: e.g., "ati"
   + target-type:          str: audio|network|storage|usb|display
+  + messages:             int : e.g., 10
 + BUG_ID.backtrace:      text (ends with an empty line)
 + BUG_ID.patch:          text
 + BUG_ID.reproduce:      text: command lines to reproduce (ends with an empty line)
@@ -44,30 +45,6 @@ To send a patch, please refer to
 + https://www.qemu.org/docs/master/devel/submitting-a-patch.html
     + `git config sendemail.cccmd 'scripts/get_maintainer.pl --nogit-fallback'`
     + `git send-email -to qemu-devel@nongnu.org -suppress-cc=self --confirm=always path/to/patch`
-
-## Status
-
-Predefined values
-+ report-status: generated, reported
-+ patch-status: None, preprared, revised, merged
-
-|bug-id|target|target-type|arch|bug-types|short-description|novelty|reward|report-status|patch-status|fixing-commit|
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-|ati-01|ati|display|i386|Out-of-bounds Write|OOB write in ati_2d_blt()|True|CVE-2021-3638|reported|merged|https://github.com/qemu/qemu/commit/205ccfd7a5ec86bd9a5678b8bd157562fc9a1643|
-|nvme-00|nvme|storage|i386|Null Pointer Dereference|Null pointer deference in memory_region_set_enabled()|True|None|reported|merged|https://github.com/qemu/qemu/commit/2b02aabc9d02f9e95946cf639f546bb61f1721b7|
-|sb16-01|sb16|audio|i386|Abort|Abort in audio_calloc()|True|None|reported|merged|https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9|
-|xlnx_dp-00|xlnx_dp|display|aarch64|Abort|Abort in xlnx_dp_aux_set_command|True|None|reported|merged|https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17|
-|xlnx_dp-01|xlnx_dp|display|aarch64|Out-of-bounds Read|OOBR in xlnx_dp_read|True|None|reported|merged|https://github.com/qemu/qemu/commit/2b3a98255c90d8d2f9f87a73eb33371961508517|
-|xhci-00|xhci|usb|i386|Abort|Abort in xhci_find_stream()|True|None|reported|merged|https://github.com/qemu/qemu/commit/145cdaba0f7ea721080e1289dc7a31bb2066406f|
-|ohci-00|ohci|usb|i386|Assertion Failure|Assertion failed in usb_msd_transfer_data|True|None|reported|merged|https://github.com/qemu/qemu/commit/12b69878fc7b4b92b1bbd3959f2c3d4c717881fb|
-|ohci-01|ohci|usb|i386|Abort|abort in ohci_frame_boundary|false|None|reported|merged|https://github.com/qemu/qemu/commit/d8c2e6f2f6d29ccb766197181eb1c65c1d46b3a4|
-|ati-03|ati|display|i386|SEGV Write|hw/display/ati_2d: Third SEGV in ati_2d.c|True|None|generated|None|None|
-|ac97-00|ac97|audio|i386|Abort|An abort was just triggered in audio_calloc|True|None|generated|None|None|
-|smc91c111-00|smc91c111|net|arm|OOB read/wirte|OOB read/write in smc91c111|True|None|generated|None|None|
-|ohci-02|ohci|usb|i386|Heap UAF|Heap-use-after-free in usb_cancel_packet|true|None|reported|revised|None|
-|ohci-03|ohci|usb|i386|Assertion Failure|Assertion failure in usb_cancel_packet|false|None|reported|revised|None|
-|sdhci-00|sdhci|storage|i386|Heap Buffer Overflow|Heap-buffer-overflow in sdhci_read_dataport()|False|None|generated|prepared|None|
-|lan9118-01|lan9118|net|arm|Abort|Abort in lan9118_16bit_mode_read()|True|None|generated|prepared|None|
 
 ## Contribution
 

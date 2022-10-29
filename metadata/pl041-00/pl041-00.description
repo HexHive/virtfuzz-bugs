@@ -25,3 +25,9 @@ pl041_write(..., offset, ..., ...)
 ```
 
 To fix this issue, we need to guarantee that s->regs.sl2tx is not empty.
+
+According to the
+[datasheet](https://datasheet.datasheetarchive.com/originals/library/Datasheets-SL1/DSASL001541.pdf)
+3.3.10, AACISL2TX is not necessarily to be non zero.
+
+Don't know how to fix it.

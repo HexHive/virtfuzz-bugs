@@ -1,0 +1,26 @@
+From d831ae7ed56daf3455f85b62201a8163d246451c Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Sat, 29 Oct 2022 10:17:25 +0800
+Subject: [PATCH] fix pl041
+
+---
+ hw/audio/lm4549.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/hw/audio/lm4549.c b/hw/audio/lm4549.c
+index 32b1481..277015c 100644
+--- a/hw/audio/lm4549.c
++++ b/hw/audio/lm4549.c
+@@ -182,6 +182,9 @@ void lm4549_write(lm4549_state *s,
+         regfile[LM4549_PCM_Front_DAC_Rate] = value;
+         DPRINTF("DAC rate change = %i\n", value);
+ 
++        if (value == 0)
++            break;
++
+         /* Re-open a voice with the new sample rate */
+         struct audsettings as;
+         as.freq = value;
+-- 
+2.25.1
+
