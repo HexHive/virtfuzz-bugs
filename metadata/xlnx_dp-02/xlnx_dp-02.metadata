@@ -4,6 +4,7 @@ xlnx_dp-02:
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
+  status: 'N/A'
   hypervisor: qemu
   introducing-commit: null
   novelty: true
@@ -11,6 +12,6 @@ xlnx_dp-02:
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
   reward: null
-  short-description: 'Index 119 out of bounds for type uint32_t[119] in xlnx_dp_vblend_read'
+  short-description: 'Index 119 out of bounds in xlnx_dp_vblend_read()'
   target: xlnx_dp
   target-type: display

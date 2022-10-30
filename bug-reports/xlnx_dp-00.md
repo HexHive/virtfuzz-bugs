@@ -1,4 +1,4 @@
-# Abort in xlnx_dp_aux_set_command
+# Abort in xlnx_dp_aux_set_command()
 
 # Abort when runs into unsupported AUXCommand in xlnx_dp_aux_set_command
 

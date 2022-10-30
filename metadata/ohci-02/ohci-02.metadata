@@ -6,7 +6,7 @@ ohci-02:
   fixing-commit: null
   hypervisor: "qemu"
   introducing-commit: null
-  novelty: "true"
+  novelty: true
   reproducible-commit: "c669f22f1a47897e8d1d595d6b8a59a572f9158c"
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.0.50"
@@ -14,3 +14,4 @@ ohci-02:
   short-description: "Heap use after free in usb_cancel_packet()"
   target: "ohci"
   target-type: "usb"
+  messages: 67

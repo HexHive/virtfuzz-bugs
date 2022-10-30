@@ -2,8 +2,9 @@ ohci-00:
   arch: i386
   bug-types: ["Assertion Failure"]
   existing-bug-reports: null
-  existing-patches: null
-  fixing-commit: "https://github.com/qemu/qemu/commit/12b69878fc7b4b92b1bbd3959f2c3d4c717881fb"
+  existing-patches: ['https://github.com/qemu/qemu/commit/12b69878fc7b4b92b1bbd3959f2c3d4c717881fb"']
+  fixing-commit: 12b69878fc7b4b92b1bbd3959f2c3d4c717881fb
+  status: 'Fixed by others'
   hypervisor: qemu
   introducing-commit: null
   novelty: true

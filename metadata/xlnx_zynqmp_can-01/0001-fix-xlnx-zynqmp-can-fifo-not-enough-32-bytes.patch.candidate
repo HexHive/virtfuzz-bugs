@@ -1,0 +1,25 @@
+From d0b97575f03f90b8fabbded79c5ef38b4084815f Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Sat, 29 Oct 2022 16:28:13 +0800
+Subject: [PATCH] fix xlnx-zynqmp-can fifo not enough 32 bytes
+
+---
+ hw/net/can/xlnx-zynqmp-can.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/net/can/xlnx-zynqmp-can.c b/hw/net/can/xlnx-zynqmp-can.c
+index ee0cf9e..159b409 100644
+--- a/hw/net/can/xlnx-zynqmp-can.c
++++ b/hw/net/can/xlnx-zynqmp-can.c
+@@ -463,7 +463,7 @@ static void transfer_fifo(XlnxZynqMPCANState *s, Fifo32 *fifo)
+              * acknowledged. The XlnxZynqMPCAN core receives any message
+              * that it transmits.
+              */
+-            if (fifo32_is_full(&s->rx_fifo) && (fifo32_num_free(&s->rx_fifo) / 32)) {
++            if (fifo32_is_full(&s->rx_fifo) || !(fifo32_num_free(&s->rx_fifo) / 32)) {
+                 ARRAY_FIELD_DP32(s->regs, INTERRUPT_STATUS_REGISTER, RXOFLW, 1);
+             } else {
+                 for (i = 0; i < CAN_FRAME_SIZE; i++) {
+-- 
+2.25.1
+

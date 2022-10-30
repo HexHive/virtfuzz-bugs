@@ -4,6 +4,7 @@ ati-02:
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
+  status: 'N/A'
   hypervisor: qemu
   introducing-commit: null
   novelty: true
@@ -14,3 +15,4 @@ ati-02:
   short-description: "Out of bounds write in ati_2d_blt()"
   target: ati
   target-type: display
+  messages: 4

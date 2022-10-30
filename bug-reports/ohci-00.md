@@ -439,40 +439,6 @@ Step 3: with spawned shell (the user is root and the password is empty), run
 `ohci-00`.
 
 
-## Suggested fix
-
-```
-From 1b56f7c3fe6fb235ce6d1a98ec98e5660b1339d6 Mon Sep 17 00:00:00 2001
-From: Qiang Liu <cyruscyliu@gmail.com>
-Date: Thu, 25 Aug 2022 15:50:22 +0800
-Subject: [PATCH] dev-storage: workaround to fix the assertion in
- usb_msd_transfer_data
-
----
- hw/usb/dev-storage.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/hw/usb/dev-storage.c b/hw/usb/dev-storage.c
-index dca62d544f..99a0f6ea75 100644
---- a/hw/usb/dev-storage.c
-+++ b/hw/usb/dev-storage.c
-@@ -414,6 +414,11 @@ static void usb_msd_handle_data(USBDevice *dev, USBPacket *p)
-             trace_usb_msd_cmd_submit(cbw.lun, tag, cbw.flags,
-                                      cbw.cmd_len, s->data_len);
-             assert(le32_to_cpu(s->csw.residue) == 0);
-+            if (s->mode == USB_MSDM_DATAOUT && cbw.cmd[0] == 0x3 &&
-+                    (s->req->cmd.mode != SCSI_XFER_TO_DEV)) {
-+                error_report("usb-msd: Incompatible s->mode and s->req->cmd.mode");
-+                goto fail;
-+            }
-             s->scsi_len = 0;
-             s->req = scsi_req_new(scsi_dev, tag, cbw.lun, cbw.cmd, NULL);
-             if (s->commandlog) {
--- 
-2.25.1
-
-```
-
-## Contact
+## Existing patcheshttps://github.com/qemu/qemu/commit/12b69878fc7b4b92b1bbd3959f2c3d4c717881fb"## Contact
 
 Let us know if I need to provide more information.

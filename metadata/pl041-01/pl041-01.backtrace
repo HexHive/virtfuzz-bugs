@@ -1,0 +1,67 @@
+root@f693d096eafa:~/videzzo/videzzo_qemu/out-san# DEFAULT_INPUT_MAXSIZE=10000000 /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-arm-target-videzzo-fuzz-pl041  -max_len=10000000 -detect_leaks=0 poc-qemu-videzzo-arm-target-videzzo-fuzz-pl041-crash-6f66ee7817e592f52ad9ba38dbe4d3b35bf95215
+==26889==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x556ae069ba00). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 2295470473
+INFO: Loaded 1 modules   (601317 inline 8-bit counters): 601317 [0x556ae3588000, 0x556ae361ace5), 
+INFO: Loaded 1 PC tables (601317 PCs): 601317 [0x556ae2c5b160,0x556ae3587fb0), 
+/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-arm-target-videzzo-fuzz-pl041: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *pl041*
+This process will fuzz the following MemoryRegions:
+  * pl041[0] (size 1000)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * pl041, EVENT_TYPE_MMIO_READ, 0x1d000000 +0x1000, 1,4
+  * pl041, EVENT_TYPE_MMIO_WRITE, 0x1d000000 +0x1000, 1,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 210Mb
+Running: poc-qemu-videzzo-arm-target-videzzo-fuzz-pl041-crash-6f66ee7817e592f52ad9ba38dbe4d3b35bf95215
+A bug was just triggered in audio_calloc
+Save all your work and restart without audio
+I am sorry
+Context:
+audio_pcm_sw_alloc_resources_out passed invalid arguments to audio_calloc
+nmemb=0 size=16 (len=0)
+==26889== ERROR: libFuzzer: deadly signal
+    #0 0x556adbfb80fe in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86:3
+    #1 0x556adbf06d71 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:38
+    #2 0x556adbedfca6 in fuzzer::Fuzzer::CrashCallback() (.part.0) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:236:18
+    #3 0x556adbedfd72 in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:208:1
+    #4 0x556adbedfd72 in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207:19
+    #5 0x7f048ff5441f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1441f)
+    #6 0x7f048fd6600a in __libc_signal_restore_set /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/internal-signals.h:86:3
+    #7 0x7f048fd6600a in raise /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/raise.c:48:3
+    #8 0x7f048fd45858 in abort /build/glibc-SzIz7B/glibc-2.31/stdlib/abort.c:79:7
+    #9 0x556adbfe864a in __wrap_abort /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/less_crashes_wrappers.c:24:12
+    #10 0x556ade179443 in audio_calloc /root/videzzo/videzzo_qemu/qemu/build-san-6/../audio/audio.c:158:9
+    #11 0x556ade1b14c8 in audio_pcm_sw_alloc_resources_out /root/videzzo/videzzo_qemu/qemu/build-san-6/../audio/audio_template.h:117:15
+    #12 0x556ade17ed45 in audio_pcm_sw_init_out /root/videzzo/videzzo_qemu/qemu/build-san-6/../audio/audio_template.h:176:11
+    #13 0x556ade17c3f6 in AUD_open_out /root/videzzo/videzzo_qemu/qemu/build-san-6/../audio/audio_template.h:495:13
+    #14 0x556adc393c5e in lm4549_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/audio/lm4549.c:195:20
+    #15 0x556adc389c85 in pl041_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/audio/pl041.c:451:13
+    #16 0x556adf64e993 in memory_region_write_accessor /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:492:5
+    #17 0x556adf64e2d1 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:554:18
+    #18 0x556adf64cbf6 in memory_region_dispatch_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1514:16
+    #19 0x556adf6dad2e in flatview_write_continue /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2825:23
+    #20 0x556adf6c8e7b in flatview_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2867:12
+    #21 0x556adf6c8938 in address_space_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2963:18
+    #22 0x556adbff80bb in qemu_writel /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1081:5
+    #23 0x556adbff6534 in dispatch_mmio_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1222:28
+    #24 0x556ae06973bf in videzzo_dispatch_event /root/videzzo/videzzo.c:1122:5
+    #25 0x556ae068e73b in __videzzo_execute_one_input /root/videzzo/videzzo.c:272:9
+    #26 0x556ae068e610 in videzzo_execute_one_input /root/videzzo/videzzo.c:313:9
+    #27 0x556adbfff0fc in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1497:12
+    #28 0x556ae069bca2 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1891:18
+    #29 0x556adbee0816 in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:594:17
+    #30 0x556adbec3444 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #31 0x556adbece3ee in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:885:19
+    #32 0x556adbeba9d6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #33 0x7f048fd47082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #34 0x556adbebaa2d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-arm-target-videzzo-fuzz-pl041+0x300ea2d)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

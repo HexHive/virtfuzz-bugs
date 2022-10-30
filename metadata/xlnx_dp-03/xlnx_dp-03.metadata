@@ -1,16 +1,18 @@
 xlnx_dp-03:
-  arch: arm
+  arch: aarch64
   bug-types: ["Assertion Failure"]
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
+  status: 'N/A'
   hypervisor: qemu
   introducing-commit: null
   novelty: true
-  reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
-  reproducible-host: 'Ubuntu 18.04'
-  reproducible-version: 6.1.50
+  reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da
+  reproducible-host: 'Ubuntu 20.04'
+  reproducible-version: 7.0.94
   reward: null
   short-description: 'Assertion failure in fifo8_push_all()'
   target: xlnx_dp
   target-type: display
+  messages: 3

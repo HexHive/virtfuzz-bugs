@@ -1,0 +1,72 @@
+From 3bc7724ecd7b198d7d41a854f400ca7d8a45cc6b Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Sun, 30 Oct 2022 11:11:50 +0800
+Subject: [PATCH] fix xlnx-dp temporarily
+
+- fix xlnx_dp-05
+- fix xlnx_dp-06
+- fix xlnx_dp-04
+---
+ hw/display/xlnx_dp.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/hw/display/xlnx_dp.c b/hw/display/xlnx_dp.c
+index b0828d6..9c87c45 100644
+--- a/hw/display/xlnx_dp.c
++++ b/hw/display/xlnx_dp.c
+@@ -471,10 +471,6 @@ static uint8_t xlnx_dp_aux_pop_tx_fifo(XlnxDPState *s)
+ {
+     uint8_t ret;
+ 
+-    if (fifo8_is_empty(&s->tx_fifo)) {
+-        error_report("%s: TX_FIFO underflow", __func__);
+-        abort();
+-    }
+     ret = fifo8_pop(&s->tx_fifo);
+     DPRINTF("pop 0x%2.2X from tx_fifo.\n", ret);
+     return ret;
+@@ -521,6 +517,11 @@ static void xlnx_dp_aux_set_command(XlnxDPState *s, uint32_t value)
+     case WRITE_I2C:
+     case WRITE_I2C_MOT:
+         for (i = 0; i < nbytes; i++) {
++            if (fifo8_is_empty(&s->tx_fifo)) {
++                // error_report("%s: TX_FIFO underflow", __func__);
++                // abort();
++                break;
++            }
+             buf[i] = xlnx_dp_aux_pop_tx_fifo(s);
+         }
+         s->core_registers[DP_AUX_REPLY_CODE] = aux_request(s->aux_bus, cmd,
+@@ -638,10 +639,10 @@ static void xlnx_dp_change_graphic_fmt(XlnxDPState *s)
+     case DP_GRAPHIC_BGR888:
+         s->g_plane.format = PIXMAN_b8g8r8;
+         break;
+-    default:
+-        error_report("%s: unsupported graphic format %u", __func__,
+-                     s->avbufm_registers[AV_BUF_FORMAT] & DP_GRAPHIC_MASK);
+-        abort();
++    // default:
++        // error_report("%s: unsupported graphic format %u", __func__,
++                     // s->avbufm_registers[AV_BUF_FORMAT] & DP_GRAPHIC_MASK);
++        // abort();
+     }
+ 
+     switch (s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK) {
+@@ -654,10 +655,10 @@ static void xlnx_dp_change_graphic_fmt(XlnxDPState *s)
+     case DP_NL_VID_RGBA8880:
+         s->v_plane.format = PIXMAN_x8b8g8r8;
+         break;
+-    default:
+-        error_report("%s: unsupported video format %u", __func__,
+-                     s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK);
+-        abort();
++    // default:
++        // error_report("%s: unsupported video format %u", __func__,
++                     // s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK);
++        // abort();
+     }
+ 
+     xlnx_dp_recreate_surface(s);
+-- 
+2.25.1
+

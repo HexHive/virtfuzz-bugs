@@ -1,0 +1,104 @@
+From 7bddea8808e6984e636fed0be4be5723a37cbb37 Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Sun, 30 Oct 2022 11:11:50 +0800
+Subject: [PATCH] fix xlnx-dp temporarily
+
+- fix xlnx_dp-05
+- fix xlnx_dp-06
+- fix xlnx_dp-04
+- fix xlnx_dp-03
+---
+ hw/display/xlnx_dp.c | 35 +++++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
+
+diff --git a/hw/display/xlnx_dp.c b/hw/display/xlnx_dp.c
+index b0828d6..e4a0259 100644
+--- a/hw/display/xlnx_dp.c
++++ b/hw/display/xlnx_dp.c
+@@ -432,6 +432,9 @@ static void xlnx_dp_aux_clear_rx_fifo(XlnxDPState *s)
+ 
+ static void xlnx_dp_aux_push_rx_fifo(XlnxDPState *s, uint8_t *buf, size_t len)
+ {
++    if (fifo8_num_free(&s->rx_fifo) < len) {
++        return;
++    }
+     DPRINTF("Push %u data in rx_fifo\n", (unsigned)len);
+     fifo8_push_all(&s->rx_fifo, buf, len);
+ }
+@@ -463,6 +466,9 @@ static void xlnx_dp_aux_clear_tx_fifo(XlnxDPState *s)
+ 
+ static void xlnx_dp_aux_push_tx_fifo(XlnxDPState *s, uint8_t *buf, size_t len)
+ {
++    if (fifo8_num_free(&s->tx_fifo) < len) {
++        return;
++    }
+     DPRINTF("Push %u data in tx_fifo\n", (unsigned)len);
+     fifo8_push_all(&s->tx_fifo, buf, len);
+ }
+@@ -471,10 +477,6 @@ static uint8_t xlnx_dp_aux_pop_tx_fifo(XlnxDPState *s)
+ {
+     uint8_t ret;
+ 
+-    if (fifo8_is_empty(&s->tx_fifo)) {
+-        error_report("%s: TX_FIFO underflow", __func__);
+-        abort();
+-    }
+     ret = fifo8_pop(&s->tx_fifo);
+     DPRINTF("pop 0x%2.2X from tx_fifo.\n", ret);
+     return ret;
+@@ -521,6 +523,11 @@ static void xlnx_dp_aux_set_command(XlnxDPState *s, uint32_t value)
+     case WRITE_I2C:
+     case WRITE_I2C_MOT:
+         for (i = 0; i < nbytes; i++) {
++            if (fifo8_is_empty(&s->tx_fifo)) {
++                // error_report("%s: TX_FIFO underflow", __func__);
++                // abort();
++                break;
++            }
+             buf[i] = xlnx_dp_aux_pop_tx_fifo(s);
+         }
+         s->core_registers[DP_AUX_REPLY_CODE] = aux_request(s->aux_bus, cmd,
+@@ -576,6 +583,10 @@ static void xlnx_dp_recreate_surface(XlnxDPState *s)
+     uint16_t height = s->core_registers[DP_MAIN_STREAM_VRES];
+     DisplaySurface *current_console_surface = qemu_console_surface(s->console);
+ 
++    // let's limit the width and height
++    width &= 0xff;
++    height &= 0xff;
++
+     if ((width != 0) && (height != 0)) {
+         /*
+          * As dpy_gfx_replace_surface calls qemu_free_displaysurface on the
+@@ -638,10 +649,10 @@ static void xlnx_dp_change_graphic_fmt(XlnxDPState *s)
+     case DP_GRAPHIC_BGR888:
+         s->g_plane.format = PIXMAN_b8g8r8;
+         break;
+-    default:
+-        error_report("%s: unsupported graphic format %u", __func__,
+-                     s->avbufm_registers[AV_BUF_FORMAT] & DP_GRAPHIC_MASK);
+-        abort();
++    // default:
++        // error_report("%s: unsupported graphic format %u", __func__,
++                     // s->avbufm_registers[AV_BUF_FORMAT] & DP_GRAPHIC_MASK);
++        // abort();
+     }
+ 
+     switch (s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK) {
+@@ -654,10 +665,10 @@ static void xlnx_dp_change_graphic_fmt(XlnxDPState *s)
+     case DP_NL_VID_RGBA8880:
+         s->v_plane.format = PIXMAN_x8b8g8r8;
+         break;
+-    default:
+-        error_report("%s: unsupported video format %u", __func__,
+-                     s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK);
+-        abort();
++    // default:
++        // error_report("%s: unsupported video format %u", __func__,
++                     // s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK);
++        // abort();
+     }
+ 
+     xlnx_dp_recreate_surface(s);
+-- 
+2.25.1
+

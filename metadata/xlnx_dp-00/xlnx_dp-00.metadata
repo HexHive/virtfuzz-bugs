@@ -4,6 +4,7 @@ xlnx_dp-00:
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: "https://github.com/qemu/qemu/commit/9390da5ef29a5e0f98e5b482dceeeb287c452f17"
+  status: 'Fixed by us'
   hypervisor: "qemu"
   introducing-commit: "58ac482a66de09a7590f705e53fc6a3fb8a055e8"
   novelty: true
@@ -11,6 +12,7 @@ xlnx_dp-00:
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: "7.0.91"
   reward: null
-  short-description: "Abort in xlnx_dp_aux_set_command"
+  short-description: "Abort in xlnx_dp_aux_set_command()"
   target: "xlnx_dp"
   target-type: "display"
+  messages: 1

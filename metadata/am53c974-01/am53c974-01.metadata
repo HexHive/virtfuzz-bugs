@@ -4,10 +4,11 @@ am53c974-01:
   existing-bug-reports: ['https://bugs.launchpad.net/qemu/+bug/1910723', 'https://bugs.launchpad.net/qemu/+bug/1909247']
   existing-patches: ['https://github.com/qemu/qemu/commit/0db895361b8a82e1114372ff9f4857abea605701']
   fixing-commit: 0db895361b8a82e1114372ff9f4857abea605701
+  status: "Fixed by others"
   hypervisor: qemu
   introducing-commit: null
   novelty: false
-  reported-by: ['Unknown']
+  reported-by: ['Anonymous']
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: "Ubuntu 18.04"
   reproducible-version: 6.1.50

@@ -1,0 +1,26 @@
+Integer overflow -> heap buffer over
+
+static void glue(nand_blk_write_, NAND_PAGE_SIZE)(NANDFlashState *s)
+{
+    uint64_t off, page, sector, soff;
+    uint8_t iobuf[(PAGE_SECTORS + 2) * 0x200];
+    if (PAGE(s->addr) >= s->pages)
+        return;
+
+    if (!s->blk) {
+        mem_and(s->storage + PAGE_START(s->addr) + (s->addr & PAGE_MASK) +
+        // s->iolen int
+                        s->offset, s->io, s->iolen);
+    } else if (s->mem_oob) {
+
+        // size_t unsigned int!!!
+static void mem_and(uint8_t *dest, const uint8_t *src, size_t n)
+{
+    /* Like memcpy() but we logical-AND the data into the destination */
+    int i;
+    for (i = 0; i < n; i++) {
+        dest[i] &= src[i];
+    }
+}
+
+This has potential!

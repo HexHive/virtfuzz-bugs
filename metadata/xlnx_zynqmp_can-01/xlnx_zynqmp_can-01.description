@@ -1,0 +1,6 @@
+This is intesting as if there is no aasertion there, this will become a out of bound write.
+
+Somehow the number of bytes is not aligned.
+
+gef➤  p s->rx_fifo->fifo.num
+$25 = 0x39c

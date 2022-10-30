@@ -1,0 +1,27 @@
+From c31bf3fbc2ce380f744ff02302adb9d91a12f8b6 Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Tue, 1 Nov 2022 18:49:48 +0800
+Subject: [PATCH] fix tc6393xb-00
+
+---
+ hw/block/nand.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/hw/block/nand.c b/hw/block/nand.c
+index 1aee1cb..297eb25 100644
+--- a/hw/block/nand.c
++++ b/hw/block/nand.c
+@@ -791,6 +791,10 @@ static void glue(nand_blk_load_, NAND_PAGE_SIZE)(NANDFlashState *s,
+             s->ioaddr = s->io + (PAGE_START(addr) & 0x1ff) + offset;
+         }
+     } else {
++        int size = NAND_PAGE_SIZE + OOB_SIZE - offset;
++        if (size < 0) {
++            return;
++        }
+         memcpy(s->io, s->storage + PAGE_START(s->addr) +
+                         offset, NAND_PAGE_SIZE + OOB_SIZE - offset);
+         s->ioaddr = s->io;
+-- 
+2.25.1
+

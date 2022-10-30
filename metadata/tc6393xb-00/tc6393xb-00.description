@@ -1,1 +1,1 @@
-# Shift is too large in hw/block/nand.c
+s->offset = 0x200 and then offset = 0x211 and then boom!

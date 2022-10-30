@@ -1,76 +1,77 @@
-==27==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x61f000000dd0 at pc 0x55cc4c7a6474 bp 0x7ffe2e2f10a0 sp 0x7ffe2e2f1098
-READ of size 1 at 0x61f000000dd0 thread T0
-    #0 0x55cc4c7a6473 in nand_getio /root/qemu/build-oss-fuzz/../hw/block/nand.c:613:14
-    #1 0x55cc4c59d37a in tc6393xb_nand_readb /root/qemu/build-oss-fuzz/../hw/display/tc6393xb.c:356:20
-    #2 0x55cc4c59d37a in tc6393xb_readb /root/qemu/build-oss-fuzz/../hw/display/tc6393xb.c:496:21
-    #3 0x55cc4d25d89c in memory_region_read_accessor /root/qemu/build-oss-fuzz/../softmmu/memory.c:442:11
-    #4 0x55cc4d245ca5 in access_with_adjusted_size /root/qemu/build-oss-fuzz/../softmmu/memory.c:552:18
-    #5 0x55cc4d245ca5 in memory_region_dispatch_read1 /root/qemu/build-oss-fuzz/../softmmu/memory.c:1422:16
-    #6 0x55cc4d245ca5 in memory_region_dispatch_read /root/qemu/build-oss-fuzz/../softmmu/memory.c:1450:9
-    #7 0x55cc4d55bfa3 in flatview_read_continue /root/qemu/build-oss-fuzz/../softmmu/physmem.c:2810:23
-    #8 0x55cc4c46fbba in address_space_read /root/qemu/include/exec/memory.h:2518:26
-    #9 0x55cc4c46fbba in __wrap_qtest_readl /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/qtest_wrappers.c:134:9
-    #10 0x55cc4c4de9da in stateful_fuzz /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/stateful_fuzz.c:423:13
-    #11 0x55cc4c4720f0 in LLVMFuzzerTestOneInput /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/fuzz.c:151:5
-    #12 0x55cc4c36ce43 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:603
-    #13 0x55cc4c3702d8 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:509
-    #14 0x55cc4c37290e in fuzzer::Fuzzer::MutateAndTestOne() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:750
-    #15 0x55cc4c3740f7 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, fuzzer::fuzzer_allocator<fuzzer::SizedFile> >&) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:894
-    #16 0x55cc4c3595e1 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:909
-    #17 0x55cc4c344f92 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
-    #18 0x7fdf33737bf6 in __libc_start_main (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x21bf6)
-    #19 0x55cc4c344fe9 in _start (/root/qemu/build-oss-fuzz/DEST_DIR/qemu-fuzz-arm-target-stateful-fuzz-tc6393xb+0x1161fe9)
+root@4edae5811335:~/videzzo/videzzo_qemu/out-san# DEFAULT_INPUT_MAXSIZE=10000000 /root/videzzo/videzzo_qemu/out-san/qemu-videzzo-arm-target-videzzo-fuzz-tc6393xb  -max_len=10000000 -detect_leaks=0 poc-qemu-videzzo-arm-target-videzzo-fuzz-tc6393xb-crash-55c2b01921c18ce020fa35319af4632834e116be.minimized
+==20435==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x5645f46c0ac0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 3601248722
+INFO: Loaded 1 modules   (601321 inline 8-bit counters): 601321 [0x5645f75ae000, 0x5645f7640ce9), 
+INFO: Loaded 1 PC tables (601321 PCs): 601321 [0x5645f6c801e0,0x5645f75ad070), 
+/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-arm-target-videzzo-fuzz-tc6393xb: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *tc6393xb*
+This process will fuzz the following MemoryRegions:
+  * tc6393xb.vram[0] (size 100000)
+  * tc6393xb[0] (size 10000)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * tc6393xb.vram, EVENT_TYPE_MMIO_READ, 0x10100000 +0x100000, 1,4
+  * tc6393xb.vram, EVENT_TYPE_MMIO_WRITE, 0x10100000 +0x100000, 1,4
+  * tc6393xb, EVENT_TYPE_MMIO_READ, 0x10000000 +0x10000, 1,1
+  * tc6393xb, EVENT_TYPE_MMIO_WRITE, 0x10000000 +0x10000, 1,1
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 280Mb
+Running: poc-qemu-videzzo-arm-target-videzzo-fuzz-tc6393xb-crash-55c2b01921c18ce020fa35319af4632834e116be.minimized
+=================================================================
+==20435==ERROR: AddressSanitizer: negative-size-param: (size=-1)
+    #0 0x5645effd2656 in __asan_memcpy /root/llvm-project/compiler-rt/lib/asan/asan_interceptors_memintrinsics.cpp:22:3
+    #1 0x5645f040b342 in nand_blk_load_512 /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/block/nand.c:794:9
+    #2 0x5645f03f1f64 in nand_getio /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/block/nand.c:601:9
+    #3 0x5645f08acc9a in tc6393xb_nand_readb /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/display/tc6393xb.c:359:20
+    #4 0x5645f08a53fc in tc6393xb_readb /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/display/tc6393xb.c:500:21
+    #5 0x5645f36b308b in memory_region_read_accessor /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:440:11
+    #6 0x5645f3673391 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:554:18
+    #7 0x5645f367075c in memory_region_dispatch_read1 /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1424:16
+    #8 0x5645f366fe98 in memory_region_dispatch_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1457:9
+    #9 0x5645f36ec09d in flatview_read_continue /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2892:23
+    #10 0x5645f36ed6a8 in flatview_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2934:12
+    #11 0x5645f36ed168 in address_space_read_full /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2947:18
+    #12 0x5645f000e7ea in address_space_read /root/videzzo/videzzo_qemu/qemu/include/exec/memory.h:2869:18
+    #13 0x5645f000e7ea in qemu_readb /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1017:5
+    #14 0x5645f000d97e in dispatch_mmio_read /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1041:35
+    #15 0x5645f46bc47f in videzzo_dispatch_event /root/videzzo/videzzo.c:1122:5
+    #16 0x5645f46b37fb in __videzzo_execute_one_input /root/videzzo/videzzo.c:272:9
+    #17 0x5645f46b36d0 in videzzo_execute_one_input /root/videzzo/videzzo.c:313:9
+    #18 0x5645f00240fc in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1504:12
+    #19 0x5645f46c0d62 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1891:18
+    #20 0x5645eff05816 in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:594:17
+    #21 0x5645efee8444 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #22 0x5645efef33ee in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:885:19
+    #23 0x5645efedf9d6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #24 0x7fbc03b97082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #25 0x5645efedfa2d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-arm-target-videzzo-fuzz-tc6393xb+0x300ea2d)
 
-0x61f000000dd0 is located 0 bytes to the right of 3408-byte region [0x61f000000080,0x61f000000dd0)
+0x7fbbf45ffa11 is located 529 bytes inside of 69206016-byte region [0x7fbbf45ff800,0x7fbbf87ff800)
 allocated by thread T0 here:
-    #0 0x55cc4c427e20 in malloc /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:145
-    #1 0x7fdf34b57bd8 in g_malloc (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libglib-2.0.so.0+0x51bd8)
-    #2 0x55cc4d682f1d in qdev_new /root/qemu/build-oss-fuzz/../hw/core/qdev.c:153:19
-    #3 0x55cc4c7a6771 in nand_init /root/qemu/build-oss-fuzz/../hw/block/nand.c:639:11
-    #4 0x55cc4c59ceee in tc6393xb_init /root/qemu/build-oss-fuzz/../hw/display/tc6393xb.c:553:16
-    #5 0x55cc4cef8f91 in tosa_init /root/qemu/build-oss-fuzz/../hw/arm/tosa.c:250:12
-    #6 0x55cc4cb1a595 in machine_run_board_init /root/qemu/build-oss-fuzz/../hw/core/machine.c:1237:5
-    #7 0x55cc4d27a20a in qemu_init_board /root/qemu/build-oss-fuzz/../softmmu/vl.c:2514:5
-    #8 0x55cc4d27a20a in qmp_x_exit_preconfig /root/qemu/build-oss-fuzz/../softmmu/vl.c:2588:5
-    #9 0x55cc4d282529 in qemu_init /root/qemu/build-oss-fuzz/../softmmu/vl.c:3611:9
-    #10 0x55cc4c47263e in LLVMFuzzerInitialize /root/qemu/build-oss-fuzz/../tests/qtest/fuzz/fuzz.c:238:5
-    #11 0x55cc4c3568be in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:645
-    #12 0x55cc4c344f92 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
-    #13 0x7fdf33737bf6 in __libc_start_main (/root/qemu/build-oss-fuzz/DEST_DIR/lib/libc.so.6+0x21bf6)
+    #0 0x5645effd36cf in malloc /root/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:145:3
+    #1 0x7fbc04e4ee98 in g_malloc (/lib/x86_64-linux-gnu/libglib-2.0.so.0+0x57e98)
+    #2 0x5645f3a1bdcb in device_set_realized /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/core/qdev.c:553:13
+    #3 0x5645f3a53a6b in property_set_bool /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:2273:5
+    #4 0x5645f3a4c99d in object_property_set /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:1408:5
+    #5 0x5645f3a60329 in object_property_set_qobject /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/qom-qobject.c:28:10
+    #6 0x5645f3a4d6fd in object_property_set_bool /root/videzzo/videzzo_qemu/qemu/build-san-6/../qom/object.c:1477:15
+    #7 0x5645f3a0d5c2 in qdev_realize /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/core/qdev.c:333:12
+    #8 0x5645f03f3f30 in nand_init /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/block/nand.c:646:5
+    #9 0x5645f08a44c2 in tc6393xb_init /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/display/tc6393xb.c:558:16
+    #10 0x5645f27b7822 in tosa_init /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/arm/tosa.c:250:12
+    #11 0x5645f05dc5d7 in machine_run_board_init /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/core/machine.c:1400:5
+    #12 0x5645f2269aab in qemu_init_board /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/vl.c:2485:5
+    #13 0x5645f22697bc in qmp_x_exit_preconfig /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/vl.c:2581:5
+    #14 0x5645f2270d3f in qemu_init /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/vl.c:3584:9
+    #15 0x5645f00223f3 in LLVMFuzzerInitialize /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1761:5
+    #16 0x5645efeeffab in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:664:29
+    #17 0x5645efedf9d6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #18 0x7fbc03b97082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
 
-SUMMARY: AddressSanitizer: heap-buffer-overflow /root/qemu/build-oss-fuzz/../hw/block/nand.c:613:14 in nand_getio
-Shadow bytes around the buggy address:
-  0x0c3e7fff8160: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x0c3e7fff8170: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x0c3e7fff8180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x0c3e7fff8190: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x0c3e7fff81a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-=>0x0c3e7fff81b0: 00 00 00 00 00 00 00 00 00 00[fa]fa fa fa fa fa
-  0x0c3e7fff81c0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
-  0x0c3e7fff81d0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0c3e7fff81e0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0c3e7fff81f0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0c3e7fff8200: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-Shadow byte legend (one shadow byte represents 8 application bytes):
-  Addressable:           00
-  Partially addressable: 01 02 03 04 05 06 07
-  Heap left redzone:       fa
-  Freed heap region:       fd
-  Stack left redzone:      f1
-  Stack mid redzone:       f2
-  Stack right redzone:     f3
-  Stack after return:      f5
-  Stack use after scope:   f8
-  Global redzone:          f9
-  Global init order:       f6
-  Poisoned by user:        f7
-  Container overflow:      fc
-  Array cookie:            ac
-  Intra object redzone:    bb
-  ASan internal:           fe
-  Left alloca redzone:     ca
-  Right alloca redzone:    cb
-  Shadow gap:              cc
-==27==ABORTING
-MS: 9 ChangeBinInt-Custom-ChangeByte-Custom-EraseBytes-Custom-ChangeBinInt-ChangeBit-Custom-; base unit: cc97e3b012c4b896e376d5b6981c9d089d9c8f49
-artifact_prefix='./'; Test unit written to ./crash-0d3ef3e42c503214c80be8db9bcab13554abfd2f
+SUMMARY: AddressSanitizer: negative-size-param /root/llvm-project/compiler-rt/lib/asan/asan_interceptors_memintrinsics.cpp:22:3 in __asan_memcpy
+==20435==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

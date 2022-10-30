@@ -14,3 +14,4 @@ ohci-03:
   short-description: "Assertion failure in usb_cancel_packet()"
   target: "ohci"
   target-type: "usb"
+  messages: 79

@@ -1,1 +1,17 @@
 # Index out of bounds for type uint32_t [64] in xilinx_spips_write
+
+#0  0x000055555c4b8398 in memory_region_do_init (mr=0x7ffff0214680, owner=0x7ffff0214350, name=0x55555d843540 <str> "spi", size=0x200) at ../softmmu/memory.c:1166
+#1  0x000055555c4b80e2 in memory_region_init (mr=0x7ffff0214680, owner=0x7ffff0214350, name=0x55555d843540 <str> "spi", size=0x200) at ../softmmu/memory.c:1195
+#2  0x000055555c4bea38 in memory_region_init_io (mr=0x7ffff0214680, owner=0x7ffff0214350, ops=0x55555e2750a0 <spips_ops>, opaque=0x7ffff0214350, name=0x55555d843540 <str> "spi", size=0x200) at ../softmmu/memory.c:1536
+#3  0x000055555a5f4ece in xilinx_spips_realize (dev=0x7ffff0214350, errp=0x7fffffff8da0) at ../hw/ssi/xilinx_spips.c:1301
+#4  0x000055555c865e5c in device_set_realized (obj=0x7ffff0214350, value=0x1, errp=0x7fffffffbee0) at ../hw/core/qdev.c:553
+
+This sets the size of memory region to 0x200 but only 0x100 is valid.
+
+I do a simple change in the following:
+
+- #define XLNX_SPIPS_R_MAX        (0x100 / 4)
++ #define XLNX_SPIPS_R_MAX        (0x200 / 4)
+
+This will work but break some regression testing. So, think up a new patch later.
+

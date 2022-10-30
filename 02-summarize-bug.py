@@ -71,7 +71,7 @@ def generate_report(bug_pathname, metadata):
     if len(patch) != 0:
         metadata['patch-provided'] = True
     else:
-        metadata['patch-provided'] = False
+        metadata['patch-provided'] = 'N/A'
 
     report.extend(["## Contact\n\n"])
     report.extend([
@@ -88,7 +88,7 @@ latex_title = [
     'hypervisor', 'reproducible-version', 'arch',
     'short-description',
     'novelty',
-    'patch-provided',
+    'status',
     'messages'
 ]
 
@@ -99,7 +99,8 @@ markdown_title = [
     'short-description',
     'bug-types',
     'novelty',
-    'patch-provided'
+    'patch-provided',
+    'status'
 ]
 
 if __name__ == '__main__':
@@ -152,12 +153,19 @@ if __name__ == '__main__':
         row = [str(i)]
         if args.markdown:
             for column in markdown_title:
+                if (column == 'messages' and column not in metadata) or \
+                        (column == 'status' and column not in metadata):
+                    metadata[column] = 'N/A'
                 cell = metadata[column]
                 if column == 'novelty' and (cell is False or cell == 'false'):
                     if 'reported-by' in metadata:
                         cell = ', '.join(metadata['reported-by'])
                     else:
                         cell = 'Unknown'
+                if 'status' in metadata:
+                    cell = metadata['status']
+                else:
+                    call = 'N/A'
                 if cell is None:
                     row.append('None')
                 elif isinstance(cell, list):
@@ -169,8 +177,9 @@ if __name__ == '__main__':
             markdown.append('|{}|'.format('|'.join(row)))
         if args.latex:
             for column in latex_title:
-                if column == 'messages' and column not in metadata:
-                    metadata['messages'] = 'N/A'
+                if ((column == 'messages' and column not in metadata) or \
+                        (column == 'status' and column not in metadata)):
+                    metadata[column] = 'N/A'
                 cell = metadata[column]
                 if column == 'novelty' and (cell is False or cell == 'false'):
                     if 'reported-by' in metadata:

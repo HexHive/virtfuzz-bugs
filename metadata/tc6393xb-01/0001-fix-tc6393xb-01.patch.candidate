@@ -1,0 +1,25 @@
+From ce53d578344c7258cd088bc1c23cf8c227ea1761 Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Tue, 1 Nov 2022 19:01:31 +0800
+Subject: [PATCH] fix tc6393xb-01
+
+---
+ hw/block/nand.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/block/nand.c b/hw/block/nand.c
+index 297eb25..9ab1d48 100644
+--- a/hw/block/nand.c
++++ b/hw/block/nand.c
+@@ -93,7 +93,7 @@ struct NANDFlashState {
+ 
+ OBJECT_DECLARE_SIMPLE_TYPE(NANDFlashState, NAND)
+ 
+-static void mem_and(uint8_t *dest, const uint8_t *src, size_t n)
++static void mem_and(uint8_t *dest, const uint8_t *src, int n)
+ {
+     /* Like memcpy() but we logical-AND the data into the destination */
+     int i;
+-- 
+2.25.1
+

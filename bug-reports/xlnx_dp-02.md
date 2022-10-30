@@ -1,4 +1,4 @@
-# Index 119 out of bounds for type uint32_t[119] in xlnx_dp_vblend_read
+# Index 119 out of bounds in xlnx_dp_vblend_read()
 
 # Index 119 out of bounds for type 'uint32_t [119] in xlnx_dp_vblend_read
 ## More details

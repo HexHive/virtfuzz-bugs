@@ -1,0 +1,1 @@
+    013, EVENT_TYPE_MMIO_WRITE, 0xfd4ab000, 0x4, 0xcf6e998

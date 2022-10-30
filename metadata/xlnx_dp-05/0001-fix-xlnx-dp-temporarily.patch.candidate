@@ -1,0 +1,47 @@
+From 64db2585352efe3f6eb3dc588b7cd4d2c6e64fae Mon Sep 17 00:00:00 2001
+From: Qiang Liu <cyruscyliu@gmail.com>
+Date: Sun, 30 Oct 2022 11:11:50 +0800
+Subject: [PATCH] fix xlnx-dp temporarily
+
+- fix xlnx_dp-05
+---
+ hw/display/xlnx_dp.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/hw/display/xlnx_dp.c b/hw/display/xlnx_dp.c
+index b0828d6..6696e91 100644
+--- a/hw/display/xlnx_dp.c
++++ b/hw/display/xlnx_dp.c
+@@ -638,10 +638,10 @@ static void xlnx_dp_change_graphic_fmt(XlnxDPState *s)
+     case DP_GRAPHIC_BGR888:
+         s->g_plane.format = PIXMAN_b8g8r8;
+         break;
+-    default:
+-        error_report("%s: unsupported graphic format %u", __func__,
+-                     s->avbufm_registers[AV_BUF_FORMAT] & DP_GRAPHIC_MASK);
+-        abort();
++    // default:
++        // error_report("%s: unsupported graphic format %u", __func__,
++                     // s->avbufm_registers[AV_BUF_FORMAT] & DP_GRAPHIC_MASK);
++        // abort();
+     }
+ 
+     switch (s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK) {
+@@ -654,10 +654,10 @@ static void xlnx_dp_change_graphic_fmt(XlnxDPState *s)
+     case DP_NL_VID_RGBA8880:
+         s->v_plane.format = PIXMAN_x8b8g8r8;
+         break;
+-    default:
+-        error_report("%s: unsupported video format %u", __func__,
+-                     s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK);
+-        abort();
++    // default:
++        // error_report("%s: unsupported video format %u", __func__,
++                     // s->avbufm_registers[AV_BUF_FORMAT] & DP_NL_VID_FMT_MASK);
++        // abort();
+     }
+ 
+     xlnx_dp_recreate_surface(s);
+-- 
+2.25.1
+

@@ -1,16 +1,18 @@
 tc6393xb-00:
   arch: arm
-  bug-types: ["Heap Buffer Overflow"]
+  bug-types: ["negative-size-param"]
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
+  status: 'N/A'
   hypervisor: qemu
   introducing-commit: null
   novelty: true
-  reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
-  reproducible-host: 'Ubuntu 18.04'
-  reproducible-version: 6.1.50
+  reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da 
+  reproducible-host: 'Ubuntu 20.04'
+  reproducible-version: 7.0.94 
   reward: null
-  short-description: 'Shift is too large in hw/block/nand.c'
+  short-description: 'negative-size-param in nand_blk_load_512()'
   target: tc6393xb
-  target-type: storage
+  target-type: display
+  messages: 23

@@ -1,0 +1,90 @@
+# Abort in xlnx_dp_change_graphic_fmt()
+
+## More details
+
+### Hypervisor, hypervisor version, upstream commit/tag, host
+qemu, 7.0.94, 9a99f964b152f8095949bbddca7841744ad418da, Ubuntu 20.04
+
+### VM architecture, device, device type
+aarch64, xlnx_dp, display
+
+### Bug Type: Abort
+
+### Stack traces, crash details
+
+```
+root@4edae5811335:~/videzzo/videzzo_qemu/out-san# ./qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-dp crash-8b178268936b24c569a421d702ef5b6d911c99e7 
+==20455==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x564934146c90). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 4022227410
+INFO: Loaded 1 modules   (618619 inline 8-bit counters): 618619 [0x5649372a5000, 0x56493733c07b), 
+INFO: Loaded 1 PC tables (618619 PCs): 618619 [0x564936933f40,0x5649372a46f0), 
+./qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-dp: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+Matching objects by name , *.core*, *.v_blend*, *.av_buffer_manager*, *.audio*
+This process will fuzz the following MemoryRegions:
+  * xlnx.v-dp.audio[0] (size 50)
+  * xlnx.v-dp.av_buffer_manager[0] (size 238)
+  * xlnx.v-dp.core[0] (size 3b0)
+  * xlnx.v-dp.v_blend[0] (size 1e0)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * xlnx.v-dp.core, EVENT_TYPE_MMIO_READ, 0xfd4a0000 +0x3b0, 4,4
+  * xlnx.v-dp.core, EVENT_TYPE_MMIO_WRITE, 0xfd4a0000 +0x3b0, 4,4
+  * xlnx.v-dp.v_blend, EVENT_TYPE_MMIO_READ, 0xfd4aa000 +0x1e0, 4,4
+  * xlnx.v-dp.v_blend, EVENT_TYPE_MMIO_WRITE, 0xfd4aa000 +0x1e0, 4,4
+  * xlnx.v-dp.av_buffer_manager, EVENT_TYPE_MMIO_READ, 0xfd4ab000 +0x238, 4,4
+  * xlnx.v-dp.av_buffer_manager, EVENT_TYPE_MMIO_WRITE, 0xfd4ab000 +0x238, 4,4
+  * xlnx.v-dp.audio, EVENT_TYPE_MMIO_READ, 0xfd4ac000 +0x50, 1,4
+  * xlnx.v-dp.audio, EVENT_TYPE_MMIO_WRITE, 0xfd4ac000 +0x50, 1,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 489Mb
+Running: crash-8b178268936b24c569a421d702ef5b6d911c99e7
+aarch64: xlnx_dp_change_graphic_fmt: unsupported graphic format 2304
+==20455== ERROR: libFuzzer: deadly signal
+    #0 0x56492f51f10e in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86:3
+    #1 0x56492f46dd81 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:38
+    #2 0x56492f446cb6 in fuzzer::Fuzzer::CrashCallback() (.part.0) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:236:18
+    #3 0x56492f446d82 in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:208:1
+    #4 0x56492f446d82 in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207:19
+    #5 0x7f7a315a641f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1441f)
+    #6 0x7f7a313b800a in __libc_signal_restore_set /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/internal-signals.h:86:3
+    #7 0x7f7a313b800a in raise /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/raise.c:48:3
+    #8 0x7f7a31397858 in abort /build/glibc-SzIz7B/glibc-2.31/stdlib/abort.c:79:7
+    #9 0x56492f54f65a in __wrap_abort /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/less_crashes_wrappers.c:24:12
+    #10 0x56492fe7e0d7 in xlnx_dp_change_graphic_fmt /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/display/xlnx_dp.c:644:9
+    #11 0x56492fe7be58 in xlnx_dp_avbufm_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../hw/display/xlnx_dp.c:1046:9
+    #12 0x5649330fa313 in memory_region_write_accessor /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:492:5
+    #13 0x5649330f9c51 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:554:18
+    #14 0x5649330f8576 in memory_region_dispatch_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/memory.c:1514:16
+    #15 0x56493318672e in flatview_write_continue /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2825:23
+    #16 0x56493317486b in flatview_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2867:12
+    #17 0x564933174328 in address_space_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../softmmu/physmem.c:2963:18
+    #18 0x56492f55f0cb in qemu_writel /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1088:5
+    #19 0x56492f55d544 in dispatch_mmio_write /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1229:28
+    #20 0x56493414264f in videzzo_dispatch_event /root/videzzo/videzzo.c:1122:5
+    #21 0x5649341399cb in __videzzo_execute_one_input /root/videzzo/videzzo.c:272:9
+    #22 0x5649341398a0 in videzzo_execute_one_input /root/videzzo/videzzo.c:313:9
+    #23 0x56492f56610c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/build-san-6/../tests/qtest/videzzo/videzzo_qemu.c:1504:12
+    #24 0x564934146f32 in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1891:18
+    #25 0x56492f447826 in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:594:17
+    #26 0x56492f42a454 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #27 0x56492f4353fe in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:885:19
+    #28 0x56492f4219e6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #29 0x7f7a31399082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #30 0x56492f421a3d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-dp+0x3291a3d)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+0x0,0xc,0x1c,0xb0,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x4,0x2,0x48,0x40,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0xa,0x20,0xa1,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x0,0xe,0x8,0xc0,0x4a,0xfd,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x4,0x2,0x3e,0xc6,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0xc,0x78,0xb1,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x1,0x9,0x4,0x2,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0xc2,0x1b,0xe,0x7b,0x0,0x0,0x0,0x0,0x1,0xb,0x84,0xa1,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0xd8,0x1f,0x9a,0x30,0x0,0x0,0x0,0x0,0x0,0x8,0x70,0x0,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x1,0x9,0xec,0x2,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x50,0x62,0xd6,0x13,0x0,0x0,0x0,0x0,0x0,0xa,0x18,0xa0,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x1,0xd,0x0,0xb0,0x4a,0xfd,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x98,0xe9,0xf6,0xc,0x0,0x0,0x0,0x0,
+\x00\x0c\x1c\xb0J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\x04\x02H@\x01\x00\x00\x00\x00\x00\x00\x0a \xa1J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\x00\x0e\x08\xc0J\xfd\x00\x00\x00\x00\x02\x00\x00\x00\x00\x08\x00\x00J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\x04\x02>\xc6\x01\x00\x00\x00\x00\x00\x00\x0cx\xb1J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\x01\x09\x04\x02J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\xc2\x1b\x0e{\x00\x00\x00\x00\x01\x0b\x84\xa1J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\xd8\x1f\x9a0\x00\x00\x00\x00\x00\x08p\x00J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\x01\x09\xec\x02J\xfd\x00\x00\x00\x00\x04\x00\x00\x00Pb\xd6\x13\x00\x00\x00\x00\x00\x0a\x18\xa0J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\x01\x0d\x00\xb0J\xfd\x00\x00\x00\x00\x04\x00\x00\x00\x98\xe9\xf6\x0c\x00\x00\x00\x00
+```
+
+## Contact
+
+Let us know if I need to provide more information.
