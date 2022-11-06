@@ -3,6 +3,7 @@ sdhci-00:
   bug-types: ["Heap-Buffer-Overflow"]
   existing-bug-reports: ["https://gitlab.com/qemu-project/qemu/-/issues/451", "https://bugs.launchpad.net/qemu/+bug/1913919"]
   existing-patches: null
+  reported-by: [QEMUFuzzer]
   fixing-commit: null
   hypervisor: "qemu"
   introducing-commit: null

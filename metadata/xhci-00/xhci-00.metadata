@@ -4,6 +4,7 @@ xhci-00:
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: "https://github.com/qemu/qemu/commit/145cdaba0f7ea721080e1289dc7a31bb2066406f"
+  status: 'Fixed by us'
   hypervisor: "qemu"
   introducing-commit: null
   novelty: true

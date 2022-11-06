@@ -1,17 +1,18 @@
-ati-01:
+ati-00:
   arch: i386
   bug-types: ["Out-of-bounds Write"]
-  existing-bug-reports: null
-  existing-patches: ['https://github.com/qemu/qemu/commit/205ccfd7a5ec86bd9a5678b8bd157562fc9a1643']
-  fixing-commit: 205ccfd7a5ec86bd9a5678b8bd157562fc9a1643
+  existing-bug-reports: []
+  existing-patches: ['https://github.com/qemu/qemu/commit/ca1f9cbfdce4d63b10d57de80fef89a89d92a540?diff=unified']
+  fixing-commit: ca1f9cbfdce4d63b10d57de80fef89a89d92a540
+  reported-by: ['VShuttle']
   status: 'Fixed by others'
   hypervisor: qemu
-  introducing-commit: "584acf34cb05f16e13a46d666196a7583d232616"
-  novelty: true
+  introducing-commit: null
+  novelty: false
   reproducible-commit: "c52d69e7dbaaed0ffdef8125e79218672c30161d"
   reproducible-host: "Ubuntu 18.04"
   reproducible-version: "6.1.50"
-  reward: CVE-2021-3638
+  reward: null
   short-description: "Out of bounds write in ati_2d_blt()"
   target: ati
   target-type: display

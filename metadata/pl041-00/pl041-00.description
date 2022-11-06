@@ -31,3 +31,5 @@ According to the
 3.3.10, AACISL2TX is not necessarily to be non zero.
 
 Don't know how to fix it.
+
+Must not be zero
