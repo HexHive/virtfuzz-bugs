@@ -4,7 +4,7 @@ xlnx_zynqmp_qspips-00:
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
-  status: 'N/A'
+  status: 'WIP'
   hypervisor: qemu
   introducing-commit: null
   novelty: true

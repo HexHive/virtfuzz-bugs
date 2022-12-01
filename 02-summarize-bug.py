@@ -71,7 +71,7 @@ def generate_report(bug_pathname, metadata):
     if len(patch) != 0:
         metadata['patch-provided'] = True
     else:
-        metadata['patch-provided'] = 'N/A'
+        metadata['patch-provided'] = 'WIP'
 
     report.extend(["## Contact\n\n"])
     report.extend([
@@ -155,17 +155,17 @@ if __name__ == '__main__':
             for column in markdown_title:
                 if (column == 'messages' and column not in metadata) or \
                         (column == 'status' and column not in metadata):
-                    metadata[column] = 'N/A'
+                    metadata[column] = 'WIP'
                 cell = metadata[column]
                 if column == 'novelty' and (cell is False or cell == 'false'):
                     if 'reported-by' in metadata:
                         cell = ', '.join(metadata['reported-by'])
                     else:
-                        cell = 'Unknown'
+                        cell = 'Anonymous'
                 if 'status' in metadata:
                     cell = metadata['status']
                 else:
-                    call = 'N/A'
+                    call = 'WIP'
                 if cell is None:
                     row.append('None')
                 elif isinstance(cell, list):
@@ -179,13 +179,13 @@ if __name__ == '__main__':
             for column in latex_title:
                 if ((column == 'messages' and column not in metadata) or \
                         (column == 'status' and column not in metadata)):
-                    metadata[column] = 'N/A'
+                    metadata[column] = 'WIP'
                 cell = metadata[column]
                 if column == 'novelty' and (cell is False or cell == 'false'):
                     if 'reported-by' in metadata:
                         cell = ', '.join(metadata['reported-by'])
                     else:
-                        cell = 'Unknown'
+                        cell = 'Anonymous'
                 if cell is None:
                     row.append('None')
                 elif isinstance(cell, list):
