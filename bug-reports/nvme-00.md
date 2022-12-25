@@ -1,4 +1,4 @@
-# Null pointer deference in memory_region_set_enabled()
+# Null pointer access in memory_region_set_enabled()
 
 An access on an unknown address is triggered in memory_region_set_enabled
 because the check of PMR capability is missing for the PMRCTL register write

@@ -3,6 +3,8 @@ ohci-02:
   bug-types: ["Heap-Use-After-Free"]
   existing-bug-reports: null
   existing-patches: null
+  bug-reports: [Confidential]
+  reported-by: [ViDeZZo]
   fixing-commit: null
   hypervisor: "qemu"
   introducing-commit: null
@@ -15,3 +17,4 @@ ohci-02:
   target: "ohci"
   target-type: "usb"
   messages: 67
+  status: Open

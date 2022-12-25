@@ -3,7 +3,9 @@ ati-01:
   bug-types: ["Out-of-bounds Write"]
   existing-bug-reports: null
   existing-patches: ['https://github.com/qemu/qemu/commit/205ccfd7a5ec86bd9a5678b8bd157562fc9a1643']
-  fixing-commit: 205ccfd7a5ec86bd9a5678b8bd157562fc9a1643
+  fixing-commit: [205ccfd7a5ec86bd9a5678b8bd157562fc9a1643]
+  bug-report: [Confidential]
+  reported-by: [ViDeZZo]
   status: 'Fixed by others'
   hypervisor: qemu
   introducing-commit: "584acf34cb05f16e13a46d666196a7583d232616"

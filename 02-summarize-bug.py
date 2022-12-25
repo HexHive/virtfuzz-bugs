@@ -139,41 +139,20 @@ if __name__ == '__main__':
     for bug_id, metadata in sorted_metadata_list.items(): # maybe we need to sort
         i += 1
         row = [str(i)]
-        if args.markdown:
-            for column in markdown_title:
-                if (column == 'messages' and column not in metadata) or \
-                        (column == 'status' and column not in metadata):
-                    metadata[column] = 'WIP'
-                cell = metadata[column]
-                if column == 'novelty' and (cell is False or cell == 'false'):
-                    if 'reported-by' in metadata:
-                        cell = ', '.join(metadata['reported-by'])
-                    else:
-                        cell = 'Anonymous'
-                if 'status' in metadata:
-                    cell = metadata['status']
-                else:
-                    call = 'WIP'
-                if cell is None:
-                    row.append('None')
-                elif isinstance(cell, list):
-                    row.append(', '.join(cell))
-                elif isinstance(cell, bool):
-                    row.append(str(cell))
-                else:
-                    row.append(cell)
-            markdown.append('|{}|'.format('|'.join(row)))
         if args.latex:
             for column in latex_title:
                 if ((column == 'messages' and column not in metadata) or \
                         (column == 'status' and column not in metadata)):
                     metadata[column] = 'WIP'
                 cell = metadata[column]
-                if column == 'novelty' and (cell is False or cell == 'false'):
+                if column == 'novelty':
                     if 'reported-by' in metadata:
-                        cell = ', '.join(metadata['reported-by'])
-                    else:
-                        cell = 'Anonymous'
+                        cell = ', '.join([i.replace('Nyx', 'Ny').
+                            replace('VShuttle', 'VS').
+                            replace('QEMUFuzzer', 'QF').
+                            replace('ViDeZZo', 'Vi').
+                            replace('Anonymous', 'An')
+                            for i in metadata['reported-by']])
                 if cell is None:
                     row.append('None')
                 elif isinstance(cell, list):

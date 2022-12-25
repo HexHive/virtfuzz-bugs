@@ -24,7 +24,7 @@ i386, ati, display
 
 ## Existing patches
 
-https://github.com/qemu/qemu/commit/ca1f9cbfdce4d63b10d57de80fef89a89d92a540?diff=unified
+https://github.com/qemu/qemu/commit/ca1f9cbfdce4d63b10d57de80fef89a89d92a540
 
 ## Contact
 

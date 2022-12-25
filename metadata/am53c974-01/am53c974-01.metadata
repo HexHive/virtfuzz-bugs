@@ -3,7 +3,7 @@ am53c974-01:
   bug-types: ["Null Pointer Dereference"]
   existing-bug-reports: ['https://bugs.launchpad.net/qemu/+bug/1910723', 'https://bugs.launchpad.net/qemu/+bug/1909247']
   existing-patches: ['https://github.com/qemu/qemu/commit/0db895361b8a82e1114372ff9f4857abea605701']
-  fixing-commit: 0db895361b8a82e1114372ff9f4857abea605701
+  fixing-commit: [0db895361b8a82e1114372ff9f4857abea605701]
   status: "Fixed by others"
   hypervisor: qemu
   introducing-commit: null
@@ -16,3 +16,4 @@ am53c974-01:
   short-description: "Null pointer access in do_busid_cmd()"
   target: am53c974
   target-type: storage
+  messages: N/A
