@@ -151,46 +151,6 @@ Step 3: with spawned shell (the user is root and the password is empty), run
 `xhci-00`.
 
 
-## Suggested fix
-
-```
-From 46ee6cb31be5a43322224bea69b3850e6cd27609 Mon Sep 17 00:00:00 2001
-From: Qiang Liu <cyruscyliu@gmail.com>
-Date: Sun, 4 Sep 2022 20:27:49 +0800
-Subject: [PATCH] hcd-xhci: drop operation with secondary stream arrays enabled
-
-The abort() in xhci_find_stream() can be triggered via enabling the secondary
-stream arrays by setting linear stream array (LSA) bit (in endpoint context) to
-0. We may show warnings and drop this operation.
-
-Fixes: 024426acc0a2 ("usb-xhci: usb3 streams")
-Reported-by: Qiang Liu <cyruscyliu@gmail.com>
-Resolves: https://gitlab.com/qemu-project/qemu/-/issues/1192
-Signed-off-by: Qiang Liu <cyruscyliu@gmail.com>
----
- hw/usb/hcd-xhci.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/hw/usb/hcd-xhci.c b/hw/usb/hcd-xhci.c
-index 3c48b58dde..654f7ec24a 100644
---- a/hw/usb/hcd-xhci.c
-+++ b/hw/usb/hcd-xhci.c
-@@ -992,7 +992,9 @@ static XHCIStreamContext *xhci_find_stream(XHCIEPContext *epctx,
-         }
-         sctx = epctx->pstreams + streamid;
-     } else {
--        FIXME("secondary streams not implemented yet");
-+        fprintf(stderr, "xhci: FIXME: secondary streams not implemented yet");
-+        *cc_error = CC_INVALID_STREAM_TYPE_ERROR;
-+        return NULL;
-     }
- 
-     if (sctx->sct == -1) {
--- 
-2.25.1
-
-```
-
 ## Contact
 
 Let us know if I need to provide more information.

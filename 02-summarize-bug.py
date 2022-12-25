@@ -59,19 +59,6 @@ def generate_report(bug_pathname, metadata):
     if metadata['existing-patches'] != None:
         report.extend(['## Existing patches'])
         report.extend(metadata['existing-patches'])
-    else:
-        ## Suggested fix
-        patch = open("metadata/{0}/{0}.patch".format(bug_id)).readlines()
-        if len(patch) != 0:
-            report.extend(["## Suggested fix\n\n"])
-            report.append("```\n")
-            report.extend(patch)
-            report.append("```\n\n")
-    patch = open("metadata/{0}/{0}.patch".format(bug_id)).readlines()
-    if len(patch) != 0:
-        metadata['patch-provided'] = True
-    else:
-        metadata['patch-provided'] = 'WIP'
 
     report.extend(["## Contact\n\n"])
     report.extend([
@@ -99,7 +86,6 @@ markdown_title = [
     'short-description',
     'bug-types',
     'novelty',
-    'patch-provided',
     'status'
 ]
 

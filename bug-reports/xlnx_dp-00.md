@@ -126,48 +126,6 @@ writel 0xfd4a0100 0x7e04
 EOF
 ```
 
-## Suggested fix
-
-```
-From 04583643fa97c638704d93c02e58e12490d9d291 Mon Sep 17 00:00:00 2001
-From: Qiang Liu <cyruscyliu@gmail.com>
-Date: Mon, 8 Aug 2022 15:05:01 +0800
-Subject: [PATCH] xlnx_dp: drop unsupported AUXCommand in
- xlnx_dp_aux_set_command
-
-In xlnx_dp_aux_set_command, when the command leads to the default
-branch, xlxn-dp will abort and then crash.
-
-This patch removes this abort and drops this operation.
-
-Fixes: 58ac482 ("introduce xlnx-dp")
-Resolves: https://gitlab.com/qemu-project/qemu/-/issues/411
-Reported-by: Qiang Liu <cyruscyliu@gmail.com>
-Tested-by: Qiang Liu <cyruscyliu@gmail.com>
-Suggested-by: Thomas Huth <thuth@redhat.com>
-Signed-off-by: Qiang Liu <cyruscyliu@gmail.com>
----
- hw/display/xlnx_dp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/hw/display/xlnx_dp.c b/hw/display/xlnx_dp.c
-index a071c81..b0828d6 100644
---- a/hw/display/xlnx_dp.c
-+++ b/hw/display/xlnx_dp.c
-@@ -532,8 +532,8 @@ static void xlnx_dp_aux_set_command(XlnxDPState *s, uint32_t value)
-         qemu_log_mask(LOG_UNIMP, "xlnx_dp: Write i2c status not implemented\n");
-         break;
-     default:
--        error_report("%s: invalid command: %u", __func__, cmd);
--        abort();
-+        qemu_log_mask(LOG_GUEST_ERROR, "%s: invalid command: %u", __func__, cmd);
-+        return;
-     }
- 
-     s->core_registers[DP_INTERRUPT_SIGNAL_STATE] |= 0x04;
--- 
-2.25.1```
-
 ## Contact
 
 Let us know if I need to provide more information.

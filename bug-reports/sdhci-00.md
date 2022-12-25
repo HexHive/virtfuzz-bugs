@@ -102,45 +102,6 @@ i386, sdhci, storage
 https://gitlab.com/qemu-project/qemu/-/issues/451
 https://bugs.launchpad.net/qemu/+bug/1913919
 
-## Suggested fix
-
-```
-From 9688c852b8a767f63e7cfa710ca2b3c68c78d531 Mon Sep 17 00:00:00 2001
-From: Qiang Liu <cyruscyliu@gmail.com>
-Date: Wed, 7 Sep 2022 13:53:56 +0800
-Subject: [PATCH] sdhci: Fix off-by-one heap-buffer-flow read and write in
- sdhci
-
-Signed-off-by: Qiang Liu <cyruscyliu@gmail.com>
----
- hw/sd/sdhci.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/hw/sd/sdhci.c b/hw/sd/sdhci.c
-index 0e5e988927..374217ca70 100644
---- a/hw/sd/sdhci.c
-+++ b/hw/sd/sdhci.c
-@@ -797,6 +797,7 @@ static void sdhci_do_adma(SDHCIState *s)
-                                            s->data_count - begin,
-                                            attrs);
-                     if (res != MEMTX_OK) {
-+                        s->data_count = 0;
-                         break;
-                     }
-                     dscr.addr += s->data_count - begin;
-@@ -826,6 +827,7 @@ static void sdhci_do_adma(SDHCIState *s)
-                                           s->data_count - begin,
-                                           attrs);
-                     if (res != MEMTX_OK) {
-+                        s->data_count = 0;
-                         break;
-                     }
-                     dscr.addr += s->data_count - begin;
--- 
-2.25.1
-
-```
-
 ## Contact
 
 Let us know if I need to provide more information.
