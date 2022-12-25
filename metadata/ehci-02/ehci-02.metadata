@@ -12,6 +12,6 @@ ehci-02:
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
   reward: null
-  short-description: 'Assertion failure in address_space_unmap() through ehci_execute_complete()'
+  short-description: 'Assertion failure in address_space_unmap()'
   target: ehci
   target-type: usb

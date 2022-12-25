@@ -1,4 +1,4 @@
-# Assertion failure in address_space_unmap() through ehci_execute_complete()
+# Assertion failure in address_space_unmap()
 
 # Assertion failure in address_space_unmap through ehci_execute_complete
 

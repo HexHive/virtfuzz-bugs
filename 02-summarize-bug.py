@@ -76,9 +76,9 @@ latex_title = [
     'target', 'target-type',
     'hypervisor', 'reproducible-version', 'arch',
     'short-description',
+    'messages',
     'novelty',
-    'status',
-    'messages'
+    'status'
 ]
 
 markdown_title = [
