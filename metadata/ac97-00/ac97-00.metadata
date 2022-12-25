@@ -1,15 +1,15 @@
 ac97-00:
   arch: i386
   bug-types: ['Abort']
-  existing-bug-reports: null
-  existing-patches: null
+  existing-bug-reports: ["https://lore.kernel.org/all/20220917131626.7521-1-vr_qemu@t-online.de/T/"]
+  existing-patches: [https://github.com/qemu/qemu/commit/12f4abf6a245c43d8411577fd400373c85f08c6b, https://github.com/qemu/qemu/commit/0cbc8bd4694f32687bf47c6da48efa48fac35fd2]
   fixing-commit: null
-  status: WIP
+  status: "Patch submitted"
   hypervisor: qemu
-  introducing-commit: null
-  novelty: true
+  introducing-commit: e5c9a13e2670b1cf23faa4b7793b3eae4ad428a5
+  novelty: false
   reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da
-  reproducible-host: Ubuntu 20.04
+  reproducible-host: "Ubuntu 20.04"
   reproducible-version: 7.0.94
   reward: null
   short-description: "Abort in audio_calloc()"

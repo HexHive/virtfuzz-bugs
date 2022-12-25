@@ -1,0 +1,36 @@
+Section 5.10.2 of the AC97 specification (https://hands.com/~lkcl/ac97_r23.pdf)
+shows the feasibility to support for rates other than 48kHZ. Specifically,
+AC97_PCM_Front_DAC_Rate (reg 2Ch) should be from 8kHZ to 48kHZ.
+
+
+An adversary can leverage this to crash QEMU.
+
+A nornal 48kHZ setting is like this.
+
+```
+ac97_realize
+  open_voice
+    as->freq = 0xbb80 # 0xbb80=48000
+    AUD_open_out
+      audio_pcm_create_voice_pair_out (sw is NULL)
+        audio_pcm_sw_init_out
+          sw->info.freq = as->freq (in audio_pcm_init_info())
+          sw->ratio = ((int64_t) sw->hw->info.freq << 32) / sw->info.freq
+          samples = ((int64_t) sw->HWBUF->size << 32) / sw->ratio (in audio_pcm_sw_alloc_resources_out())
+```
+
+A non-48kHZ setting is like this. Since `as->freq` is too small, `sw->ratio` is
+too large. Finally, `samples` is zero, failing the audio_calloc() in
+audio_pcm_sw_alloc_resources_out().
+
+```
+nam_writew
+  open_voice
+    as->freq = 0x6
+    AUD_open_out
+      audio_pcm_sw_init_out (sw is not NULL)
+        sw->info.freq = as->freq (in audio_pcm_init_info())
+        sw->ratio = ((int64_t) sw->hw->info.freq << 32) / sw->info.freq
+        samples = ((int64_t) sw->HWBUF->size << 32) / sw->ratio (in audio_pcm_sw_alloc_resources_out())
+        audio_calloc(.., samples, ) (in audio_pcm_sw_alloc_resources_out())
+```
