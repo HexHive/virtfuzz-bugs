@@ -325,9 +325,11 @@ I'm not sure about this fix. I'd like to discuss more.
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.0.50, 5288bee45fbd33203b61f8c76e41b15bb5913e6e, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 i386, ohci, usb
 
 ### Bug Type: Assertion Failure
@@ -439,6 +441,10 @@ Step 3: with spawned shell (the user is root and the password is empty), run
 `ohci-00`.
 
 
-## Existing patcheshttps://github.com/qemu/qemu/commit/12b69878fc7b4b92b1bbd3959f2c3d4c717881fb"## Contact
+## Existing patches
+
+https://github.com/qemu/qemu/commit/12b69878fc7b4b92b1bbd3959f2c3d4c717881fb"
+
+## Contact
 
 Let us know if I need to provide more information.

@@ -22,9 +22,11 @@ static XHCIStreamContext *xhci_find_stream(XHCIEPContext *epctx,
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.0.94, 9a99f964b152f8095949bbddca7841744ad418da, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 i386, xhci, usb
 
 ### Bug Type: Abort

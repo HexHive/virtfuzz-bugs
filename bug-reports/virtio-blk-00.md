@@ -75,14 +75,17 @@ This write will update the viring.num to 0xea.
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.0.94, 9a99f964b152f8095949bbddca7841744ad418da, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 i386, virtio-blk, storage
 
 ### Bug Type: Assertion failure
 
 ### Existing bug reports
+
 https://gitlab.com/qemu-project/qemu/-/issues/781
 https://bugs.launchpad.net/qemu/+bug/1910941
 https://lists.gnu.org/archive/html/qemu-devel/2018-09/msg03947.html

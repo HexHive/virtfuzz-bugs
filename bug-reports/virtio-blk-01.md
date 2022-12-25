@@ -84,9 +84,11 @@ static void *virtqueue_split_pop(VirtQueue *vq, size_t sz)
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.0.94, 9a99f964b152f8095949bbddca7841744ad418da, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 i386, virtio-blk, storage
 
 ### Bug Type: Infinite Loop

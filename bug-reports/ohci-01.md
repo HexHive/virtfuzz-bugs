@@ -166,9 +166,11 @@ ohci_frame_boundary will then abort due to ohci->done is NULL.
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.0.50, c669f22f1a47897e8d1d595d6b8a59a572f9158c, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 i386, ohci, usb
 
 ### Bug Type: Abort
@@ -268,6 +270,10 @@ Step 3: with spawned shell (the user is root and the password is empty), run
 `ohci-01`.
 
 
-## Existing patcheshttps://github.com/qemu/qemu/commit/d8c2e6f2f6d29ccb766197181eb1c65c1d46b3a4## Contact
+## Existing patches
+
+https://github.com/qemu/qemu/commit/d8c2e6f2f6d29ccb766197181eb1c65c1d46b3a4
+
+## Contact
 
 Let us know if I need to provide more information.

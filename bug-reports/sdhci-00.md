@@ -91,14 +91,17 @@ g_hash_table_new_full(), which idk how to free.
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.1.50, e93ded1bf6c94ab95015b33e188bc8b0b0c32670, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 i386, sdhci, storage
 
 ### Bug Type: Heap-Buffer-Overflow
 
 ### Existing bug reports
+
 https://gitlab.com/qemu-project/qemu/-/issues/451
 https://bugs.launchpad.net/qemu/+bug/1913919
 

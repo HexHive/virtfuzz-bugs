@@ -74,9 +74,11 @@ this primitive.
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubuntu 18.04
 
 ### VM architecture, device, device type
+
 i386, ati, display
 
 ### Bug Type: Out-of-bounds Write
@@ -152,6 +154,10 @@ The bzImage and rootfs.ext2 are attached.
 
 Attachment: https://drive.google.com/file/d/17ZxZcq2Wt0kzNyxXsF1sXRirh37jIGk-/view?usp=sharing
 
-## Existing patcheshttps://github.com/qemu/qemu/commit/205ccfd7a5ec86bd9a5678b8bd157562fc9a1643## Contact
+## Existing patches
+
+https://github.com/qemu/qemu/commit/205ccfd7a5ec86bd9a5678b8bd157562fc9a1643
+
+## Contact
 
 Let us know if I need to provide more information.

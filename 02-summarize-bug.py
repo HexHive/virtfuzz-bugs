@@ -22,13 +22,13 @@ def generate_report(bug_pathname, metadata):
     ## technique details
     report.extend([
         "## More details\n\n",
-        "### Hypervisor, hypervisor version, upstream commit/tag, host\n",
+        "### Hypervisor, hypervisor version, upstream commit/tag, host\n\n",
         '{}, {}, {}, {}\n\n'.format(
             metadata['hypervisor'],
             metadata['reproducible-version'],
             metadata['reproducible-commit'],
             metadata['reproducible-host']),
-        "### VM architecture, device, device type\n",
+        "### VM architecture, device, device type\n\n",
         '{}, {}, {}\n\n'.format(metadata['arch'], metadata['target'], metadata['target-type']),
         '### Bug Type: {}\n\n'.format('; '.join(metadata['bug-types'])),
     ])
@@ -49,16 +49,18 @@ def generate_report(bug_pathname, metadata):
             report.append("\n")
     else:
         ### Existing bug reports
-        report.extend(['### Existing bug reports'])
-        report.append('\n')
+        report.extend(['### Existing bug reports\n\n'])
         for i in metadata['existing-bug-reports']:
             report.append(i)
             report.append('\n')
         report.append('\n')
 
     if metadata['existing-patches'] != None:
-        report.extend(['## Existing patches'])
-        report.extend(metadata['existing-patches'])
+        report.extend(['## Existing patches\n\n'])
+        for i in metadata['existing-patches']:
+            report.append(i)
+            report.append('\n')
+        report.append('\n')
 
     report.extend(["## Contact\n\n"])
     report.extend([

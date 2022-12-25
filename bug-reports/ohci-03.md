@@ -147,9 +147,11 @@ ohci_port_set_status().
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.0.91, c669f22f1a47897e8d1d595d6b8a59a572f9158c, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 i386, ohci, usb
 
 ### Bug Type: Assertion Failure

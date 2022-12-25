@@ -13,15 +13,22 @@ This bug was found in QEMU 5.1.0 but fixed by
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubuntu 18.04
 
 ### VM architecture, device, device type
+
 i386, ehci, usb
 
 ### Bug Type: Assertion Failure
 
 ### Existing bug reports
 
-## Existing patcheshttps://github.com/qemu/qemu/commit/2fdb42d840400d58f2e706ecca82c142b97bcbd6## Contact
+
+## Existing patches
+
+https://github.com/qemu/qemu/commit/2fdb42d840400d58f2e706ecca82c142b97bcbd6
+
+## Contact
 
 Let us know if I need to provide more information.

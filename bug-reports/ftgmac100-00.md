@@ -49,9 +49,11 @@ static bool ftgmac100_can_receive(NetClientState *nc) {
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubuntu 18.04
 
 ### VM architecture, device, device type
+
 arm, ftgmac100, net
 
 ### Bug Type: Heap-Buffer-Overflow

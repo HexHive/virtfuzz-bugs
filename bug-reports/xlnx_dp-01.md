@@ -50,9 +50,11 @@ is (0x3AF >> 2) (0x3A8 >> 2 is better). However, in xlxn_dp_read, offset
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d/6.1.50, Ubuntu 18.04
 
 ### VM architecture, device, device type
+
 aarch64, xlnx_dp, display
 
 ### Bug Type: Out-of-bounds Read

@@ -21,9 +21,11 @@ This will work but break some regression testing. So, think up a new patch later
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.0.94, 9a99f964b152f8095949bbddca7841744ad418da, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 aarch64, xlnx_zynqmp_qspips, bus
 
 ### Bug Type: Out-of-bound Write

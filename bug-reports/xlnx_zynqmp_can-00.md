@@ -17,9 +17,11 @@
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 7.0.94, 9a99f964b152f8095949bbddca7841744ad418da, Ubuntu 20.04
 
 ### VM architecture, device, device type
+
 aarch64, xlnx_zynqmp_can, net
 
 ### Bug Type: Assertion Failure

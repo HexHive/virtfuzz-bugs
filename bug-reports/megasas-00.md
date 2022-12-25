@@ -9,14 +9,17 @@ and [here](https://github.com/qemu/qemu/commit/5ecfbae201d68a2f13df233260c77b0a2
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubuntu 18.04
 
 ### VM architecture, device, device type
+
 i386, megasas, storage
 
 ### Bug Type: Assertion Failure
 
 ### Existing bug reports
+
 
 ## Contact
 

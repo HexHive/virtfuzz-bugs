@@ -34,9 +34,11 @@ void memory_region_set_enabled(MemoryRegion *mr, bool enabled) {
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
+
 qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubunut 18.04
 
 ### VM architecture, device, device type
+
 i386, nvme, storage
 
 ### Bug Type: Null Pointer Dereference
