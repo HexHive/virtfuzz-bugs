@@ -3,7 +3,8 @@ e1000-00:
   bug-types: ["Infinite Loop"]
   existing-bug-reports: []
   existing-patches: null
-  fixing-commit: null
+  fixing-commit: 3de46e6fc489c52c9431a8a832ad8170a7569bd8
+  status: "Fixed by others"
   hypervisor: qemu
   introducing-commit: null
   novelty: false
@@ -11,7 +12,8 @@ e1000-00:
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
-  reward: null
+  reward: CVE-2021-20257
   short-description: 'Infinite loop in process_tx_desc()'
   target: e1000
   target-type: net
+  messages: N/A

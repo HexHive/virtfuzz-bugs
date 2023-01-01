@@ -6,7 +6,7 @@ ac97-00:
   bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/1393]
   reported-by: ['Anonymous', 'ViDeZZo']
   fixing-commit: null
-  status: "Patch submitted"
+  status: "Fixed by others"
   hypervisor: qemu
   introducing-commit: e5c9a13e2670b1cf23faa4b7793b3eae4ad428a5
   novelty: false

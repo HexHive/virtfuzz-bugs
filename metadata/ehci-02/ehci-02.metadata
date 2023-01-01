@@ -4,14 +4,16 @@ ehci-02:
   existing-bug-reports: []
   existing-patches: ['https://github.com/qemu/qemu/commit/2fdb42d840400d58f2e706ecca82c142b97bcbd6']
   fixing-commit: 2fdb42d840400d58f2e706ecca82c142b97bcbd6
+  reported-by: ['Nyx', 'VShuttle', 'QEMUFuzzer']
+  status: "Fixed by others"
   hypervisor: qemu
   introducing-commit: null
   novelty: false
-  reported-by: ['Nyx', 'VShuttle', 'QEMUFuzzer']
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
-  reward: null
+  reward: CVE-2020-25084
   short-description: 'Assertion failure in address_space_unmap()'
   target: ehci
   target-type: usb
+  messages: N/A

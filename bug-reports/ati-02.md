@@ -93,6 +93,10 @@ MS: 0 ; base unit: 0000000000000000000000000000000000000000
 30/08/2022 18:36:52 VNC server closed connection
 ```
 
+## Existing patches
+
+https://github.com/qemu/qemu/commit/205ccfd7a5ec86bd9a5678b8bd157562fc9a1643
+
 ## Contact
 
 Let us know if I need to provide more information.
