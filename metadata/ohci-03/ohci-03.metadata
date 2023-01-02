@@ -5,6 +5,8 @@ ohci-03:
   existing-patches: null
   fixing-commit: null
   hypervisor: "qemu"
+  reported-by: [Anonymous]
+  status: Open
   introducing-commit: null
   novelty: "false"
   reproducible-commit: "c669f22f1a47897e8d1d595d6b8a59a572f9158c"

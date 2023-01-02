@@ -3,14 +3,18 @@ imx_usb_phy-00:
   bug-types: ["Out-of-bounds Read"]
   existing-bug-reports: null
   existing-patches: null
+  bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/1408]
+  reported-by: [ViDeZZo]
   fixing-commit: null
   hypervisor: qemu
   introducing-commit: null
   novelty: true
-  reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
-  reproducible-host: 'Ubuntu 18.04'
-  reproducible-version: 6.1.50
+  reproducible-commit: 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b
+  reproducible-host: 'Ubuntu 20.04'
+  reproducible-version: 7.2.50
   reward: null
   short-description: 'Out of bounds in imx_usbphy_read()'
   target: imx_usb_phy
   target-type: usb
+  messages: 1
+  status: Open

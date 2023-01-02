@@ -1,11 +1,31 @@
 # Out of bounds in imx_usbphy_read()
 
-# Out of bounds in imx_usbphy_read
+The size of the memory region of imx-usb-phy is 0x1000.
+
+```
+memory_region_init_io(&s->iomem, OBJECT(s), &imx_usbphy_ops, s,
+                          "imx-usbphy", 0x1000);
+```
+
+A read to s->usbphy[33] will easily overflow.
+
+```
+static uint64_t imx_usbphy_read(void *opaque, hwaddr offset, unsigned size)
+{
+    // ...
+    default:
+        value = s->usbphy[index];
+        break;
+    }
+```
+
+Maybe we should drop this read in default branch.
+
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
 
-qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubuntu 18.04
+qemu, 7.2.50, 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b, Ubuntu 20.04
 
 ### VM architecture, device, device type
 
@@ -16,61 +36,73 @@ arm, imx_usb_phy, usb
 ### Stack traces, crash details
 
 ```
-root@fff5a5933072:~/qemu/build-san-5# ./qemu-fuzz-arm --fuzz-target=stateful-fuzz-imx-usb-phy crash-3f7a852b52d0e3fb62175442730b5b7092218430 
-INFO: found LLVMFuzzerCustomMutator (0x560b87224700). Disabling -len_control by default.
-INFO: libFuzzer ignores flags that start with '--'
+root@621cbd136b6f:~/bugs/metadata/imx_usb_phy-00# bash -x imx_usb_phy-00.videzzo
++ DEFAULT_INPUT_MAXSIZE=10000000
++ ./qemu-videzzo-arm-target-videzzo-fuzz-imx-usb-phy -max_len=10000000 -detect_leaks=0 ./crash-2f5e9c8ec69dd69f8db69aaa84dde878482b8690.minimized
+==14370==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x561837db1240). Disabling -len_control by default.
 INFO: Running with entropic power schedule (0xFF, 100).
-INFO: Seed: 3615372409
-INFO: Loaded 1 modules   (997152 inline 8-bit counters): 997152 [0x560b8ad5a000, 0x560b8ae4d720),
-INFO: Loaded 1 PC tables (997152 PCs): 997152 [0x560b89e22c70,0x560b8ad59e70),
-./qemu-fuzz-arm: Running 1 inputs 1 time(s) each.
+INFO: Seed: 1679742864
+INFO: Loaded 1 modules   (583356 inline 8-bit counters): 583356 [0x56183b151000, 0x56183b1df6bc),
+INFO: Loaded 1 PC tables (583356 PCs): 583356 [0x56183a86a3b0,0x56183b150f70),
+./qemu-videzzo-arm-target-videzzo-fuzz-imx-usb-phy: Running 1 inputs 1 time(s) each.
 INFO: Reading pre_seed_input if any ...
 INFO: Executing pre_seed_input if any ...
-INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
 Matching objects by name , *imx-usbphy*
 This process will fuzz the following MemoryRegions:
   * imx-usbphy[0] (size 1000)
   * imx-usbphy[0] (size 1000)
 This process will fuzz through the following interfaces:
-  * imx-usbphy, EVENT_TYPE_MMIO_READ, 0x20c9000 +0x1000, 4,4
-  * imx-usbphy, EVENT_TYPE_MMIO_WRITE, 0x20c9000 +0x1000, 4,4
-  * imx-usbphy, EVENT_TYPE_MMIO_READ, 0x20ca000 +0x1000, 4,4
-  * imx-usbphy, EVENT_TYPE_MMIO_WRITE, 0x20ca000 +0x1000, 4,4
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
   * imx-usbphy, EVENT_TYPE_MMIO_READ, 0x20c9000 +0x1000, 4,4
   * imx-usbphy, EVENT_TYPE_MMIO_WRITE, 0x20c9000 +0x1000, 4,4
   * imx-usbphy, EVENT_TYPE_MMIO_READ, 0x20ca000 +0x1000, 4,4
   * imx-usbphy, EVENT_TYPE_MMIO_WRITE, 0x20ca000 +0x1000, 4,4
 INFO: A corpus is not provided, starting from an empty corpus
-#2	INITED cov: 11 ft: 12 corp: 1/1b exec/s: 0 rss: 220Mb
-Running: crash-3f7a852b52d0e3fb62175442730b5b7092218430
-/root/qemu/hw/usb/imx-usb-phy.c:94:17: runtime error: index 1023 out of bounds for type 'uint32_t [33]'
-    #0 0x560b86108eea in imx_usbphy_read imx-usb-phy.c
-    #1 0x560b83ccaa21 in memory_region_read_accessor memory.c
-    #2 0x560b83c5c2f6 in access_with_adjusted_size memory.c
-    #3 0x560b83c584ab in memory_region_dispatch_read1 memory.c
-    #4 0x560b83c576dd in memory_region_dispatch_read (/root/qemu/build-san-5/qemu-fuzz-arm+0x45886dd)
-    #5 0x560b82f04b68 in flatview_read_continue (/root/qemu/build-san-5/qemu-fuzz-arm+0x3835b68)
-    #6 0x560b82f0744b in flatview_read exec.c
-    #7 0x560b82f06fa1 in address_space_read_full (/root/qemu/build-san-5/qemu-fuzz-arm+0x3837fa1)
-    #8 0x560b8720e048 in __wrap_qtest_readl (/root/qemu/build-san-5/qemu-fuzz-arm+0x7b3f048)
-    #9 0x560b872b496a in dispatch_mmio_read stateful_fuzz.c
-    #10 0x560b8722e927 in dispatch_event stateful_fuzz.c
-    #11 0x560b872b6e0a in stateful_fuzz stateful_fuzz.c
-    #12 0x560b872066be in LLVMFuzzerTestOneInput (/root/qemu/build-san-5/qemu-fuzz-arm+0x7b376be)
-    #13 0x560b82dba7f3 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
-    #14 0x560b82d9db1a in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
-    #15 0x560b82da87d4 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:883
-    #16 0x560b82d7e3c2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
-    #17 0x7f49274ecbf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
-    #18 0x560b82d93f49 in _start (/root/qemu/build-san-5/qemu-fuzz-arm+0x36c4f49)
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 222Mb
+Running: ./crash-2f5e9c8ec69dd69f8db69aaa84dde878482b8690.minimized
+../hw/usb/imx-usb-phy.c:93:17: runtime error: index 540 out of bounds for type 'uint32_t [33]'
+    #0 0x5618357ddb2a in imx_usbphy_read /root/videzzo/videzzo_qemu/qemu/out-san/../hw/usb/imx-usb-phy.c:93:17
+    #1 0x561836f07a0b in memory_region_read_accessor /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:441:11
+    #2 0x561836ec6501 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:555:18
+    #3 0x561836ec38cc in memory_region_dispatch_read1 /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:1425:16
+    #4 0x561836ec3008 in memory_region_dispatch_read /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:1458:9
+    #5 0x561836f415ad in flatview_read_continue /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2892:23
+    #6 0x561836f42bb8 in flatview_read /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2934:12
+    #7 0x561836f42678 in address_space_read_full /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2947:18
+    #8 0x5618337f4b41 in address_space_read /root/videzzo/videzzo_qemu/qemu/include/exec/memory.h:2873:18
+    #9 0x5618337f4b41 in qemu_readl /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1037:5
+    #10 0x5618337f2c06 in dispatch_mmio_read /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1051:35
+    #11 0x561837dac6bf in videzzo_dispatch_event /root/videzzo/videzzo.c:1140:5
+    #12 0x561837da3a3d in __videzzo_execute_one_input /root/videzzo/videzzo.c:288:9
+    #13 0x561837da37e4 in videzzo_execute_one_input /root/videzzo/videzzo.c:329:9
+    #14 0x56183380a07c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1520:12
+    #15 0x561837db150b in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1910:18
+    #16 0x5618336ea806 in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:594:17
+    #17 0x5618336cd434 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #18 0x5618336d83de in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:885:19
+    #19 0x5618336c49c6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #20 0x7f74d2914082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #21 0x5618336c4a1d in _start (/root/bugs/metadata/imx_usb_phy-00/qemu-videzzo-arm-target-videzzo-fuzz-imx-usb-phy+0x31cea1d)
 
-SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /root/qemu/hw/usb/imx-usb-phy.c:94:17 in 
-MS: 0 ; base unit: 0000000000000000000000000000000000000000```
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior ../hw/usb/imx-usb-phy.c:93:17 in
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+0x0,0x8,0x70,0x98,0xc,0x2,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,
+\x00\x08p\x98\x0c\x02\x00\x00\x00\x00\x04\x00\x00\x00
+```
 
 ### Reproducer steps
 
-# With USBAN
-./qemu-fuzz-arm --fuzz-target=stateful-fuzz-imx-usb-phy crash-3f7a852b52d0e3fb62175442730b5b7092218430 
+```
+export QEMU=/path/to/qemu-system-arm
+
+cat << EOF | $QEMU \
+-machine sabrelite -monitor none -serial none \
+-display none -nodefaults -qtest stdio
+readl 0x20c9870
+EOF
+```
+
 ## Contact
 
 Let us know if I need to provide more information.

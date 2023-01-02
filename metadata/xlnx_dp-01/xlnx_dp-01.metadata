@@ -3,7 +3,8 @@ xlnx_dp-01:
   bug-types: ["Out-of-bounds Read"]
   existing-bug-reports: null
   existing-patches: null
-  fixing-commit: "https://github.com/qemu/qemu/commit/2b3a98255c90d8d2f9f87a73eb33371961508517"
+  fixing-commit: [2b3a98255c90d8d2f9f87a73eb33371961508517]
+  reported-by: [ViDeZZo]
   status: 'Fixed by us'
   hypervisor: qemu
   introducing-commit: "58ac482a66de09a7590f705e53fc6a3fb8a055e8"
@@ -15,3 +16,4 @@ xlnx_dp-01:
   short-description: "Out of bounds read in xlnx_dp_read()"
   target: xlnx_dp
   target-type: display
+  messages: 1

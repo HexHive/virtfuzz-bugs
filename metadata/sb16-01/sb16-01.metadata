@@ -3,7 +3,8 @@ sb16-01:
   bug-types: ["Abort"]
   existing-bug-reports: null
   existing-patches: null
-  fixing-commit: "https://github.com/qemu/qemu/commit/60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9"
+  fixing-commit: [60e543f5ce46d4a90a95963b3bab5c7d13a2aaa9]
+  reported-by: [ViDeZZo]
   status: 'Fixed by us'
   hypervisor: "qemu"
   introducing-commit: "85571bc7415c3fa9390f5edc3720ec7975219a68"
@@ -15,3 +16,4 @@ sb16-01:
   short-description: "Abort in audio_calloc()"
   target: sb16
   target-type: audio
+  messages: 4

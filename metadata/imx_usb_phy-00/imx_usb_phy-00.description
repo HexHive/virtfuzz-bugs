@@ -1,1 +1,20 @@
-# Out of bounds in imx_usbphy_read
+The size of the memory region of imx-usb-phy is 0x1000.
+
+```
+memory_region_init_io(&s->iomem, OBJECT(s), &imx_usbphy_ops, s,
+                          "imx-usbphy", 0x1000);
+```
+
+A read to s->usbphy[33] will easily overflow.
+
+```
+static uint64_t imx_usbphy_read(void *opaque, hwaddr offset, unsigned size)
+{
+    // ...
+    default:
+        value = s->usbphy[index];
+        break;
+    }
+```
+
+Maybe we should drop this read in default branch.
