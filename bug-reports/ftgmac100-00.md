@@ -1,15 +1,21 @@
 # Heap buffer overflow in aspeed_smc_flash_do_select()
 
-# HBO in aspeed_smc_flash_do_select because accessible AspeedSMCFlash is unchecked
-
-I found a heap buffer overflow in aspeed_smc_flash_do_select because the check of accessible AspeedSMCFlash is missing. This issue is related to two bugs. I will explain them in the following.
+I found a heap buffer overflow in aspeed_smc_flash_do_select() because the check
+of accessible AspeedSMCFlash is missing. This issue is related to two bugs. I
+will explain them in the following.
 
 ## Bug 1
-1 `s->cs_lines` is allocated in `aspeed_smc_realize`, where `s->num_cs` is 1 by default.
+
+1 `s->cs_lines` is allocated in `aspeed_smc_realize()`, where `s->num_cs` is 1
+by default.
+
 ```
 s->cs_lines = g_new0(qemu_irq, s->num_cs);
 ```
-2 In `aspeed_smc_flash_do_select`, we can overflow `s->cs_lines` by `fl->id` that is larger than 0.
+
+2 In `aspeed_smc_flash_do_select()`, we can overflow `s->cs_lines` by `fl->id`
+that is larger than 0.
+
 ```
 static void aspeed_smc_flash_do_select(AspeedSMCFlash *fl, bool unselect) {
     ....
@@ -17,12 +23,29 @@ static void aspeed_smc_flash_do_select(AspeedSMCFlash *fl, bool unselect) {
                            // ---if fl->id is 1, then overflow here ---
 }
 ```
-3 The root cause is that we can access the second or the third Flash chip without any check when the index of the current Flash chip is larger than `s->num_cs`, say some fmcs,  e.g., aspeed.fmc-ast2400, have more than one Flash chip.
-4 Security impact: this primitive can assist in exploiting QEMU vulnerabilities. I think the primitive cannot be used standalone, but with other arbitrary write primitives, putting a malicious qemu_irq pointer at s->cs_lines[fl->id], the malicious qemu irq handler (a dangerous function) will be triggered when unselect is 1.
+
+3 The root cause is that we can access the second or the third Flash chip
+without any check when the index of the current Flash chip is larger than
+`s->num_cs`, say some fmcs, e.g., aspeed.fmc-ast2400, have more than one Flash
+chip.
+
+4 Security impact: this primitive can assist in exploiting QEMU vulnerabilities.
+I think the primitive cannot be used standalone, but with other arbitrary write
+primitives, putting a malicious qemu_irq pointer at s->cs_lines[fl->id], the
+malicious qemu irq handler (a dangerous function) will be triggered when
+unselect is 1.
 
 ## Bug 2
-1 The above overflow is not found by directly testing the aspeed smc but found by testing the ftgmac100, a NIC.
-2 Root Cause: In `ftgmac100_read_bd`, the range of `dma_memory_read` is not checked, thus with this primitive, I can load sizeof(*bd)=16 bytes into local variable bd from any a) registered MMIO regions, b) ram. Because of a), I can access the second Flash chip even if the default number of valid Flash chips is 1 and finally trigger the heap buffer overflow.
+
+1 The above overflow is not found by directly testing the aspeed smc but found
+by testing the ftgmac100, a NIC.
+
+2 Root Cause: In `ftgmac100_read_bd()`, the range of `dma_memory_read()` is not
+checked, thus with this primitive, I can load sizeof(*bd)=16 bytes into local
+variable bd from any a) registered MMIO regions, b) ram. Because of a), I can
+access the second Flash chip even if the default number of valid Flash chips is
+1 and finally trigger the heap buffer overflow.
+
 ```
 static int ftgmac100_read_bd(FTGMAC100Desc *bd, dma_addr_t addr) {
     if (dma_memory_read(&address_space_memory, addr, bd, sizeof(*bd))) {
@@ -32,7 +55,10 @@ static int ftgmac100_read_bd(FTGMAC100Desc *bd, dma_addr_t addr) {
     }
     // omit
 ```
-3 Security impact 1: Furthermore, the controlled `bd` can affect the control flow in the following.
+
+3 Security impact 1: Furthermore, the controlled `bd` can affect the control
+flow in the following.
+
 ```
 static bool ftgmac100_can_receive(NetClientState *nc) {
     FTGMAC100Desc bd; // local variable
@@ -43,14 +69,26 @@ static bool ftgmac100_can_receive(NetClientState *nc) {
            // ---- may return true
 }
 ```
-4 Security impact 2: When fixing the first bug, if we don’t expose the invalid Flash chips to the guest, we still can access the invalid Flash chips by ftgmac100.
-5 Security impact 3: If fixing the first bug properly, this primitive seems to be useless. However, without IOMMU to control the range the DMA can access, it is still not good. This bug inspires us to check similar issues in i386/86_64 and other arches. I’d like to discuss more.
+
+4 Security impact 2: When fixing the first bug, if we don’t expose the invalid
+Flash chips to the guest, we still can access the invalid Flash chips by
+ftgmac100.
+
+5 Security impact 3: If fixing the first bug properly, this primitive seems to
+be useless. However, without IOMMU to control the range the DMA can access, it
+is still not good. This bug inspires us to check similar issues in i386/86_64
+and other arches. 
+
+Comments:
+
+QEMU guys think ftgmac100 is not used along with KVM, so.
+
 
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
 
-qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubuntu 18.04
+qemu, 7.2.50, 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b, Ubuntu 20.04
 
 ### VM architecture, device, device type
 
@@ -165,15 +203,12 @@ Shadow byte legend (one shadow byte represents 8 application bytes):
 
 ### Reproducer steps
 
-I use QTest to reproduce this crash. Note that qemu should be instrumented by ASAN.
-
 ```
-#!/bin/bash -x
-export QEMU=/root/qemu/build-oss-fuzz/qemu-system-arm
-export BUILDROOT=./
+export QEMU=/path/to/qemu-system-arm
+
 # 0x24242400 is the address of the second aspeed Flash chip
 cat << EOF | $QEMU \
--M palmetto-bmc,accel=qtest -qtest stdio -monitor none -serial none \
+-machine palmetto-bmc -monitor none -serial none \
 -display none -nodefaults -qtest stdio
 writel 0x1e660424 0x24242400
 writel 0x1e661050 0x1a1a1a1a
