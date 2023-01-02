@@ -1,5 +1,4 @@
-```
-export QEMU=/path/to/qemu-system-arm
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build/qemu-system-arm
 
 cat << EOF | $QEMU \
 -machine smdkc210 -monitor none -serial none \
@@ -7,4 +6,3 @@ cat << EOF | $QEMU \
 writel 0x11c00020 0x3454d403
 writel 0x11c00000 0x61988eaf
 EOF
-```

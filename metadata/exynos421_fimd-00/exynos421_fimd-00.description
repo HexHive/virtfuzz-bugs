@@ -1,1 +1,1 @@
-# Assertion failure in fimd_update_memory_section
+It seems the frame buffer is not properly initialized before usage.
