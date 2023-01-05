@@ -1,0 +1,5 @@
+xlnx_dp_change_graphic_fmt() will directly abort if either graphic format or the
+video format is not supported.
+
+Replacing abort() in xlnx_dp_change_graphic_fmt() to `return` might be OK but I
+am not sure what side effect there is.
