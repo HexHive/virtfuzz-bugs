@@ -4,15 +4,17 @@ xlnx_dp-06:
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
-  status: WIP
+  status: "Patch submitted"
+  bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/1418]
+  reported-by: [ViDeZZo]
   hypervisor: qemu
   introducing-commit: null
   novelty: true
-  reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da
+  reproducible-commit: 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b
   reproducible-host: 'Ubuntu 20.04'
-  reproducible-version: 7.0.94
+  reproducible-version: 7.2.50
   reward: null
-  short-description: 'Abort in xlnx_dp_aux_pop_tx_fifo()'
+  short-description: 'Underflow in xlnx_dp_aux_pop_tx_fifo()'
   target: xlnx_dp
   target-type: display
   messages: 1

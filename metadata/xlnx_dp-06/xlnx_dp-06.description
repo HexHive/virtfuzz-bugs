@@ -1,0 +1,1 @@
+Pop from s->tx_fifo but s->tx_fifo has zero element.

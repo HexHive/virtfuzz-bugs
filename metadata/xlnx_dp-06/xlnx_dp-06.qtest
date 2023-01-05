@@ -1,9 +1,7 @@
-```
-export QEMU=/path/to/qemu-system-aarch64
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build/qemu-system-aarch64
 
 cat << EOF | $QEMU \
 -machine xlnx-zcu102 -monitor none -serial none \
 -display none -nodefaults -qtest stdio
 writel 0xfd4a0100 0x19c4406f
 EOF
-```
