@@ -44,7 +44,7 @@ all|bug-id`.
 To send a patch, please refer to
 + https://www.qemu.org/docs/master/devel/submitting-a-patch.html
     + `git config sendemail.cccmd 'scripts/get_maintainer.pl --nogit-fallback'`
-    + `git send-email -to qemu-devel@nongnu.org -suppress-cc=self --confirm=always path/to/patch`
+    + `git send-email -to qemu-devel@nongnu.org --confirm=always path/to/patch`
 
 ## Contribution
 
