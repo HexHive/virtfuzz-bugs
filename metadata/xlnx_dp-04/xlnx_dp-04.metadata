@@ -5,10 +5,10 @@ xlnx_dp-04:
   existing-patches: null
   fixing-commit: null
   status: Open
-  reported-by: [ViDeZZo]
+  reported-by: []
   hypervisor: qemu
   introducing-commit: null
-  novelty: true
+  novelty: disputed
   reproducible-commit: 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b
   reproducible-host: 'Ubuntu 20.04'
   reproducible-version: 7.2.50

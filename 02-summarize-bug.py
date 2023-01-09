@@ -126,8 +126,9 @@ if __name__ == '__main__':
         metadata = yaml.safe_load(open(metadata_pathname))
         # step 2: generate report
         generate_report(bug_pathname, metadata[bug_id])
-        metadata[bug_id]['bug-id'] = bug_id
-        metadata_list.update(metadata)
+        if metadata[bug_id]['novelty'] != 'disputed':
+            metadata[bug_id]['bug-id'] = bug_id
+            metadata_list.update(metadata)
 
     # step 3: generate summary
     if args.markdown:

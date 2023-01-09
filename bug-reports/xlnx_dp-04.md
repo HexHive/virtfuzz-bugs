@@ -1,6 +1,8 @@
 # Out of memory in xlnx_dp_recreate_surface()
 
-# Out-of-memory in xlnx_dp_recreate_surface
+qemu_create_displaysurface_from() may run out of memory due to unchecked width
+and height (up to 0xffff).
+
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
