@@ -1,17 +1,19 @@
 xlnx_dp-02:
   arch: aarch64
   bug-types: ["Out-of-bounds Read/Write"]
-  existing-bug-reports: null
+  existing-bug-reports: [https://lists.gnu.org/archive/html/qemu-devel/2022-06/msg00139.html]
   existing-patches: null
-  fixing-commit: null
-  status: WIP
+  fixing-commit: d2008b3355061ab0cca823739cd98045e769a809
+  reported-by: [Anonymous]
+  status: "Fixed by others"
   hypervisor: qemu
   introducing-commit: null
-  novelty: true
+  novelty: false
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
   reward: null
-  short-description: 'Index 119 out of bounds in xlnx_dp_vblend_read()'
+  short-description: 'Out of bounds in xlnx_dp_vblend_read()'
   target: xlnx_dp
   target-type: display
+  messages: N/A
