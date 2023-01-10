@@ -1,24 +1,12 @@
-# Assertion failure in fifo8_pop()
+# Fifo underflow in transfer_fifo()
 
-# Assertion failure in fifo8_pop through xlnx-zynqmp-can
-
-    009, EVENT_TYPE_MMIO_WRITE, 0xff070000, 0x4, 0xf73720a
-
-    ARRAY_FIELD_DP32(s->regs, SOFTWARE_RESET_REGISTER, CEN, FIELD_EX32(val, SOFTWARE_RESET_REGISTER, CEN));
-
-    009, EVENT_TYPE_MMIO_WRITE, 0xff07003c, 0x4, 0x1f37ee63
-
-    if (initiate_transfer && ARRAY_FIELD_EX32(s->regs, SOFTWARE_RESET_REGISTER, CEN)) {
-        transfer_fifo(s, f);
-    }
-
-    Dependencies
+In transfer_fifo(), fifo32_pop() fails since less than 32 bytes are in the fifo.
 
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
 
-qemu, 7.0.94, 9a99f964b152f8095949bbddca7841744ad418da, Ubuntu 20.04
+qemu, 7.2.50, 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b, Ubuntu 20.04
 
 ### VM architecture, device, device type
 
@@ -101,7 +89,17 @@ MS: 0 ; base unit: 0000000000000000000000000000000000000000
 
 ### Reproducer steps
 
-bash 21.sh
+```
+export QEMU=/path/to/qemu-system-aarch64
+
+cat << EOF | $QEMU \
+-machine xlnx-zcu102 -monitor none -serial none \
+-display none -nodefaults -qtest stdio
+writel 0xff070000 0x0f73720a
+writel 0xff07003c 0x1f37ee63
+EOF
+```
+
 ## Contact
 
 Let us know if I need to provide more information.

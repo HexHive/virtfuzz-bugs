@@ -1,0 +1,67 @@
+==60953==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x55c4943a85f0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 1771329340
+INFO: Loaded 1 modules   (600781 inline 8-bit counters): 600781 [0x55c4979bb000, 0x55c497a4dacd), 
+INFO: Loaded 1 PC tables (600781 PCs): 600781 [0x55c49708fbf0,0x55c4979ba8c0), 
+./qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-can: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *xlnx.zynqmp-can*
+This process will fuzz the following MemoryRegions:
+  * xlnx.zynqmp-can[1] (size 84)
+  * xlnx.zynqmp-can[0] (size 84)
+  * xlnx.zynqmp-can[1] (size 84)
+  * xlnx.zynqmp-can[0] (size 84)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * xlnx.zynqmp-can, EVENT_TYPE_MMIO_READ, 0xff070000 +0x84, 4,4
+  * xlnx.zynqmp-can, EVENT_TYPE_MMIO_WRITE, 0xff070000 +0x84, 4,4
+  * xlnx.zynqmp-can, EVENT_TYPE_MMIO_READ, 0xff060000 +0x84, 4,4
+  * xlnx.zynqmp-can, EVENT_TYPE_MMIO_WRITE, 0xff060000 +0x84, 4,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 509Mb
+Running: poc-qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-can-crash-8c83f08fb7643e6eb55af43e76de522c6f5fcef2.minimized.minimized
+qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-can: ../util/fifo8.c:34: void fifo8_push(Fifo8 *, uint8_t): Assertion `fifo->num < fifo->capacity' failed.
+==60953== ERROR: libFuzzer: deadly signal
+    #0 0x55c48f86e0fe in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86:3
+    #1 0x55c48f7bcd71 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:38
+    #2 0x55c48f795ca6 in fuzzer::Fuzzer::CrashCallback() (.part.0) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:236:18
+    #3 0x55c48f795d72 in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:208:1
+    #4 0x55c48f795d72 in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207:19
+    #5 0x7fe36599541f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1441f)
+    #6 0x7fe3657a700a in __libc_signal_restore_set /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/internal-signals.h:86:3
+    #7 0x7fe3657a700a in raise /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/raise.c:48:3
+    #8 0x7fe365786858 in abort /build/glibc-SzIz7B/glibc-2.31/stdlib/abort.c:79:7
+    #9 0x7fe365786728 in __assert_fail_base /build/glibc-SzIz7B/glibc-2.31/assert/assert.c:92:3
+    #10 0x7fe365797fd5 in __assert_fail /build/glibc-SzIz7B/glibc-2.31/assert/assert.c:101:3
+    #11 0x55c4941f98ef in fifo8_push /root/videzzo/videzzo_qemu/qemu/out-san/../util/fifo8.c:34:5
+    #12 0x55c490d83bb0 in fifo32_push /root/videzzo/videzzo_qemu/qemu/include/qemu/fifo32.h:94:9
+    #13 0x55c490d79d17 in transfer_fifo /root/videzzo/videzzo_qemu/qemu/out-san/../hw/net/can/xlnx-zynqmp-can.c:476:21
+    #14 0x55c490d71a00 in can_tx_post_write /root/videzzo/videzzo_qemu/qemu/out-san/../hw/net/can/xlnx-zynqmp-can.c:836:9
+    #15 0x55c48fdfaf9b in register_write /root/videzzo/videzzo_qemu/qemu/out-san/../hw/core/register.c:122:9
+    #16 0x55c48fdfefb8 in register_write_memory /root/videzzo/videzzo_qemu/qemu/out-san/../hw/core/register.c:203:5
+    #17 0x55c4934be1d3 in memory_region_write_accessor /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:493:5
+    #18 0x55c4934bdb11 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:555:18
+    #19 0x55c4934bc436 in memory_region_dispatch_write /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:1515:16
+    #20 0x55c49354cd0e in flatview_write_continue /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2825:23
+    #21 0x55c49353aabb in flatview_write /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2867:12
+    #22 0x55c49353a578 in address_space_write /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2963:18
+    #23 0x55c48f8aed48 in qemu_writel /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1096:5
+    #24 0x55c48f8ad0b3 in dispatch_mmio_write /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1245:28
+    #25 0x55c4943a3a6f in videzzo_dispatch_event /root/videzzo/videzzo.c:1140:5
+    #26 0x55c49439aded in __videzzo_execute_one_input /root/videzzo/videzzo.c:288:9
+    #27 0x55c49439ab94 in videzzo_execute_one_input /root/videzzo/videzzo.c:329:9
+    #28 0x55c48f8b608c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1520:12
+    #29 0x55c4943a88bb in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1910:18
+    #30 0x55c48f796816 in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:594:17
+    #31 0x55c48f779444 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #32 0x55c48f7843ee in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:885:19
+    #33 0x55c48f7709d6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #34 0x7fe365788082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #35 0x55c48f770a2d in _start (/root/bugs/metadata/xlnx_zynqmp_can-01/qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-can+0x3454a2d)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000

@@ -1,13 +1,1 @@
-# Assertion failure in fifo8_pop through xlnx-zynqmp-can
-
-    009, EVENT_TYPE_MMIO_WRITE, 0xff070000, 0x4, 0xf73720a
-
-    ARRAY_FIELD_DP32(s->regs, SOFTWARE_RESET_REGISTER, CEN, FIELD_EX32(val, SOFTWARE_RESET_REGISTER, CEN));
-
-    009, EVENT_TYPE_MMIO_WRITE, 0xff07003c, 0x4, 0x1f37ee63
-
-    if (initiate_transfer && ARRAY_FIELD_EX32(s->regs, SOFTWARE_RESET_REGISTER, CEN)) {
-        transfer_fifo(s, f);
-    }
-
-    Dependencies
+In transfer_fifo(), fifo32_pop() fails since less than 32 bytes are in the fifo.

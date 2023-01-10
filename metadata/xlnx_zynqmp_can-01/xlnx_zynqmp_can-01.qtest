@@ -1,5 +1,4 @@
-```
-export QEMU=/path/to/qemu-system-aarch64
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build-clean/qemu-system-aarch64
 
 cat << EOF | $QEMU \
 -machine xlnx-zcu102 -monitor none -serial none \
@@ -296,4 +295,3 @@ writel 0xff07003c 0x1f9c3bcd
 writel 0xff070038 0x3730c1d8
 writel 0xff07003c 0x1f9c3bcd
 EOF
-```
