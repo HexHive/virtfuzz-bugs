@@ -1,0 +1,4 @@
+DEFAULT_INPUT_MAXSIZE=10000000 \
+    ./qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-qspips \
+    -max_len=10000000 -detect_leaks=0 \
+    poc-qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-qspips-crash-a0a2370456c328eb42053d5f521af526210b0696

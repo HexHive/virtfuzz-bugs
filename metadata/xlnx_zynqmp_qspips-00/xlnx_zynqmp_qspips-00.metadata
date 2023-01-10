@@ -4,15 +4,17 @@ xlnx_zynqmp_qspips-00:
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
-  status: 'WIP'
+  status: Open
   hypervisor: qemu
+  reported-by: [ViDeZZo]
+  bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/1429]
   introducing-commit: null
   novelty: true
-  reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da
+  reproducible-commit: 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b
   reproducible-host: 'Ubuntu 20.04'
-  reproducible-version: 7.0.94
+  reproducible-version: 7.2.50
   reward: null
-  short-description: 'Index out of bounds for type uint32_t[64] in xilinx_spips_write()'
+  short-description: 'Out of bound in xilinx_spips_write()'
   target: xlnx_zynqmp_qspips
-  target-type: bus
-  messages: 2
+  target-type: spi
+  messages: 1

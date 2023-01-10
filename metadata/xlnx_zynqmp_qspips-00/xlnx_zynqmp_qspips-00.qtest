@@ -1,5 +1,4 @@
-```
-export QEMU=/path/to/qemu-system-aarch64
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build/qemu-system-aarch64
 export UBSAN_OPTIONS=halt_on_error=1:symbolize=1:print_stacktrace=1
 
 cat << EOF | $QEMU \
@@ -7,4 +6,3 @@ cat << EOF | $QEMU \
 -display none -nodefaults -qtest stdio
 writew 0xff050108 0x29be
 EOF
-```
