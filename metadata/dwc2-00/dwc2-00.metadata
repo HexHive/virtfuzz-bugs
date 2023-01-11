@@ -11,6 +11,6 @@ dwc2-00:
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
   reward: null
-  short-description: 'An assertion failure in hw/usb/core.c from dwc2 usb controller'
+  short-description: 'Assertion failure in hw/usb/core.c from dwc2'
   target: dwc2
   target-type: usb

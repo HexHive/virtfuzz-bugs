@@ -1,13 +1,14 @@
 lsi53c895a-00:
   arch: i386
   bug-types: ["Assertion Failure"]
-  existing-bug-reports: []
-  existing-patches: null
-  fixing-commit: null
+  existing-bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/305]
+  existing-patches: [https://gitlab.com/qemu-project/qemu/-/commit/4051a1f062c9b336343e22efa291ed15d235cd4f]
+  fixing-commit: [4051a1f062c9b336343e22efa291ed15d235cd4f]
   hypervisor: qemu
+  status: "Fixed by others"
   introducing-commit: null
   novelty: false
-  reported-by: ['Nyx', 'VShuttle', 'QEMUFuzzer']
+  reported-by: ['Nyx', 'VShuttle', 'QEMUFuzzer', 'Anonymous', 'ViDeZZo']
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
@@ -15,3 +16,4 @@ lsi53c895a-00:
   short-description: 'Assertion failure in lsi53c810 emulator'
   target: lsi53c895a
   target-type: storage
+  messages: N/A
