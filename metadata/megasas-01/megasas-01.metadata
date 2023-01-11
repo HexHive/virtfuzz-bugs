@@ -1,9 +1,9 @@
 megasas-01:
   arch: i386
   bug-types: ["Assertaion Failure"]
-  existing-bug-reports: []
-  existing-patches: null
-  fixing-commit: null
+  existing-bug-reports: [https://www.mail-archive.com/qemu-devel@nongnu.org/msg782182.html, https://bugs.launchpad.net/qemu/+bug/1906693]
+  existing-patches: [https://gitlab.com/qemu-project/qemu/-/commit/86b1cf322789b79c8a]
+  fixing-commit: 86b1cf322789b79c8a
   hypervisor: qemu
   introducing-commit: null
   novelty: false
@@ -15,3 +15,5 @@ megasas-01:
   short-description: 'Assertion failure in bdrv_co_write_req_prepare()'
   target: megasas
   target-type: storage
+  status: "Fixed by others"
+  messages: N/A

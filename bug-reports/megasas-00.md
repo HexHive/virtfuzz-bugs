@@ -20,6 +20,12 @@ i386, megasas, storage
 
 ### Existing bug reports
 
+https://bugs.launchpad.net/qemu/+bug/1878263
+
+## Existing patches
+
+https://github.com/qemu/qemu/commit/4773a5f35b0d83674f92816a226a594b03bbcf60
+https://github.com/qemu/qemu/commit/5ecfbae201d68a2f13df233260c77b0a25d7cd35
 
 ## Contact
 
