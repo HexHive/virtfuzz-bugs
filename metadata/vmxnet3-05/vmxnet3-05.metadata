@@ -1,17 +1,19 @@
 vmxnet3-05:
   arch: i386
   bug-types: ["Assertion Failure"]
-  existing-bug-reports: []
-  existing-patches: null
-  fixing-commit: null
+  existing-bug-reports: [https://bugs.launchpad.net/qemu/+bug/1878067]
+  existing-patches: [https://github.com/qemu/qemu/commit/7564bf7701f00214cdc8a678a9f7df765244def1]
+  fixing-commit: [7564bf7701f00214cdc8a678a9f7df765244def1]
   hypervisor: qemu
   introducing-commit: null
   novelty: false
-  reported-by: ['QEMUFuzzer']
+  status: "Fixed by others"
+  reported-by: ['QEMUFuzzer', 'VShuttle']
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
-  reward: null
+  reward: CVE-2020-27617
   short-description: 'eth_get_gso_type: code should not be reached'
   target: vmxnet3
   target-type: net
+  messages: N/A

@@ -1,17 +1,19 @@
 vmxnet3-03:
   arch: i386
   bug-types: ["Out of Memory"]
-  existing-bug-reports: []
-  existing-patches: null
-  fixing-commit: null
+  existing-bug-reports: [https://bugs.launchpad.net/qemu/+bug/1890152, https://lists.gnu.org/archive/html/qemu-devel/2020-08/msg00156.html, https://bugs.launchpad.net/qemu/+bug/1913873]
+  existing-patches: [https://gitlab.com/qemu-project/qemu/-/commit/d05dcd94aee88728facafb993c7280547eb4d645]
+  fixing-commit: d05dcd94aee88728facafb993c7280547eb4d645
+  status: "Fixed by others"
   hypervisor: qemu
   introducing-commit: null
   novelty: false
-  reported-by: ['QEMUFuzzer']
+  reported-by: ['QEMUFuzzer', 'VShuttle']
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
-  reward: null
-  short-description: 'Allocator is trying to allocate 0xffffffff0 bytes in net_tx_pkt_init()'
+  reward: d05dcd94aee88728facafb993c7280547eb4d645
+  short-description: 'Out of memory net_tx_pkt_init()'
   target: vmxnet3
   target-type: net
+  messages: N/A

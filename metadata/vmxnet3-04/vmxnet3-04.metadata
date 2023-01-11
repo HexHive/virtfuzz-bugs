@@ -1,9 +1,9 @@
 vmxnet3-04:
   arch: i386
   bug-types: ["Assertion Failure"]
-  existing-bug-reports: []
-  existing-patches: null
-  fixing-commit: null
+  existing-bug-reports: [https://bugs.launchpad.net/qemu/+bug/1890157]
+  existing-patches: [https://gitlab.com/qemu-project/qemu/-/commit/283f0a05e24a5e5fab783]
+  fixing-commit: 283f0a05e24a5e5fab783
   hypervisor: qemu
   introducing-commit: null
   novelty: false
@@ -15,3 +15,5 @@ vmxnet3-04:
   short-description: 'Assertion failure in net_tx_pkt_reset()'
   target: vmxnet3
   target-type: net
+  status: "Fixed by others"
+  messages: N/A

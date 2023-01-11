@@ -3,6 +3,7 @@
 # Three hw_error() in vmxnet3_validate_queues (vmxnet3)
 
 [1](https://bugs.launchpad.net/qemu/+bug/1890160)
+
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
@@ -17,6 +18,11 @@ i386, vmxnet3, net
 
 ### Existing bug reports
 
+https://bugs.launchpad.net/qemu/+bug/1890160
+
+## Existing patches
+
+https://gitlab.com/qemu-project/qemu/-/commit/9010b0c7a9a097590e183
 
 ## Contact
 

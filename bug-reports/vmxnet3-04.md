@@ -18,6 +18,11 @@ i386, vmxnet3, net
 
 ### Existing bug reports
 
+https://bugs.launchpad.net/qemu/+bug/1890157
+
+## Existing patches
+
+https://gitlab.com/qemu-project/qemu/-/commit/283f0a05e24a5e5fab783
 
 ## Contact
 

@@ -1,13 +1,14 @@
 vmxnet3-00:
   arch: i386
   bug-types: ["Assertion Failure"]
-  existing-bug-reports: []
-  existing-patches: null
-  fixing-commit: null
+  existing-bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/309]
+  existing-patches: [https://gitlab.com/qemu-project/qemu/-/commit/f3e5a17593b972a9a6079ccf7677b4389d74d5a1]
+  fixing-commit: [f3e5a17593b972a9a6079ccf7677b4389d74d5a1]
+  reported-by: [VShuttle, ViDeZZo]
   hypervisor: qemu
   introducing-commit: null
   novelty: false
-  reported-by: ['VShuttle']
+  status: "Fixed by others"
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
@@ -15,3 +16,4 @@ vmxnet3-00:
   short-description: 'Code should not be reached vmxnet3_io_bar1_write()'
   target: vmxnet3
   target-type: net
+  messages: N/A

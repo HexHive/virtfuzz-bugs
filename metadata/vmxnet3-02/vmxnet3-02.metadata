@@ -1,17 +1,19 @@
 vmxnet3-02:
   arch: i386
   bug-types: ["Assertion Failure"]
-  existing-bug-reports: []
-  existing-patches: null
-  fixing-commit: null
-  hypervisor: null
+  existing-bug-reports: [https://bugs.launchpad.net/qemu/+bug/1926111]
+  existing-patches: [https://gitlab.com/qemu-project/qemu/-/commit/6a932c4ed8748b08c58c]
+  fixing-commit: 6a932c4ed8748b08c58c
+  hypervisor: qemu
   introducing-commit: null
   novelty: false
+  status: "Fixed by others"
   reported-by: ['QEMUFuzzer']
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
   reward: null
-  short-description: 'Assertion tx_queue_idx <= s->txq_num failed'
+  short-description: 'Assertion failed in vmxnet3_io_bar0_write()'
   target: vmxnet3
   target-type: net
+  messages: N/A
