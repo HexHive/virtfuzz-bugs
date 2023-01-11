@@ -1,0 +1,11 @@
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build/qemu-system-arm
+
+cat << EOF | $QEMU \
+-machine mainstone -monitor none -serial none \
+-display none -nodefaults -qtest stdio
+writel 0x1000030E 0x00000002
+writel 0x10000306 0x000000ff
+writel 0x10000307 0x00000007
+writel 0x10000302 0x000000ff
+readl 0x10000308
+EOF
