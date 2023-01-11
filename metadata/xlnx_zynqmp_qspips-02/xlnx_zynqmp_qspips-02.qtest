@@ -1,0 +1,8 @@
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build-clean/qemu-system-aarch64
+
+cat << EOF | $QEMU \
+-machine xlnx-zcu102 -monitor none -serial none \
+-display none -nodefaults -qtest stdio
+writel 0xff0f00a0 0x74b13699
+readl 0xc1af068c
+EOF

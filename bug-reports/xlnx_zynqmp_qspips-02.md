@@ -1,0 +1,131 @@
+# Underflow in xlnx_dp_aux_push_rx_fifo()
+
+Pop two times from s->tx_fifo[2] but there is one element left. Since the fifo
+is not empty, the check at [1] will fail.
+
+
+```
+static void xilinx_spips_flush_txfifo(XilinxSPIPS *s)
+{
+    // ...
+    for (;;) {
+        // ...
+        if (fifo8_is_empty(&s->tx_fifo)) {   // ---------------> [1]
+            xilinx_spips_update_ixr(s);
+            return;
+        } else if (s->snoop_state == SNOOP_STRIPING ||
+                   s->snoop_state == SNOOP_NONE) {
+            for (i = 0; i < num_effective_busses(s); ++i) {
+                tx_rx[i] = fifo8_pop(&s->tx_fifo); // ---------> [2]
+            }
+            stripe8(tx_rx, num_effective_busses(s), false);
+        } else if (s->snoop_state >= SNOOP_ADDR) {
+        // ...
+```
+
+## More details
+
+### Hypervisor, hypervisor version, upstream commit/tag, host
+
+qemu, 7.2.50, 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b, Ubuntu 20.04
+
+### VM architecture, device, device type
+
+aarch64, xlnx_zynqmp_qspips, spi
+
+### Bug Type: Assertion Failure
+
+### Stack traces, crash details
+
+```
+==64457==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x55f8037f3440). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 1864808059
+INFO: Loaded 1 modules   (600775 inline 8-bit counters): 600775 [0x55f806e06000, 0x55f806e98ac7), 
+INFO: Loaded 1 PC tables (600775 PCs): 600775 [0x55f8064dab90,0x55f806e05800), 
+/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-qspips: Running 1 inputs 1 time(s) each.
+INFO: Reading pre_seed_input if any ...
+INFO: Executing pre_seed_input if any ...
+Matching objects by name , *spi*, *lqspi*
+This process will fuzz the following MemoryRegions:
+  * spi[0] (size 200)
+  * spi[0] (size 200)
+  * lqspi[0] (size 2000000)
+  * spi[0] (size 200)
+This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
+  * spi, EVENT_TYPE_MMIO_READ, 0xff050000 +0x200, 1,4
+  * spi, EVENT_TYPE_MMIO_WRITE, 0xff050000 +0x200, 1,4
+  * spi, EVENT_TYPE_MMIO_READ, 0xff040000 +0x200, 1,4
+  * spi, EVENT_TYPE_MMIO_WRITE, 0xff040000 +0x200, 1,4
+  * spi, EVENT_TYPE_MMIO_READ, 0xff0f0000 +0x200, 1,4
+  * spi, EVENT_TYPE_MMIO_WRITE, 0xff0f0000 +0x200, 1,4
+  * lqspi, EVENT_TYPE_MMIO_READ, 0xc0000000 +0x2000000, 4,4
+  * lqspi, EVENT_TYPE_MMIO_WRITE, 0xc0000000 +0x2000000, 4,4
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 509Mb
+Running: /root/videzzo/videzzo_qemu/out-san/poc-qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-qspips-crash-a2dce6d03fde8dc9cb50fb0c8708f307ca93d7c2.minimized
+qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-qspips: ../util/fifo8.c:62: uint8_t fifo8_pop(Fifo8 *): Assertion `fifo->num > 0' failed.
+==64457== ERROR: libFuzzer: deadly signal
+    #0 0x55f7fecb90fe in __sanitizer_print_stack_trace /root/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:86:3
+    #1 0x55f7fec07d71 in fuzzer::PrintStackTrace() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:38
+    #2 0x55f7febe0ca6 in fuzzer::Fuzzer::CrashCallback() (.part.0) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:236:18
+    #3 0x55f7febe0d72 in fuzzer::Fuzzer::CrashCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:208:1
+    #4 0x55f7febe0d72 in fuzzer::Fuzzer::StaticCrashSignalCallback() /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:207:19
+    #5 0x7f67ea63a41f  (/lib/x86_64-linux-gnu/libpthread.so.0+0x1441f)
+    #6 0x7f67ea44c00a in __libc_signal_restore_set /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/internal-signals.h:86:3
+    #7 0x7f67ea44c00a in raise /build/glibc-SzIz7B/glibc-2.31/signal/../sysdeps/unix/sysv/linux/raise.c:48:3
+    #8 0x7f67ea42b858 in abort /build/glibc-SzIz7B/glibc-2.31/stdlib/abort.c:79:7
+    #9 0x7f67ea42b728 in __assert_fail_base /build/glibc-SzIz7B/glibc-2.31/assert/assert.c:92:3
+    #10 0x7f67ea43cfd5 in __assert_fail /build/glibc-SzIz7B/glibc-2.31/assert/assert.c:101:3
+    #11 0x55f803645699 in fifo8_pop /root/videzzo/videzzo_qemu/qemu/out-san/../util/fifo8.c:62:5
+    #12 0x55f8009d1ded in xilinx_spips_flush_txfifo /root/videzzo/videzzo_qemu/qemu/out-san/../hw/ssi/xilinx_spips.c:623:28
+    #13 0x55f8009dc092 in lqspi_load_cache /root/videzzo/videzzo_qemu/qemu/out-san/../hw/ssi/xilinx_spips.c:1194:9
+    #14 0x55f8009da069 in lqspi_read /root/videzzo/videzzo_qemu/qemu/out-san/../hw/ssi/xilinx_spips.c:1231:5
+    #15 0x55f80294a61a in memory_region_read_with_attrs_accessor /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:464:9
+    #16 0x55f802908961 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:555:18
+    #17 0x55f8029060d8 in memory_region_dispatch_read1 /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:1431:16
+    #18 0x55f802905468 in memory_region_dispatch_read /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:1458:9
+    #19 0x55f802983a6d in flatview_read_continue /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2892:23
+    #20 0x55f802985078 in flatview_read /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2934:12
+    #21 0x55f802984b38 in address_space_read_full /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2947:18
+    #22 0x55f7fecebb51 in address_space_read /root/videzzo/videzzo_qemu/qemu/include/exec/memory.h:2873:18
+    #23 0x55f7fecebb51 in qemu_readl /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1037:5
+    #24 0x55f7fece9c16 in dispatch_mmio_read /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1051:35
+    #25 0x55f8037ee8bf in videzzo_dispatch_event /root/videzzo/videzzo.c:1140:5
+    #26 0x55f8037e5c3d in __videzzo_execute_one_input /root/videzzo/videzzo.c:288:9
+    #27 0x55f8037e59e4 in videzzo_execute_one_input /root/videzzo/videzzo.c:329:9
+    #28 0x55f7fed0108c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1520:12
+    #29 0x55f8037f370b in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1910:18
+    #30 0x55f7febe1816 in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:594:17
+    #31 0x55f7febc4444 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #32 0x55f7febcf3ee in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:885:19
+    #33 0x55f7febbb9d6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #34 0x7f67ea42d082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #35 0x55f7febbba2d in _start (/root/videzzo/videzzo_qemu/out-san/qemu-videzzo-aarch64-target-videzzo-fuzz-xlnx-zynqmp-qspips+0x3454a2d)
+
+NOTE: libFuzzer has rudimentary signal handlers.
+      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
+SUMMARY: libFuzzer: deadly signal
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+0x1,0xd,0xa0,0x0,0xf,0xff,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x99,0x36,0xb1,0x74,0x0,0x0,0x0,0x0,0x0,0xe,0x8c,0x6,0xaf,0xc1,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,
+\x01\x0d\xa0\x00\x0f\xff\x00\x00\x00\x00\x04\x00\x00\x00\x996\xb1t\x00\x00\x00\x00\x00\x0e\x8c\x06\xaf\xc1\x00\x00\x00\x00\x04\x00\x00\x00
+```
+
+### Reproducer steps
+
+```
+export QEMU=/path/to/qemu-system-aarch64
+
+cat << EOF | $QEMU \
+-machine xlnx-zcu102 -monitor none -serial none \
+-display none -nodefaults -qtest stdio
+writel 0xff0f00a0 0x74b13699
+readl 0xc1af068c
+EOF
+```
+
+## Contact
+
+Let us know if I need to provide more information.

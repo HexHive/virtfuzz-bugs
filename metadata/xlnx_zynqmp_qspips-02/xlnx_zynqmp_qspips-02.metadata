@@ -1,20 +1,20 @@
-xlnx_zynqmp_qspips-01:
+xlnx_zynqmp_qspips-02:
   arch: aarch64
-  bug-types: ["Large Shift"]
+  bug-types: ["Assertion Failure"]
   existing-bug-reports: null
   existing-patches: null
   fixing-commit: null
   status: Open
-  reported-by: null
-  bug-reports: null
+  bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/1430]
+  reported-by: [ViDeZZo]
   hypervisor: qemu
   introducing-commit: null
-  novelty: disputed
+  novelty: true
   reproducible-commit: 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b
   reproducible-host: 'Ubuntu 20.04'
   reproducible-version: 7.2.50
   reward: null
-  short-description: 'Shift exponent is too large in xilinx_spips_read()'
+  short-description: 'Underflow in xlnx_dp_aux_push_rx_fifo()'
   target: xlnx_zynqmp_qspips
   target-type: spi
-  messages: 1
+  messages: 2

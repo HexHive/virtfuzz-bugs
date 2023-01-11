@@ -1,0 +1,22 @@
+Pop two times from s->tx_fifo[2] but there is one element left. Since the fifo
+is not empty, the check at [1] will fail.
+
+
+```
+static void xilinx_spips_flush_txfifo(XilinxSPIPS *s)
+{
+    // ...
+    for (;;) {
+        // ...
+        if (fifo8_is_empty(&s->tx_fifo)) {   // ---------------> [1]
+            xilinx_spips_update_ixr(s);
+            return;
+        } else if (s->snoop_state == SNOOP_STRIPING ||
+                   s->snoop_state == SNOOP_NONE) {
+            for (i = 0; i < num_effective_busses(s); ++i) {
+                tx_rx[i] = fifo8_pop(&s->tx_fifo); // ---------> [2]
+            }
+            stripe8(tx_rx, num_effective_busses(s), false);
+        } else if (s->snoop_state >= SNOOP_ADDR) {
+        // ...
+```

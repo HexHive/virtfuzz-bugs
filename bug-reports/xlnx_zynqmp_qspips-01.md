@@ -10,7 +10,7 @@ qemu, 7.2.50, 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b, Ubuntu 20.04
 
 ### VM architecture, device, device type
 
-aarch64, xlnx_zynqmp_qspips, bus
+aarch64, xlnx_zynqmp_qspips, spi
 
 ### Bug Type: Large Shift
 
