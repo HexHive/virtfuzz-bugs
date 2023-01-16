@@ -64,23 +64,17 @@ SUMMARY: AddressSanitizer: allocation-size-too-big ../../../../src/libsanitizer/
 
 ### Reproducer steps
 
-I use QTest to reproduce this bug.
-
 ```
-#!/bin/bash -x
-export QEMU=/root/qemu/build-oss-fuzz/qemu-system-arm
-export BUILDROOT=./
-# 0x48050800
+export QEMU=/path/to/qemu-system-arm
+
 cat << EOF | $QEMU \
 -machine n810,accel=qtest -m 128M -qtest stdio -monitor none -serial none \
 -display none -nodefaults -qtest stdio
-writel 0x48050440 0x00000800
-writel 0x48050844 0xFFFF0000
-writel 0x48050840 0x00000011
+writel 0x48050440 0x74a57907
+writel 0x48050858 0x34982d63
+writel 0x48050840 0x65a61a51
 EOF
 ```
-
-qemu-system-arm: GLib: ../../../../glib/gmem.c:170: failed to allocate 18446744073709420544 bytes
 
 ## Contact
 
