@@ -1,0 +1,1 @@
+[read|write][w|l] are allowed but [read|write]b are not allowed when mode_16bit is enabled.
