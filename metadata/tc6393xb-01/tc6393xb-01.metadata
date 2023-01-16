@@ -7,11 +7,11 @@ tc6393xb-01:
   hypervisor: qemu
   introducing-commit: null
   novelty: true
-  reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da 
+  reproducible-commit: 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b
   reproducible-host: 'Ubuntu 20.04'
-  reproducible-version: 7.0.94 
+  reproducible-version: 7.2.50
   reward: null
   short-description: 'Heap buffer overflow in nand_blk_write_512()'
   target: tc6393xb
   target-type: display
-  messages: 9
+  messages: 7

@@ -1,1 +1,14 @@
-s->offset = 0x200 and then offset = 0x211 and then boom!
+Found a way to trigger negative-size-param when calling memcpy in
+nand_blk_load_512() called by nand_getio(). Specifically, the offset can
+be larger than NAND_PAGE_SIZE + OOB_SIZE, e.g., 0x211.
+
+``` c
+    if (s->blk) {
+        // ...
+    } else {
+        memcpy(s->io, s->storage + PAGE_START(s->addr) +
+                        // offset=0x211
+                        offset, NAND_PAGE_SIZE + OOB_SIZE - offset);
+        s->ioaddr = s->io;
+    }
+```
