@@ -6,6 +6,8 @@ tc6393xb-01:
   fixing-commit: null
   hypervisor: qemu
   introducing-commit: null
+  reported-by: [ViDeZZo]
+  bug-reports: []
   novelty: true
   reproducible-commit: 222059a0fccf4af3be776fe35a5ea2d6a68f9a0b
   reproducible-host: 'Ubuntu 20.04'
@@ -15,3 +17,4 @@ tc6393xb-01:
   target: tc6393xb
   target-type: display
   messages: 7
+  status: Open

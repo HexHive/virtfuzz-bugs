@@ -1,26 +1,44 @@
-Integer overflow -> heap buffer over
+I captured the negative-size-param (memcpy) in nand_blk_load_512() like below.
 
+```
+diff --git a/hw/block/nand.c b/hw/block/nand.c
+index 8bc80e351..f68b23d05 100644
+--- a/hw/block/nand.c
++++ b/hw/block/nand.c
+@@ -790,6 +790,10 @@ static void glue(nand_blk_load_, NAND_PAGE_SIZE)(NANDFlashState *s,
+             s->ioaddr = s->io + (PAGE_START(addr) & 0x1ff) + offset;
+         }
+     } else {
++        int size = NAND_PAGE_SIZE + OOB_SIZE - offset;
++        if (size < 0) {
++            return;
++        }
+         memcpy(s->io, s->storage + PAGE_START(s->addr) +
+                         offset, NAND_PAGE_SIZE + OOB_SIZE - offset);
+         s->ioaddr = s->io;
+
+```
+
+Then, I triggered an integer overflow in nand_blk_write_512() resulting in a
+heap buffer overflow. Specifically, s->iolen is a signed integer[1], but based
+on the function signature of mem_and(), s->iolen will be casted to an unsigned
+integer[2]. Asan then captures a heap buffer overflow[3].
+
+```
 static void glue(nand_blk_write_, NAND_PAGE_SIZE)(NANDFlashState *s)
 {
-    uint64_t off, page, sector, soff;
-    uint8_t iobuf[(PAGE_SECTORS + 2) * 0x200];
-    if (PAGE(s->addr) >= s->pages)
-        return;
-
+    // ...
     if (!s->blk) {
         mem_and(s->storage + PAGE_START(s->addr) + (s->addr & PAGE_MASK) +
-        // s->iolen int
-                        s->offset, s->io, s->iolen);
+                        s->offset, s->io, s->iolen); // <--------------- [1]
     } else if (s->mem_oob) {
+    // ...
 
-        // size_t unsigned int!!!
-static void mem_and(uint8_t *dest, const uint8_t *src, size_t n)
+static void mem_and(uint8_t *dest, const uint8_t *src, size_t n) // <--- [2]
 {
-    /* Like memcpy() but we logical-AND the data into the destination */
     int i;
     for (i = 0; i < n; i++) {
-        dest[i] &= src[i];
+        dest[i] &= src[i]; // <----------------------------------------- [3]
     }
 }
-
-This has potential!
+```
