@@ -1,0 +1,17 @@
+intel-hda-00:
+  arch: i386
+  bug-types: ["Global Buffer Overflow"]
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: vbox
+  introducing-commit: null
+  novelty: true
+  reproducible-commit: r95063
+  reproducible-host: "Ubuntu 20.04"
+  reproducible-version: 7.0.0
+  reward: null
+  short-description: "Global buffer overflow in hdaMmioWrite()"
+  target: intel-hda
+  target-type: audio
+  messages: 1

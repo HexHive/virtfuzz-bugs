@@ -1,0 +1,2 @@
+In hdaMmioWrite(), when LOG_ENABLED is defined, idxRegMem can be 0xffffffff if
+hdaRegLookup() returns -1.

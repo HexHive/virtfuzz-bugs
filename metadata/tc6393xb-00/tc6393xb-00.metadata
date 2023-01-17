@@ -6,7 +6,7 @@ tc6393xb-00:
   fixing-commit: null
   status: Open
   reported-by: [ViDeZZo]
-  bug-reports: [Confidential]
+  bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/1445]
   hypervisor: qemu
   introducing-commit: null
   novelty: true
