@@ -1,12 +1,12 @@
 virtio-blk-01:
   arch: i386
   bug-types: ["Infinite Loop"]
-  existing-bug-reports: null
+  existing-bug-reports: []
   existing-patches: null
   fixing-commit: null
   hypervisor: qemu
   introducing-commit: null
-  novelty: true
+  novelty: false
   reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: 7.0.94
@@ -15,3 +15,5 @@ virtio-blk-01:
   target: virtio-blk
   target-type: storage
   messages: 16
+  status: "Fixed by others"
+  reported-by: [Anonymous]

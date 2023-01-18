@@ -6,6 +6,7 @@ virtio-blk-00:
   fixing-commit: null
   hypervisor: qemu
   introducing-commit: null
+  reported-by: [Anonymous]
   novelty: false
   reproducible-commit: 9a99f964b152f8095949bbddca7841744ad418da
   reproducible-host: "Ubuntu 20.04"
@@ -14,3 +15,5 @@ virtio-blk-00:
   short-description: "Assertion failure in address_space_stw_le_cached()"
   target: virtio-blk
   target-type: storage
+  messages: 5
+  status: "Fixed by others"

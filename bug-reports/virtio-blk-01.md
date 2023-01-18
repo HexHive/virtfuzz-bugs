@@ -93,6 +93,9 @@ i386, virtio-blk, storage
 
 ### Bug Type: Infinite Loop
 
+### Existing bug reports
+
+
 ## Contact
 
 Let us know if I need to provide more information.

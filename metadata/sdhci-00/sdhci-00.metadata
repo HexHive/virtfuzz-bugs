@@ -4,7 +4,8 @@ sdhci-00:
   existing-bug-reports: ["https://gitlab.com/qemu-project/qemu/-/issues/451", "https://bugs.launchpad.net/qemu/+bug/1913919"]
   existing-patches: null
   reported-by: [QEMUFuzzer]
-  fixing-commit: null
+  fixing-commit: 799f7f0104a3f2e0fea06ee7b31a1c293cd7c948
+  status: "Fixed by others"
   hypervisor: "qemu"
   introducing-commit: null
   novelty: false
