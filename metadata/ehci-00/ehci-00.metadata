@@ -1,7 +1,7 @@
 ehci-00:
   arch: i386
   bug-types: ["Abort"]
-  existing-bug-reports: []
+  existing-bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/303]
   existing-patches: null
   fixing-commit: null
   hypervisor: qemu
@@ -15,3 +15,5 @@ ehci-00:
   short-description: 'Abort in usb_ep_get()'
   target: ehci
   target-type: usb
+  messages: N/A
+  status: 'Patch submitted'

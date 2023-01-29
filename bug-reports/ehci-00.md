@@ -1,6 +1,5 @@
 # Abort in usb_ep_get()
 
-# Assertion `pid == USB_TOKEN_IN || pid == USB_TOKEN_OUT' failed through EHCI
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
@@ -15,6 +14,7 @@ i386, ehci, usb
 
 ### Existing bug reports
 
+https://gitlab.com/qemu-project/qemu/-/issues/303
 
 ## Contact
 
