@@ -6,11 +6,14 @@ dwc2-00:
   fixing-commit: null
   hypervisor: qemu
   introducing-commit: null
-  novelty: false
+  reported-by: [ViDeZZo]
+  novelty: True
   reproducible-commit: c52d69e7dbaaed0ffdef8125e79218672c30161d
   reproducible-host: 'Ubuntu 18.04'
   reproducible-version: 6.1.50
   reward: null
-  short-description: 'Assertion failure in hw/usb/core.c from dwc2'
+  short-description: 'Assertion failed in hw/usb/core.c from dwc2'
   target: dwc2
   target-type: usb
+  messages: N/A
+  status: 'Patch submitted'
