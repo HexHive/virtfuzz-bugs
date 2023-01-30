@@ -1,0 +1,19 @@
+ehci-01:
+  arch: i386
+  bug-types: ['Assertion Failure']
+  existing-bug-reports: null
+  existing-patches: null
+  fixing-commit: null
+  hypervisor: qemu
+  introducing-commit: null
+  reported-by: [ViDeZZo]
+  novelty: disputed
+  reproducible-commit: 13356edb87506c148b163b8c7eb0695647d00c2a
+  reproducible-host: 'Ubuntu 20.04'
+  reproducible-version: 7.2.50
+  reward: null
+  short-description: "Assertion failed due to bad token"
+  target: ehci
+  target-type: usb
+  messages: 15
+  status: Open
