@@ -1,7 +1,4 @@
-Download bzImage and rootfs.
-
-```
-export QEMU=/path/to/qemu-system-x86_64
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build/qemu-system-x86_64
 
 $QEMU -M q35 -kernel bzImage -drive file=rootfs.ext2,if=virtio,format=raw \
     -append "rootwait root=/dev/vda console=tty1 console=ttyS0" \
@@ -14,4 +11,3 @@ $QEMU -M q35 -kernel bzImage -drive file=rootfs.ext2,if=virtio,format=raw \
     -device usb-storage,bus=ich9-ehci-1.0,port=1,drive=disk0 \
     -device usb-tablet,bus=ich9-ehci-1.0,port=2,usb_version=1 \
     -nographic
-```
