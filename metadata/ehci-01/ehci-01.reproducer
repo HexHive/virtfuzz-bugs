@@ -1,0 +1,17 @@
+Download bzImage and rootfs.
+
+```
+export QEMU=/path/to/qemu-system-x86_64
+
+$QEMU -M q35 -kernel bzImage -drive file=rootfs.ext2,if=virtio,format=raw \
+    -append "rootwait root=/dev/vda console=tty1 console=ttyS0" \
+    -net nic,model=virtio -net user \
+    -device ich9-usb-ehci1,bus=pcie.0,addr=1d.7,multifunction=on,id=ich9-ehci-1 \
+    -device ich9-usb-uhci1,bus=pcie.0,addr=1d.0,multifunction=on,masterbus=ich9-ehci-1.0,firstport=0 \
+    -device ich9-usb-uhci2,bus=pcie.0,addr=1d.1,multifunction=on,masterbus=ich9-ehci-1.0,firstport=2 \
+    -device ich9-usb-uhci3,bus=pcie.0,addr=1d.2,multifunction=on,masterbus=ich9-ehci-1.0,firstport=4 \
+    -drive file=null-co://,if=none,format=raw,id=disk0 \
+    -device usb-storage,bus=ich9-ehci-1.0,port=1,drive=disk0 \
+    -device usb-tablet,bus=ich9-ehci-1.0,port=2,usb_version=1 \
+    -nographic
+```
