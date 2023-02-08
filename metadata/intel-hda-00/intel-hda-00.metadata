@@ -7,9 +7,12 @@ intel-hda-00:
   hypervisor: vbox
   introducing-commit: null
   novelty: true
-  reproducible-commit: r95063
+  status: Open
+  reported-by: [ViDeZZo]
+  bug-reports: [https://www.virtualbox.org/ticket/21474]
+  reproducible-commit: r98339
   reproducible-host: "Ubuntu 20.04"
-  reproducible-version: 7.0.0
+  reproducible-version: 7.0.7
   reward: null
   short-description: "Global buffer overflow in hdaMmioWrite()"
   target: intel-hda

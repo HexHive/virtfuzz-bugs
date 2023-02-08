@@ -1,2 +1,15 @@
-In hdaMmioWrite(), when LOG_ENABLED is defined, idxRegMem can be 0xffffffff if
-hdaRegLookup() returns -1.
+cbBefore[1] can be too large for g_afMasks[2], which only has five elements.
+
+```
+static DECLCALLBACK(VBOXSTRICTRC) hdaMmioWrite(PPDMDEVINS pDevIns, void *pvUser, RTGCPHYS off, void const *pv, unsigned cb) {
+    // ...
+    idxRegDsc = hdaR3RegLookupWithin(off);
+    if (idxRegDsc != -1)
+    {
+        uint32_t const cbBefore = (uint32_t)off - g_aHdaRegMap[idxRegDsc].off; // [1]
+        Assert(cbBefore > 0 && cbBefore < 4);
+        off      -= cbBefore;
+        idxRegMem = g_aHdaRegMap[idxRegDsc].idxReg;
+        u64Value <<= cbBefore * 8;
+        u64Value  |= pThis->au32Regs[idxRegMem] & g_afMasks[cbBefore]; // ------> [2]
+```
