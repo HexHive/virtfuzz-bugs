@@ -1,76 +1,105 @@
-# Division by zero in uart_parameters_setup()
+# Devision by zero in uart_parameters_setup()
 
-# Division by zero in uart_parameters_setup
+s->r[R_BRGR] could be zero but there is no check[1].
 
+```
+static void uart_parameters_setup(CadenceUARTState *s)
+{
+    QEMUSerialSetParams ssp;
+    unsigned int baud_rate, packet_size, input_clk;
+    input_clk = clock_get_hz(s->refclk);
+
+    baud_rate = (s->r[R_MR] & UART_MR_CLKS) ? input_clk / 8 : input_clk;
+    baud_rate /= (s->r[R_BRGR] * (s->r[R_BDIV] + 1)); // ----> [1]
+```
 
 ## More details
 
 ### Hypervisor, hypervisor version, upstream commit/tag, host
 
-qemu, 6.1.50, c52d69e7dbaaed0ffdef8125e79218672c30161d, Ubuntu 18.04
+qemu, 7.2.50, f670b3eec7f5d1ed8c4573ef244e7b8c6b32001b, Ubuntu 20.04
 
 ### VM architecture, device, device type
 
-aarch64, cadence_uart, char
+aarch64, cadence_uart, serial
 
-### Bug Type: Devision by Zero
+### Bug Type: Division by Zero
 
 ### Stack traces, crash details
 
 ```
-root@e1fc40420e44:~/evaluation/bug-reports# /tmp/tmp.OljH5NPSeN/picire_reproduce.sh /tmp/tmp.OljH5NPSeN/picire_inputs.20211003_145546/picire_inputs
-INFO: found LLVMFuzzerCustomMutator (0x563846a83230). Disabling -len_control by default.
+==23==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+INFO: found LLVMFuzzerCustomMutator (0x55555d6bab70). Disabling -len_control by default.
 INFO: Running with entropic power schedule (0xFF, 100).
-INFO: Seed: 657066260
-INFO: Loaded 1 modules   (1042817 inline 8-bit counters): 1042817 [0x56384a7ab000, 0x56384a8a9981),
-INFO: Loaded 1 PC tables (1042817 PCs): 1042817 [0x5638497c1790,0x56384a7aafa0),
-/root/qemu/build-san-5/qemu-fuzz-aarch64-target-stateful-fuzz-cadence-uart: Running 1 inputs 1 time(s) each.
+INFO: Seed: 4102190864
+INFO: Loaded 1 modules   (603606 inline 8-bit counters): 603606 [0x555560d6e000, 0x555560e015d6), 
+INFO: Loaded 1 PC tables (603606 PCs): 603606 [0x5555604379b0,0x555560d6d710), 
+./qemu-videzzo-aarch64-target-videzzo-fuzz-cadence-uart: Running 1 inputs 1 time(s) each.
 INFO: Reading pre_seed_input if any ...
 INFO: Executing pre_seed_input if any ...
-INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
 Matching objects by name , *uart*
 This process will fuzz the following MemoryRegions:
   * uart[0] (size 1000)
   * uart[0] (size 1000)
 This process will fuzz through the following interfaces:
+  * clock_step, EVENT_TYPE_CLOCK_STEP, 0xffffffff +0xffffffff, 255,255
   * uart, EVENT_TYPE_MMIO_READ, 0xff000000 +0x1000, 1,4
   * uart, EVENT_TYPE_MMIO_WRITE, 0xff000000 +0x1000, 1,4
   * uart, EVENT_TYPE_MMIO_READ, 0xff010000 +0x1000, 1,4
   * uart, EVENT_TYPE_MMIO_WRITE, 0xff010000 +0x1000, 1,4
-  * uart, EVENT_TYPE_MMIO_READ, 0xff000000 +0x1000, 1,4
-  * uart, EVENT_TYPE_MMIO_WRITE, 0xff000000 +0x1000, 1,4
-  * uart, EVENT_TYPE_MMIO_READ, 0xff010000 +0x1000, 1,4
-  * uart, EVENT_TYPE_MMIO_WRITE, 0xff010000 +0x1000, 1,4
-INFO: seed corpus: files: 1 min: 1971b max: 1971b total: 1971b rss: 487Mb
-#3	INITED cov: 1810 ft: 1809 corp: 1/1971b exec/s: 0 rss: 488Mb
-Running: /root/evaluation/bug-reports/crash-1c170bd042242a1be8d01ba2375413df135f0540
-/root/qemu/hw/char/cadence_uart.c:180:15: runtime error: division by zero
-    #0 0x563843fee654 in uart_parameters_setup cadence_uart.c
-    #1 0x563843fe8101 in uart_write cadence_uart.c
-    #2 0x563843043fd1 in memory_region_write_accessor memory.c
-    #3 0x5638430435a6 in access_with_adjusted_size memory.c
-    #4 0x5638430414f1 in memory_region_dispatch_write (/root/qemu/build-san-5/qemu-fuzz-aarch64+0x480e4f1)
-    #5 0x5638422c9749 in flatview_write_continue exec.c
-    #6 0x5638422b38d2 in flatview_write exec.c
-    #7 0x5638422b3421 in address_space_write (/root/qemu/build-san-5/qemu-fuzz-aarch64+0x3a80421)
-    #8 0x563846a6ef29 in __wrap_qtest_writel (/root/qemu/build-san-5/qemu-fuzz-aarch64+0x823bf29)
-    #9 0x563846b13650 in dispatch_mmio_write stateful_fuzz.c
-    #10 0x563846a8d655 in dispatch_event stateful_fuzz.c
-    #11 0x563846b1593a in stateful_fuzz stateful_fuzz.c
-    #12 0x563846a651ee in LLVMFuzzerTestOneInput (/root/qemu/build-san-5/qemu-fuzz-aarch64+0x82321ee)
-    #13 0x563842166803 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:607
-    #14 0x563842149b2a in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323
-    #15 0x5638421547e4 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:883
-    #16 0x56384212a3d2 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20
-    #17 0x7f60b04d6bf6 in __libc_start_main /build/glibc-S9d2JN/glibc-2.27/csu/../csu/libc-start.c:310
-    #18 0x56384213ff59 in _start (/root/qemu/build-san-5/qemu-fuzz-aarch64+0x390cf59)
+INFO: A corpus is not provided, starting from an empty corpus
+#2      INITED cov: 3 ft: 4 corp: 1/1b exec/s: 0 rss: 512Mb
+Running: ./poc-qemu-videzzo-aarch64-target-videzzo-fuzz-cadence-uart-crash-cef41ca061384b94899472d8e2e6b5a86b62d259.minimized
+../hw/char/cadence_uart.c:181:15: runtime error: division by zero
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior ../hw/char/cadence_uart.c:181:15 in 
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==23==ERROR: AddressSanitizer: FPE on unknown address 0x555558fee913 (pc 0x555558fee913 bp 0x7fffffffb5f0 sp 0x7fffffffb220 T0)
+    #0 0x555558fee913 in uart_parameters_setup /root/videzzo/videzzo_qemu/qemu/out-san/../hw/char/cadence_uart.c:181:15
+    #1 0x555558fe8165 in uart_write /root/videzzo/videzzo_qemu/qemu/out-san/../hw/char/cadence_uart.c:471:9
+    #2 0x55555c7bee3e in memory_region_write_with_attrs_accessor /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:514:12
+    #3 0x55555c7be051 in access_with_adjusted_size /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:555:18
+    #4 0x55555c7bcd1e in memory_region_dispatch_write /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/memory.c:1522:13
+    #5 0x55555c84ce1e in flatview_write_continue /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2826:23
+    #6 0x55555c83abcb in flatview_write /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2868:12
+    #7 0x55555c83a688 in address_space_write /root/videzzo/videzzo_qemu/qemu/out-san/../softmmu/physmem.c:2964:18
+    #8 0x555558b3e91e in qemu_writew /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1101:5
+    #9 0x555558b3d173 in dispatch_mmio_write /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1253:28
+    #10 0x55555d6b5fef in videzzo_dispatch_event /root/videzzo/videzzo.c:1140:5
+    #11 0x55555d6ad36d in __videzzo_execute_one_input /root/videzzo/videzzo.c:288:9
+    #12 0x55555d6ad114 in videzzo_execute_one_input /root/videzzo/videzzo.c:329:9
+    #13 0x555558b4646c in videzzo_qemu /root/videzzo/videzzo_qemu/qemu/out-san/../tests/qtest/videzzo/videzzo_qemu.c:1530:12
+    #14 0x55555d6bae3b in LLVMFuzzerTestOneInput /root/videzzo/videzzo.c:1910:18
+    #15 0x555558a26bf6 in fuzzer::Fuzzer::ExecuteCallback(unsigned char*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:594:17
+    #16 0x555558a09824 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:323:21
+    #17 0x555558a147ce in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char*, unsigned long)) /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:885:19
+    #18 0x555558a00db6 in main /root/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:30
+    #19 0x7ffff607a082 in __libc_start_main /build/glibc-SzIz7B/glibc-2.31/csu/../csu/libc-start.c:308:16
+    #20 0x555558a00e0d in _start (/root/bugs/metadata/cadence_uart-00/qemu-videzzo-aarch64-target-videzzo-fuzz-cadence-uart+0x34ace0d)
 
-SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /root/qemu/hw/char/cadence_uart.c:180:15 in
-MS: 0 ; base unit: 0000000000000000000000000000000000000000```
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: FPE /root/videzzo/videzzo_qemu/qemu/out-san/../hw/char/cadence_uart.c:181:15 in uart_parameters_setup
+==23==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+0x1,0x9,0x18,0x0,0x0,0xff,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x0,0x0,0x33,0x12,0x0,0x0,0x0,0x0,0x1,0x9,0x4,0x0,0x0,0xff,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0xc4,0xbc,0x4e,0x4c,0x0,0x0,0x0,0x0,
+\x01\x09\x18\x00\x00\xff\x00\x00\x00\x00\x04\x00\x00\x00\x00\x003\x12\x00\x00\x00\x00\x01\x09\x04\x00\x00\xff\x00\x00\x00\x00\x02\x00\x00\x00\xc4\xbcNL\x00\x00\x00\x00
+```
 
 ### Reproducer steps
 
-bash 29.sh
+Build with ASan.
+
+```
+export QEMU=/path/to/qemu-system-aarch64
+
+cat << EOF | $QEMU \
+-machine xlnx-zcu102 -monitor none -serial none \
+-display none -nodefaults -qtest stdio
+writel 0xff000018 0x12330000
+writew 0xff000004 0xbcc4
+EOF
+```
+
 ## Contact
 
 Let us know if I need to provide more information.

@@ -1,7 +1,4 @@
-Build with ASan.
-
-```
-export QEMU=/path/to/qemu-system-aarch64
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build-san/qemu-system-aarch64
 
 cat << EOF | $QEMU \
 -machine xlnx-zcu102 -monitor none -serial none \
@@ -9,4 +6,3 @@ cat << EOF | $QEMU \
 writel 0xff000018 0x12330000
 writew 0xff000004 0xbcc4
 EOF
-```
