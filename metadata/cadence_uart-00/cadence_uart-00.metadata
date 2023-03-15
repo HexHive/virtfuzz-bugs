@@ -9,7 +9,7 @@ cadence_uart-00:
   reported-by: [ViDeZZo]
   bug-reports: [https://gitlab.com/qemu-project/qemu/-/issues/1493]
   novelty: true
-  status: Open
+  status: "Fixed by others"
   reproducible-commit: f670b3eec7f5d1ed8c4573ef244e7b8c6b32001b
   reproducible-host: "Ubuntu 20.04"
   reproducible-version: 7.2.50
