@@ -1,4 +1,4 @@
-export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build/qemu-system-arm
+export QEMU=/home/liuqiang/project-videzzo/qemu-devel/build-san/qemu-system-arm
 
 cat << EOF | $QEMU \
 -machine sabrelite -monitor none -serial none \

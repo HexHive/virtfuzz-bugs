@@ -17,4 +17,4 @@ imx_usb_phy-00:
   target: imx_usb_phy
   target-type: usb
   messages: 1
-  status: Open
+  status: "Fixed by others"
