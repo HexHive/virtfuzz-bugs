@@ -1,0 +1,1 @@
+outl 0xc004 0xdeadbeef
